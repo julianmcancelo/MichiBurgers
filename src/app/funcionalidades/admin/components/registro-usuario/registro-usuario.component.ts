@@ -61,8 +61,8 @@ export class RegistroUsuarioComponent {
     queueMicrotask(() => {
       this.cargando.set(true);
       const body = this.form.value;
-      // Usamos ruta relativa al dominio para funcionar en hosting
-      this.http.post('/api/auth/register.php', body).subscribe({
+      // Usamos URL absoluta para apuntar explícitamente al backend
+      this.http.post('https://burguersaurio.jcancelo.dev/api/auth/register.php', body).subscribe({
         next: () => {
           this.cargando.set(false);
           this.snack.open('Usuario creado', 'OK', { duration: 2500 });
