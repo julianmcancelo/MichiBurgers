@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 
-// Ajustar si luego movemos a environments
+// Usar el dominio público en producción
 const BASE_URL = 'https://burguersaurio.jcancelo.dev/api';
 
 @Injectable({ providedIn: 'root' })

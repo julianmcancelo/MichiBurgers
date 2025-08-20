@@ -312,14 +312,21 @@ export class MapaSalonComponent implements OnInit {
         const otras = this.mesas.filter(m => (m.area || 'interior') !== area);
         const normalizadas = (mesasApi as Mesa[]).map((m) => {
           const forma = m.forma || 'cuadrada';
-          const ancho = m.ancho || (forma === 'redonda' ? 100 : 120);
-          const alto = m.alto || (forma === 'redonda' ? (m.ancho || 100) : 90);
+          const ancho = Number.isFinite(Number(m.ancho)) ? Number(m.ancho) : (forma === 'redonda' ? 100 : 120);
+          const alto = Number.isFinite(Number(m.alto)) ? Number(m.alto) : (forma === 'redonda' ? (Number(m.ancho) || 100) : 90);
           // Limitar dentro del canvas visible
           const maxX = Math.max(0, this.ancho - ancho);
           const maxY = Math.max(0, this.alto - alto);
-          const x = Math.min(Math.max(0, m.x ?? 0), maxX);
-          const y = Math.min(Math.max(0, m.y ?? 0), maxY);
-          return { ...m, area: m.area || area, x, y, ancho, alto, forma } as Mesa;
+          const nx = Number(m.x);
+          const ny = Number(m.y);
+          const safeX = Number.isFinite(nx) ? nx : 0;
+          const safeY = Number.isFinite(ny) ? ny : 0;
+          const x = Math.min(Math.max(0, safeX), maxX);
+          const y = Math.min(Math.max(0, safeY), maxY);
+          const rawArea = ((m as any).area ?? area)?.toString().toLowerCase();
+          const areaNorm: 'interior' | 'exterior' = rawArea === 'exterior' ? 'exterior' : 'interior';
+          const id = (m as any).id != null ? String((m as any).id) : this.generarId();
+          return { ...m, id, area: areaNorm, x, y, ancho, alto, forma } as Mesa;
         });
         this.mesas = [...otras, ...normalizadas];
         this.guardar(); // sincronizar cache local
