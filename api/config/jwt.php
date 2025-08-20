@@ -58,7 +58,24 @@ function jwt_decode(string $token, string $secret): ?array {
 }
 
 function jwt_parse_from_header(): ?object {
-  $hdr = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+  // Algunas configuraciones (Apache/Nginx/CGI) no exponen HTTP_AUTHORIZATION directamente.
+  $hdr = $_SERVER['HTTP_AUTHORIZATION']
+    ?? $_SERVER['Authorization']
+    ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION']
+    ?? '';
+
+  if ($hdr === '' && function_exists('getallheaders')) {
+    $headers = getallheaders();
+    foreach ($headers as $k => $v) {
+      if (strcasecmp($k, 'Authorization') === 0) { $hdr = $v; break; }
+    }
+  } elseif ($hdr === '' && function_exists('apache_request_headers')) {
+    $headers = apache_request_headers();
+    foreach ($headers as $k => $v) {
+      if (strcasecmp($k, 'Authorization') === 0) { $hdr = $v; break; }
+    }
+  }
+
   if (!preg_match('/^Bearer\s+(.*)$/i', $hdr, $m)) return null;
   $token = $m[1];
   $payload = jwt_decode($token, (string)($_ENV['JWT_SECRET'] ?? ''));

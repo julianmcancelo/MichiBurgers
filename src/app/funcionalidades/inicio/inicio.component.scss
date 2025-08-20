@@ -1,24 +1,76 @@
 .inicio {
-  padding: 2rem;
   display: grid;
+  gap: 2rem;
+  padding: 2rem 1.25rem 3rem;
+}
+
+.hero {
+  background: linear-gradient(135deg, rgba(25,118,210,0.08), rgba(0,0,0,0.03));
+  border: 1px solid rgba(25,118,210,0.15);
+  border-radius: 16px;
+  padding: 2rem;
+}
+
+.titulo {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.titulo h1 {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.sub {
+  margin: 0;
+  color: rgba(0,0,0,0.6);
+}
+
+.bienvenida {
+  margin: 0.25rem 0 0;
+  color: rgba(0,0,0,0.7);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
   gap: 1rem;
 }
 
-.acciones {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+@media (max-width: 959px) {
+  .grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
 }
 
-.btn {
-  background: #e3f2fd;
-  border: 1px solid #90caf9;
-  color: #0d47a1;
-  padding: 0.5rem 0.9rem;
-  border-radius: 6px;
-  text-decoration: none;
+@media (max-width: 599px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
-.btn:hover {
-  background: #bbdefb;
+.card {
+  grid-column: span 3;
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.card .mat-mdc-card-header {
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card .mat-mdc-card-header mat-icon {
+  margin-right: 0.25rem;
+  color: #1976d2;
+}
+
+.acceso {
+  border-radius: 14px;
 }

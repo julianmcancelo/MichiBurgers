@@ -1,7 +1,13 @@
 <mat-toolbar color="primary">
   <span>Burguersaurio 🦖🍔</span>
   <span class="espaciador"></span>
-  <button mat-button routerLink="/auth/login">Iniciar Sesión</button>
+  <ng-container *ngIf="usuario$ | async as u; else loginLink">
+    <span>Bienvenido, {{ u.nombreCompleto }} ({{ u.rol }})</span>
+    <button mat-button (click)="logout()">Salir</button>
+  </ng-container>
+  <ng-template #loginLink>
+    <button mat-button routerLink="/auth/login">Iniciar Sesión</button>
+  </ng-template>
   <button mat-button routerLink="/admin">Administración</button>
   <button mat-button routerLink="/mapa-meses">Mapa de Meses</button>
   <button mat-button routerLink="/mapa-meses/salon">Mapa del Salón</button>

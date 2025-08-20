@@ -42,7 +42,7 @@
         </mat-form-field>
       </div>
       <div class="actions">
-        <button mat-raised-button color="primary" type="submit" [disabled]="cargando">{{ cargando ? 'Guardando...' : 'Crear usuario' }}</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="cargando()">{{ cargando() ? 'Guardando...' : 'Crear usuario' }}</button>
       </div>
     </form>
   </mat-card-content>

@@ -1,10 +1,97 @@
 <section class="inicio">
-  <h1>¡Bienvenido a Burguersaurio! 🦖🍔</h1>
-  <p>Selecciona una opción para comenzar:</p>
-  <div class="acciones">
-    <a mat-raised-button color="primary" routerLink="/auth/login">Iniciar sesión</a>
-    <a mat-raised-button color="accent" routerLink="/admin">Administración</a>
-    <a mat-raised-button color="warn" routerLink="/comandera">Comandera</a>
-    <a mat-raised-button routerLink="/cocina">Cocina</a>
+  <div class="hero">
+    <div class="titulo">
+      <h1>Burguersaurio 🦖🍔</h1>
+      <p class="sub">Gestión ágil para tu restaurante</p>
+      <ng-container *ngIf="usuario$ | async as u; else visitante">
+        <p class="bienvenida">Bienvenido, <strong>{{ u.nombreCompleto }}</strong> ({{ u.rol }})</p>
+      </ng-container>
+      <ng-template #visitante>
+        <p class="bienvenida">Iniciá sesión para acceder a tus herramientas</p>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="grid">
+    <mat-card class="card acceso" routerLink="/comandera" appearance="outlined">
+      <mat-card-header>
+        <mat-icon fontIcon="receipt_long"></mat-icon>
+        <mat-card-title>Comandera</mat-card-title>
+        <mat-card-subtitle>Tomar y gestionar pedidos</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        Flujo rápido para mozos y caja.
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary">Ir</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="card acceso" routerLink="/cocina" appearance="outlined">
+      <mat-card-header>
+        <mat-icon fontIcon="restaurant"></mat-icon>
+        <mat-card-title>Cocina</mat-card-title>
+        <mat-card-subtitle>Pedidos en preparación</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        Vista optimizada para el equipo de cocina.
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary">Ir</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="card acceso" routerLink="/mapa-meses" appearance="outlined">
+      <mat-card-header>
+        <mat-icon fontIcon="map"></mat-icon>
+        <mat-card-title>Mapa de Meses</mat-card-title>
+        <mat-card-subtitle>Distribución y estado de mesas</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        Organización de salón en tiempo real.
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary">Ir</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="card acceso" routerLink="/admin" appearance="outlined" *ngIf="(usuario$ | async)?.rol === 'admin'">
+      <mat-card-header>
+        <mat-icon fontIcon="admin_panel_settings"></mat-icon>
+        <mat-card-title>Administración</mat-card-title>
+        <mat-card-subtitle>Productos, usuarios y configuración</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        Gestioná el catálogo, usuarios y más.
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary">Ir</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="card acceso" routerLink="/admin/usuarios/registrar" appearance="outlined" *ngIf="(usuario$ | async)?.rol === 'admin'">
+      <mat-card-header>
+        <mat-icon fontIcon="person_add"></mat-icon>
+        <mat-card-title>Registrar Usuario</mat-card-title>
+        <mat-card-subtitle>Crear nuevos usuarios del sistema</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        Alta rápida de personal con roles.
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary">Ir</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="card acceso" routerLink="/auth/login" appearance="outlined" *ngIf="!(usuario$ | async)">
+      <mat-card-header>
+        <mat-icon fontIcon="login"></mat-icon>
+        <mat-card-title>Iniciar Sesión</mat-card-title>
+        <mat-card-subtitle>Accedé a tus herramientas</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-actions>
+        <button mat-stroked-button color="primary">Ingresar</button>
+      </mat-card-actions>
+    </mat-card>
   </div>
 </section>

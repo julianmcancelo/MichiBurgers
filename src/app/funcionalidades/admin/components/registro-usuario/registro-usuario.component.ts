@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -22,12 +22,13 @@ import { MatButtonModule } from '@angular/material/button';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatSnackBarModule,
   ],
   templateUrl: './registro-usuario.component.html',
   styleUrls: ['./registro-usuario.component.scss']
 })
 export class RegistroUsuarioComponent {
-  cargando = false;
+  cargando = signal(false);
   roles = [
     { value: 'admin', label: 'Administrador' },
     { value: 'mozo', label: 'Mozo' },
@@ -56,20 +57,36 @@ export class RegistroUsuarioComponent {
       this.form.markAllAsTouched();
       return;
     }
-    this.cargando = true;
-    const body = this.form.value;
-    // Usamos ruta relativa al dominio para funcionar en hosting
-    this.http.post('/api/auth/register.php', body).subscribe({
-      next: () => {
-        this.cargando = false;
-        this.snack.open('Usuario creado', 'OK', { duration: 2500 });
-        this.router.navigate(['/admin']);
-      },
-      error: (err) => {
-        this.cargando = false;
-        const msg = err?.error?.error || 'No se pudo crear el usuario';
-        this.snack.open(msg, 'Cerrar', { duration: 3500 });
-      }
+    // Evita NG0100 (ExpressionChangedAfterItHasBeenChecked) con zoneless/SSR
+    queueMicrotask(() => {
+      this.cargando.set(true);
+      const body = this.form.value;
+      // Usamos ruta relativa al dominio para funcionar en hosting
+      this.http.post('/api/auth/register.php', body).subscribe({
+        next: () => {
+          this.cargando.set(false);
+          this.snack.open('Usuario creado', 'OK', { duration: 2500 });
+          this.router.navigate(['/admin']);
+        },
+        error: (err) => {
+          this.cargando.set(false);
+          // Log completo para diagnóstico
+          console.error('Registro de usuario falló:', err);
+          // Extrae mensaje significativo según forma de respuesta
+          let msg = 'No se pudo crear el usuario';
+          if (typeof err?.error === 'string') {
+            // Respuesta en texto/HTML
+            msg = err.error.slice(0, 200);
+          } else if (err?.error?.error) {
+            msg = err.error.error;
+          } else if (err?.status === 401) {
+            msg = 'No autorizado. Iniciá sesión como administrador.';
+          } else if (err?.status === 0) {
+            msg = 'No hay conexión con el servidor.';
+          }
+          this.snack.open(msg, 'Cerrar', { duration: 4500 });
+        }
+      });
     });
   }
 }

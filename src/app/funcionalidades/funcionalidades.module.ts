@@ -4,6 +4,8 @@ import { RouterModule } from '@angular/router';
 import { authGuard } from './auth/auth.guard';
 import { InicioComponent } from './inicio/inicio.component';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { NotFoundComponent } from './not-found/not-found.component';
 
 @NgModule({
@@ -14,6 +16,8 @@ import { NotFoundComponent } from './not-found/not-found.component';
   imports: [
     CommonModule,
     MatButtonModule,
+    MatCardModule,
+    MatIconModule,
     RouterModule.forChild([
       {
         path: '',

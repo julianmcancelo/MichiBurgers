@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,7 @@ export class LoginComponent {
   cargando = false;
   errorLogin = false;
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
+  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router, private snack: MatSnackBar) {
     this.formularioLogin = this.fb.group({
       legajo: ['', [Validators.required]],
       password: ['', [Validators.required]]
@@ -31,9 +32,19 @@ export class LoginComponent {
     this.cargando = true;
     const { legajo, password } = this.formularioLogin.value;
     this.auth.login(legajo, password).subscribe({
-      next: () => {
+      next: (resp) => {
         this.cargando = false;
-        this.router.navigateByUrl('/');
+        const u = resp.usuario;
+        this.snack.open(`Bienvenido, ${u.nombreCompleto}`, 'OK', { duration: 3000 });
+        // Redirección por rol
+        let destino = '/';
+        switch (u.rol) {
+          case 'admin': destino = '/admin'; break;
+          case 'mozo': destino = '/comandera'; break;
+          case 'cocina': destino = '/cocina'; break;
+          case 'caja': destino = '/mapa-meses'; break;
+        }
+        this.router.navigateByUrl(destino);
       },
       error: () => {
         this.errorLogin = true;

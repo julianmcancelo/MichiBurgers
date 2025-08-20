@@ -66,7 +66,8 @@
               "buildTarget": "burgersaurio:build:production"
             },
             "development": {
-              "buildTarget": "burgersaurio:build:development"
+              "buildTarget": "burgersaurio:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
