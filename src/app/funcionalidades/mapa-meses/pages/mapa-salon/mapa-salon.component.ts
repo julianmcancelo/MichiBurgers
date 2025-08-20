@@ -1,6 +1,6 @@
-import { Component, OnInit, Optional } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Subject, debounceTime } from 'rxjs';
+import { Component, OnInit, Optional, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject, debounceTime, interval, takeUntil } from 'rxjs';
 import { MapaSalonApiService } from '../../services/mapa-salon-api.service';
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
 
@@ -55,6 +55,23 @@ export class MapaSalonComponent implements OnInit {
     return this.mesas.filter(m => (m.area || 'interior') === area);
   }
 
+  private cargarEstadoMesas() {
+    this.api.getEstadoMesas(this.areaActiva).subscribe({
+      next: (lista) => {
+        this.estadoMesas.clear();
+        for (const m of lista) {
+          this.estadoMesas.set(m.mesaId, { estado: m.estado, pedidoId: (m.pedidoId ?? null) as any });
+        }
+      },
+      error: () => {}
+    });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   // Dibujo / anotaciones
   modo: 'seleccion' | 'dibujo' = 'seleccion';
   brushColor = '#ff1744';
@@ -65,9 +82,20 @@ export class MapaSalonComponent implements OnInit {
   }
   dibujoEnCurso: string | null = null;
 
-  constructor(@Optional() private route: ActivatedRoute, private api: MapaSalonApiService) {}
+  // Estado mesas por id (libre/ocupada y pedido actual)
+  estadoMesas = new Map<string, { estado: 'libre'|'ocupada'; pedidoId: number|null }>();
+  private destroy$ = new Subject<void>();
+  rol: 'admin'|'mozo'|'cocina'|'caja'|null = null;
+
+  constructor(@Optional() private route: ActivatedRoute, private api: MapaSalonApiService, private router: Router) {}
 
   ngOnInit(): void {
+    // Rol del usuario (para habilitar flujo mozo)
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('auth_user') : null;
+      this.rol = raw ? (JSON.parse(raw).rol as any) : null;
+    } catch { this.rol = null; }
+
     // Cargar preferencias guardadas
     const prefs = this.cargarPrefs();
     if (prefs) {
@@ -114,6 +142,11 @@ export class MapaSalonComponent implements OnInit {
         }
       });
     });
+
+    // Polling de estado de mesas para pintar ocupación (mozo y admin ven estado)
+    interval(3000).pipe(takeUntil(this.destroy$)).subscribe(() => this.cargarEstadoMesas());
+    // Cargar inmediatamente
+    this.cargarEstadoMesas();
   }
 
   private cargar(): Mesa[] {
@@ -203,6 +236,20 @@ export class MapaSalonComponent implements OnInit {
   }
 
   seleccionarMesa(m: Mesa) {
+    // Si es mozo: click abre/continúa pedido
+    if (this.rol === 'mozo') {
+      const est = this.estadoMesas.get(m.id);
+      if (est && est.estado === 'ocupada' && est.pedidoId) {
+        this.router.navigate(['/comandera/pedido', est.pedidoId]);
+        return;
+      }
+      // abrir mesa
+      this.api.abrirMesa(this.areaActiva, m.id).subscribe({
+        next: (res) => this.router.navigate(['/comandera/pedido', res.pedidoId]),
+        error: () => {}
+      });
+      return;
+    }
     if (!this.puedeEditarMesa(m)) return;
     this.seleccionada = m;
   }
@@ -257,9 +304,23 @@ export class MapaSalonComponent implements OnInit {
     this.api.getLayout(area).subscribe({
       next: (mesasApi) => {
         if (!Array.isArray(mesasApi)) return;
+        // Si la API no tiene layout aún (lista vacía), no reemplazar lo local
+        if ((mesasApi as any[]).length === 0) {
+          return;
+        }
         // Reemplazar solo las mesas del área indicada, mantener otras áreas
         const otras = this.mesas.filter(m => (m.area || 'interior') !== area);
-        const normalizadas = (mesasApi as Mesa[]).map(m => ({ ...m, area: m.area || area }));
+        const normalizadas = (mesasApi as Mesa[]).map((m) => {
+          const forma = m.forma || 'cuadrada';
+          const ancho = m.ancho || (forma === 'redonda' ? 100 : 120);
+          const alto = m.alto || (forma === 'redonda' ? (m.ancho || 100) : 90);
+          // Limitar dentro del canvas visible
+          const maxX = Math.max(0, this.ancho - ancho);
+          const maxY = Math.max(0, this.alto - alto);
+          const x = Math.min(Math.max(0, m.x ?? 0), maxX);
+          const y = Math.min(Math.max(0, m.y ?? 0), maxY);
+          return { ...m, area: m.area || area, x, y, ancho, alto, forma } as Mesa;
+        });
         this.mesas = [...otras, ...normalizadas];
         this.guardar(); // sincronizar cache local
       },

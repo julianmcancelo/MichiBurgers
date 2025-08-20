@@ -60,7 +60,8 @@ export class RegistroUsuarioComponent {
     // Evita NG0100 (ExpressionChangedAfterItHasBeenChecked) con zoneless/SSR
     queueMicrotask(() => {
       this.cargando.set(true);
-      const body = this.form.value;
+      const token = typeof window !== 'undefined' ? (localStorage.getItem('auth_token') || '') : '';
+      const body = { ...this.form.value, token } as const;
       // Usamos URL absoluta para apuntar explícitamente al backend
       this.http.post('https://burguersaurio.jcancelo.dev/api/auth/register.php', body).subscribe({
         next: () => {

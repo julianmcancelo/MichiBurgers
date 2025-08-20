@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterModule } from '@angular/router';
+import { authGuard } from '../auth/auth.guard';
 import { HttpClientModule } from '@angular/common/http';
 
 import { ListaProductosComponent } from './components/lista-productos/lista-productos.component';
@@ -35,10 +36,10 @@ import { RegistroUsuarioComponent } from './components/registro-usuario/registro
     HttpClientModule,
     RegistroUsuarioComponent,
     RouterModule.forChild([
-      { path: '', component: ListaProductosComponent },
-      { path: 'nuevo', component: FormularioProductoComponent },
-      { path: 'editar/:id', component: FormularioProductoComponent },
-      { path: 'usuarios/registrar', component: RegistroUsuarioComponent }
+      { path: '', component: ListaProductosComponent, canActivate: [authGuard], data: { roles: ['admin'] } },
+      { path: 'nuevo', component: FormularioProductoComponent, canActivate: [authGuard], data: { roles: ['admin'] } },
+      { path: 'editar/:id', component: FormularioProductoComponent, canActivate: [authGuard], data: { roles: ['admin'] } },
+      { path: 'usuarios/registrar', component: RegistroUsuarioComponent, canActivate: [authGuard], data: { roles: ['admin'] } }
     ])
   ]
 })

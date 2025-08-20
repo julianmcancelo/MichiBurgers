@@ -3,18 +3,18 @@
   <mat-card-subtitle>Arrastra y suelta para reubicar mesas. Los cambios se guardan automáticamente.</mat-card-subtitle>
 
   <div class="acciones">
-    <button mat-raised-button color="primary" (click)="agregarMesa()">
+    <button mat-raised-button color="primary" (click)="agregarMesa()" *ngIf="rol !== 'mozo'">
       <mat-icon>add</mat-icon> Agregar mesa
     </button>
-    <button mat-button color="warn" (click)="resetearMapa()">
+    <button mat-button color="warn" (click)="resetearMapa()" *ngIf="rol !== 'mozo'">
       <mat-icon>refresh</mat-icon> Resetear mapa
     </button>
     <span style="flex:1 1 auto"></span>
-    <mat-button-toggle-group [(ngModel)]="modo" (change)="onCambioModo()">
+    <mat-button-toggle-group [(ngModel)]="modo" (change)="onCambioModo()" *ngIf="rol !== 'mozo'">
       <mat-button-toggle value="seleccion"><mat-icon>mouse</mat-icon> Selección</mat-button-toggle>
       <mat-button-toggle value="dibujo"><mat-icon>gesture</mat-icon> Dibujo</mat-button-toggle>
     </mat-button-toggle-group>
-    <div style="display:flex;align-items:center;gap:8px;margin:0 8px;">
+    <div style="display:flex;align-items:center;gap:8px;margin:0 8px;" *ngIf="rol !== 'mozo'">
       <label>Color:</label>
       <input type="color" [(ngModel)]="brushColor"/>
       <mat-form-field appearance="outline" style="width:90px;">
@@ -35,11 +35,11 @@
       <mat-button-toggle value="interior"><mat-icon>store</mat-icon> Interior</mat-button-toggle>
       <mat-button-toggle value="exterior"><mat-icon>deck</mat-icon> Exterior</mat-button-toggle>
     </mat-button-toggle-group>
-    <mat-checkbox style="margin-left:8px;" [(ngModel)]="permitirEditarExterior" (change)="onCambio()">
+    <mat-checkbox style="margin-left:8px;" [(ngModel)]="permitirEditarExterior" (change)="onCambio()" *ngIf="rol !== 'mozo'">
       Permitir editar afuera
     </mat-checkbox>
-    <mat-checkbox [(ngModel)]="snapToGrid" (change)="onCambio()">Snap a grilla</mat-checkbox>
-    <mat-form-field appearance="outline" style="width:100px; margin-left:8px;">
+    <mat-checkbox [(ngModel)]="snapToGrid" (change)="onCambio()" *ngIf="rol !== 'mozo'">Snap a grilla</mat-checkbox>
+    <mat-form-field appearance="outline" style="width:100px; margin-left:8px;" *ngIf="rol !== 'mozo'">
       <mat-label>Grilla</mat-label>
       <input matInput type="number" min="5" max="200" [(ngModel)]="gridSize" (ngModelChange)="onCambio()" />
     </mat-form-field>
@@ -62,39 +62,50 @@
            cdkDrag
            (click)="seleccionarMesa(mesa)"
            [class.seleccionada]="seleccionada?.id === mesa.id"
-           [class.bloqueada]="!puedeEditarMesa(mesa)"
+           [class.bloqueada]="rol==='mozo' || !puedeEditarMesa(mesa)"
            [style.width.px]="mesa.ancho || 120"
            [style.height.px]="mesa.alto || (mesa.forma === 'redonda' ? (mesa.ancho || 100) : 90)"
            [style.background]="mesa.color || '#fff'"
            [style.transform]="mesa.rotationDeg ? 'rotate(' + mesa.rotationDeg + 'deg)' : null"
            [cdkDragFreeDragPosition]="{x: mesa.x, y: mesa.y}"
-           [cdkDragDisabled]="!puedeEditarMesa(mesa)"
+           [cdkDragDisabled]="rol==='mozo' || !puedeEditarMesa(mesa)"
            (cdkDragEnded)="onDragEnded($event, mesa)"
            [ngClass]="{
             'redonda': mesa.forma === 'redonda',
             'cuadrada': mesa.forma === 'cuadrada',
             'rectangular': mesa.forma === 'rectangular',
-            'dinosaurio': mesa.forma === 'dinosaurio'
+            'dinosaurio': mesa.forma === 'dinosaurio',
+            'estado-ocupada': (estadoMesas.get(mesa.id)?.estado === 'ocupada'),
+            'estado-libre': (estadoMesas.get(mesa.id)?.estado !== 'ocupada')
            }">
         <div class="mesa-header">
           <div class="nombre">{{ mesa.nombre }}</div>
           <span class="acciones-mesa">
-            <button mat-icon-button color="primary" (click)="$event.stopPropagation(); duplicarMesa(mesa)">
+            <button mat-icon-button color="primary" (click)="$event.stopPropagation(); duplicarMesa(mesa)" *ngIf="rol !== 'mozo'">
               <mat-icon>content_copy</mat-icon>
             </button>
-            <button mat-icon-button color="warn" (click)="$event.stopPropagation(); eliminarMesa(mesa.id)">
+            <button mat-icon-button color="warn" (click)="$event.stopPropagation(); eliminarMesa(mesa.id)" *ngIf="rol !== 'mozo'">
               <mat-icon>delete</mat-icon>
             </button>
           </span>
         </div>
         <div class="detalles">
           Cap.: {{ mesa.capacidad }} – {{ mesa.forma }}
+          <span class="chip" [class.ocupada]="estadoMesas.get(mesa.id)?.estado === 'ocupada'">
+            {{ estadoMesas.get(mesa.id)?.estado === 'ocupada' ? 'Ocupada' : 'Libre' }}
+          </span>
         </div>
         <div class="dino" *ngIf="mesa.forma === 'dinosaurio'">🦖</div>
       </div>
+      <div *ngIf="mesasArea.length === 0" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#757575;">
+        <div>
+          <div style="font-weight:600; text-align:center;">No hay mesas para el área "{{ areaActiva }}"</div>
+          <div style="text-align:center; font-size:13px;">Si el backend aún no tiene layout guardado, se muestra el local.</div>
+        </div>
+      </div>
     </div>
 
-    <div class="panel" *ngIf="seleccionada as m">
+    <div class="panel" *ngIf="seleccionada as m" [hidden]="rol==='mozo'">
       <h3>Editar mesa</h3>
       <div class="panel-campos">
         <mat-form-field appearance="outline">

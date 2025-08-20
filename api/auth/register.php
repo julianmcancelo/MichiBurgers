@@ -4,15 +4,28 @@ require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../config/jwt.php';
 require_once __DIR__ . '/../config/cors.php';
 
-// Solo admin puede registrar
-$payload = jwt_parse_from_header();
-if (!$payload || (($payload->rol ?? '') !== 'admin')) {
+// Leer input primero (no se puede leer php://input dos veces)
+$input = json_decode(file_get_contents('php://input'), true) ?? [];
+
+// Autorización: permite JWT admin por body.token o por header, O clave X-Admin-Key
+$payload = null;
+$tokenFromBody = isset($input['token']) && is_string($input['token']) ? trim($input['token']) : '';
+if ($tokenFromBody !== '') {
+  $decoded = jwt_decode($tokenFromBody, (string)($_ENV['JWT_SECRET'] ?? ''));
+  if (is_array($decoded)) { $payload = (object)$decoded; }
+}
+if (!$payload) {
+  $payload = jwt_parse_from_header();
+}
+$isJwtAdmin = $payload && (($payload->rol ?? '') === 'admin');
+$serverAdminKey = (string)($_ENV['ADMIN_REG_KEY'] ?? '');
+$providedAdminKey = $_SERVER['HTTP_X_ADMIN_KEY'] ?? '';
+$isHeaderAdmin = ($serverAdminKey !== '' && hash_equals($serverAdminKey, $providedAdminKey));
+if (!$isJwtAdmin && !$isHeaderAdmin) {
   http_response_code(403);
   echo json_encode(['error' => 'No autorizado']);
   exit;
 }
-
-$input = json_decode(file_get_contents('php://input'), true) ?? [];
 $legajo = trim((string)($input['legajo'] ?? ''));
 $nombre = trim((string)($input['nombreCompleto'] ?? ''));
 $dni = trim((string)($input['dni'] ?? ''));
