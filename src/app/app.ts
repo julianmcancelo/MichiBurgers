@@ -1,12 +1,13 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { CompartidoModule } from './compartido/compartido.module';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.scss'
+  imports: [CompartidoModule],
+  template: `<app-layout-principal></app-layout-principal>`,
+  styleUrl: './app.scss',
+  standalone: true
 })
-export class App {
-  protected readonly title = signal('burgersaurio');
+export class AppComponent {
+  title = signal('burgersaurio');
 }

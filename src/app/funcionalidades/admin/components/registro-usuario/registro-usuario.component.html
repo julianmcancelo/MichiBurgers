@@ -1,0 +1,49 @@
+<mat-card>
+  <mat-card-title>Registrar usuario</mat-card-title>
+  <mat-card-content>
+    <form (ngSubmit)="registrar()" [formGroup]="form">
+      <div class="row">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Legajo</mat-label>
+          <input matInput formControlName="legajo" placeholder="Ej: A001">
+          <mat-error *ngIf="form.controls['legajo'].hasError('required')">Requerido</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Nombre completo</mat-label>
+          <input matInput formControlName="nombreCompleto" placeholder="Ej: Juan Pérez">
+          <mat-error *ngIf="form.controls['nombreCompleto'].hasError('required')">Requerido</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>DNI</mat-label>
+          <input matInput formControlName="dni" placeholder="Ej: 32123456">
+          <mat-error *ngIf="form.controls['dni'].hasError('required')">Requerido</mat-error>
+          <mat-error *ngIf="form.controls['dni'].hasError('pattern')">Formato inválido</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Rol</mat-label>
+          <mat-select formControlName="rol">
+            <mat-option *ngFor="let r of roles" [value]="r.value">{{ r.label }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.controls['rol'].hasError('required')">Requerido</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" formControlName="password">
+          <mat-error *ngIf="form.controls['password'].hasError('required')">Requerido</mat-error>
+          <mat-error *ngIf="form.controls['password'].hasError('minlength')">Mínimo 6 caracteres</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="actions">
+        <button mat-raised-button color="primary" type="submit" [disabled]="cargando">{{ cargando ? 'Guardando...' : 'Crear usuario' }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,48 @@
+<div class="contenedor-admin">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Gestión de Productos</mat-card-title>
+      <mat-card-subtitle>Administra el menú de Burguersaurio</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <div class="acciones-header">
+        <button mat-raised-button color="primary" (click)="nuevoProducto()">
+          <mat-icon>add</mat-icon>
+          Nuevo Producto
+        </button>
+        <a mat-raised-button color="accent" routerLink="/admin/usuarios/registrar" style="margin-left: 8px;">
+          <mat-icon>person_add</mat-icon>
+          Registrar usuario
+        </a>
+      </div>
+
+      <table mat-table [dataSource]="productos" class="tabla-productos">
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+          <td mat-cell *matCellDef="let producto">{{ producto.nombre }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="precio">
+          <th mat-header-cell *matHeaderCellDef>Precio</th>
+          <td mat-cell *matCellDef="let producto">${{ producto.precio | number:'1.0-0' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let producto">
+            <button mat-icon-button color="primary" (click)="editarProducto(producto.id)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="eliminarProducto(producto.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnasTabla"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnasTabla;"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+</div>

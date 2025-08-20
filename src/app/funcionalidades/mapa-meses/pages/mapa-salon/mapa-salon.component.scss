@@ -1,0 +1,118 @@
+.acciones {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 16px;
+}
+
+.canvas {
+  position: relative;
+  border: 2px dashed #bdbdbd;
+  background: repeating-conic-gradient(#fafafa 0% 25%, #f5f5f5 0% 50%) 50% / 40px 40px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.mesa {
+  position: absolute;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  border: 1px solid #e0e0e0;
+  padding: 8px;
+  cursor: move;
+  user-select: none;
+  transition: box-shadow .15s ease, transform .1s ease;
+  z-index: 3;
+}
+
+.mesa.redonda {
+  border-radius: 50%;
+}
+
+.mesa.cuadrada {
+  border-radius: 8px;
+}
+
+.mesa.rectangular {
+  border-radius: 6px;
+}
+
+.mesa.dinosaurio {
+  border: 2px dashed #8bc34a;
+  background: linear-gradient(135deg, rgba(139,195,74,0.12), rgba(76,175,80,0.12));
+}
+
+.mesa.seleccionada {
+  box-shadow: 0 0 0 3px #3f51b5 inset, 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.mesa.bloqueada {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.mesa-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.detalles {
+  font-size: 12px;
+  color: #616161;
+}
+
+.dino {
+  position: absolute;
+  right: 6px;
+  bottom: 4px;
+  font-size: 20px;
+}
+
+.panel {
+  padding: 8px 0;
+}
+
+.panel h3 {
+  margin: 4px 0 12px;
+  font-weight: 600;
+}
+
+.panel-campos {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.acciones-panel {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.color-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

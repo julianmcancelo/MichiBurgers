@@ -1,0 +1,26 @@
+.contenedor-formulario {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.contenedor-formulario mat-card {
+  max-width: 500px;
+  width: 100%;
+}
+
+.campo-completo {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.acciones-formulario {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 16px;
+}
+
+.acciones-formulario button {
+  flex: 1;
+}

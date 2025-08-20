@@ -1,0 +1,30 @@
+<mat-card>
+  <mat-card-title>{{ id ? 'Editar mes' : 'Nuevo mes' }}</mat-card-title>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Año</mat-label>
+      <input matInput type="number" formControlName="anio" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Mes</mat-label>
+      <input matInput type="number" formControlName="mes" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Título</mat-label>
+      <input matInput formControlName="titulo" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Notas</mat-label>
+      <textarea matInput rows="4" formControlName="notas"></textarea>
+    </mat-form-field>
+
+    <div class="acciones">
+      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Guardar</button>
+      <button mat-button type="button" (click)="cancelar()">Cancelar</button>
+    </div>
+  </form>
+</mat-card>

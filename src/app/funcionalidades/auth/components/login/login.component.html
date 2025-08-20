@@ -1,0 +1,49 @@
+<div class="contenedor-login">
+  <mat-card class="tarjeta-login">
+    <mat-card-header class="header-login">
+      <div class="logo-container">
+        <img src="URL_DE_TU_LOGO.png" alt="Logo Burguersaurio">
+      </div>
+      <mat-card-title>Iniciar Sesión</mat-card-title>
+      <mat-card-subtitle>Sistema de Gestión Burguersaurio 🦖</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="formularioLogin" (ngSubmit)="iniciarSesion()">
+        <mat-form-field appearance="outline" class="campo-completo">
+          <mat-label>Legajo</mat-label>
+          <mat-icon matPrefix>badge</mat-icon>
+          <input matInput formControlName="legajo" placeholder="Ingresa tu legajo">
+          <mat-error *ngIf="formularioLogin.get('legajo')?.touched && formularioLogin.get('legajo')?.invalid">
+            {{ obtenerErrorLegajo() }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="campo-completo">
+          <mat-label>Contraseña</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-error *ngIf="formularioLogin.get('password')?.hasError('required')">
+            La contraseña es requerida.
+          </mat-error>
+        </mat-form-field>
+
+        <div class="opciones-extra">
+            <a href="#">¿Problemas para ingresar?</a>
+        </div>
+
+        <button mat-raised-button color="primary" type="submit" class="boton-login" [disabled]="formularioLogin.invalid || cargando">
+          <span *ngIf="!cargando">Ingresar</span>
+          <mat-progress-spinner *ngIf="cargando" mode="indeterminate" diameter="24"></mat-progress-spinner>
+        </button>
+
+        <div *ngIf="errorLogin" class="error-login">
+          Las credenciales son incorrectas. Por favor, inténtalo de nuevo.
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
