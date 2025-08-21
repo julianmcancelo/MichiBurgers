@@ -1,3 +1,30 @@
+.navbar {
+  --nav-max-w: 1280px;
+}
+
+.toolbar-inner {
+  width: 100%;
+  max-width: var(--nav-max-w);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand {
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.nav a.active {
+  background: color-mix(in oklab, var(--mat-sys-on-primary) 10%, #0000);
+}
+
+.nav a {
+  border-radius: 8px;
+  height: 36px;
+}
+
 .espaciador {
   flex: 1 1 auto;
 }
@@ -5,4 +32,9 @@
 .contenido-principal {
   padding: 20px;
   min-height: calc(100vh - 64px);
+}
+
+@media (max-width: 800px) {
+  .welcome { display: none; }
+  .nav a { min-width: unset; padding: 0 8px; }
 }
