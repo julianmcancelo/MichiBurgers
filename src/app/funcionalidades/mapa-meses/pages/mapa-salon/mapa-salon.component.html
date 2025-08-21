@@ -1,48 +1,67 @@
-<mat-card>
-  <mat-card-title>Mapa de Mesas</mat-card-title>
-  <mat-card-subtitle>Arrastra y suelta para reubicar mesas. Los cambios se guardan automáticamente.</mat-card-subtitle>
+<div class="rounded-2xl border border-gray-200 bg-white shadow-sm p-4">
+  <div class="mb-4">
+    <h2 class="text-lg font-semibold text-gray-800">Mapa de Mesas</h2>
+    <p class="text-sm text-gray-500">Arrastra y suelta para reubicar mesas. Los cambios se guardan automáticamente.</p>
+  </div>
 
   <div class="acciones flex flex-wrap items-center gap-2 mb-4">
-    <button mat-raised-button color="primary" (click)="agregarMesa()" *ngIf="rol !== 'mozo'">
-      <mat-icon>add</mat-icon> Agregar mesa
+    <button (click)="agregarMesa()" *ngIf="rol !== 'mozo'" class="px-3 py-2 rounded-lg bg-orange-600 text-white hover:bg-orange-700 inline-flex items-center gap-2">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/></svg>
+      Agregar mesa
     </button>
-    <button mat-button color="warn" (click)="resetearMapa()" *ngIf="rol !== 'mozo'">
-      <mat-icon>refresh</mat-icon> Resetear mapa
+    <button (click)="resetearMapa()" *ngIf="rol !== 'mozo'" class="px-3 py-2 rounded-lg border border-red-300 text-red-700 hover:bg-red-50 inline-flex items-center gap-2">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 6V3L8 7l4 4V8c2.76 0 5 2.24 5 5a5 5 0 0 1-8.66 3.54l-1.42 1.42A7 7 0 0 0 19 13c0-3.87-3.13-7-7-7z"/></svg>
+      Resetear mapa
     </button>
     <span class="flex-1"></span>
-    <mat-button-toggle-group class="shrink-0" [(ngModel)]="modo" (change)="onCambioModo()" *ngIf="rol !== 'mozo'">
-      <mat-button-toggle value="seleccion"><mat-icon>mouse</mat-icon> Selección</mat-button-toggle>
-      <mat-button-toggle value="dibujo"><mat-icon>gesture</mat-icon> Dibujo</mat-button-toggle>
-    </mat-button-toggle-group>
-    <div class="flex items-center gap-2 mx-2" *ngIf="rol !== 'mozo'">
-      <label>Color:</label>
-      <input type="color" [(ngModel)]="brushColor"/>
-      <mat-form-field appearance="outline" class="w-24">
-        <mat-label>Grosor</mat-label>
-        <mat-select [(ngModel)]="brushWidth">
-          <mat-option [value]="2">2</mat-option>
-          <mat-option [value]="4">4</mat-option>
-          <mat-option [value]="6">6</mat-option>
-          <mat-option [value]="8">8</mat-option>
-          <mat-option [value]="10">10</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <button mat-stroked-button color="warn" (click)="borrarAnotacionesArea()">
-        <mat-icon>layers_clear</mat-icon> Borrar marcas área
+    <div *ngIf="rol !== 'mozo'" class="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+      <button type="button" (click)="modo='seleccion'; onCambioModo()" [class.bg-white]="modo==='seleccion'" class="px-3 py-1.5 rounded-md text-sm inline-flex items-center gap-1">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg>
+        Selección
+      </button>
+      <button type="button" (click)="modo='dibujo'; onCambioModo()" [class.bg-white]="modo==='dibujo'" class="px-3 py-1.5 rounded-md text-sm inline-flex items-center gap-1">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        Dibujo
       </button>
     </div>
-    <mat-button-toggle-group class="shrink-0" [(ngModel)]="areaActiva" (change)="onCambioArea()">
-      <mat-button-toggle value="interior"><mat-icon>store</mat-icon> Interior</mat-button-toggle>
-      <mat-button-toggle value="exterior"><mat-icon>deck</mat-icon> Exterior</mat-button-toggle>
-    </mat-button-toggle-group>
-    <mat-checkbox class="ml-2" [(ngModel)]="permitirEditarExterior" (change)="onCambio()" *ngIf="rol !== 'mozo'">
+    <div class="flex items-center gap-2 mx-2" *ngIf="rol !== 'mozo'">
+      <label class="text-sm text-gray-700">Color:</label>
+      <input type="color" [(ngModel)]="brushColor" class="h-9 w-10 p-0 bg-transparent border border-gray-300 rounded"/>
+      <label class="text-sm text-gray-700">Grosor</label>
+      <select [(ngModel)]="brushWidth" class="h-9 rounded border-gray-300">
+        <option [value]="2">2</option>
+        <option [value]="4">4</option>
+        <option [value]="6">6</option>
+        <option [value]="8">8</option>
+        <option [value]="10">10</option>
+      </select>
+      <button (click)="borrarAnotacionesArea()" class="px-3 py-2 rounded-lg border border-red-300 text-red-700 hover:bg-red-50 inline-flex items-center gap-2">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15 4H5l-4 8 4 8h10l4-8-4-8zm-2 12H9v-2h4v2zm0-4H9V8h4v4z"/></svg>
+        Borrar marcas área
+      </button>
+    </div>
+    <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+      <button type="button" (click)="areaActiva='interior'; onCambioArea()" [class.bg-white]="areaActiva==='interior'" class="px-3 py-1.5 rounded-md text-sm inline-flex items-center gap-1">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        Interior
+      </button>
+      <button type="button" (click)="areaActiva='exterior'; onCambioArea()" [class.bg-white]="areaActiva==='exterior'" class="px-3 py-1.5 rounded-md text-sm inline-flex items-center gap-1">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5z"/></svg>
+        Exterior
+      </button>
+    </div>
+    <label *ngIf="rol !== 'mozo'" class="ml-2 inline-flex items-center gap-2 text-sm">
+      <input type="checkbox" [(ngModel)]="permitirEditarExterior" (change)="onCambio()" class="rounded border-gray-300 text-orange-600 focus:ring-orange-500"/>
       Permitir editar afuera
-    </mat-checkbox>
-    <mat-checkbox class="ml-2" [(ngModel)]="snapToGrid" (change)="onCambio()" *ngIf="rol !== 'mozo'">Snap a grilla</mat-checkbox>
-    <mat-form-field appearance="outline" class="w-28 ml-2" *ngIf="rol !== 'mozo'">
-      <mat-label>Grilla</mat-label>
-      <input matInput type="number" min="5" max="200" [(ngModel)]="gridSize" (ngModelChange)="onCambio()" />
-    </mat-form-field>
+    </label>
+    <label *ngIf="rol !== 'mozo'" class="ml-2 inline-flex items-center gap-2 text-sm">
+      <input type="checkbox" [(ngModel)]="snapToGrid" (change)="onCambio()" class="rounded border-gray-300 text-orange-600 focus:ring-orange-500"/>
+      Snap a grilla
+    </label>
+    <div *ngIf="rol !== 'mozo'" class="ml-2 inline-flex items-center gap-2">
+      <label class="text-sm text-gray-700">Grilla</label>
+      <input type="number" min="5" max="200" [(ngModel)]="gridSize" (ngModelChange)="onCambio()" class="h-9 w-20 rounded border-gray-300 px-2"/>
+    </div>
   </div>
 
   <div class="layout grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -81,15 +100,15 @@
         <div class="mesa-header">
           <div class="nombre">{{ mesa.nombre }}</div>
           <span class="acciones-mesa">
-            <button mat-stroked-button color="primary" (click)="$event.stopPropagation(); atenderMesa(mesa)" *ngIf="rol !== 'mozo'">
-              <mat-icon>restaurant</mat-icon>
+            <button (click)="$event.stopPropagation(); atenderMesa(mesa)" *ngIf="rol !== 'mozo'" class="px-2 py-1 rounded border border-orange-300 text-orange-700 hover:bg-orange-50 inline-flex items-center gap-1">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 19h20v2H2v-2zm2-2h16l-1.5-6h-13L4 17zm3-8h10a4 4 0 0 0-10 0z"/></svg>
               Atender
             </button>
-            <button mat-icon-button color="primary" (click)="$event.stopPropagation(); duplicarMesa(mesa)" *ngIf="rol !== 'mozo'">
-              <mat-icon>content_copy</mat-icon>
+            <button (click)="$event.stopPropagation(); duplicarMesa(mesa)" *ngIf="rol !== 'mozo'" class="p-2 rounded hover:bg-gray-100 inline-flex items-center" title="Duplicar">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14h13c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
             </button>
-            <button mat-icon-button color="warn" (click)="$event.stopPropagation(); eliminarMesa(mesa.id)" *ngIf="rol !== 'mozo'">
-              <mat-icon>delete</mat-icon>
+            <button (click)="$event.stopPropagation(); eliminarMesa(mesa.id)" *ngIf="rol !== 'mozo'" class="p-2 rounded hover:bg-red-50 text-red-600 inline-flex items-center" title="Eliminar">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1z"/></svg>
             </button>
           </span>
         </div>
@@ -111,61 +130,59 @@
 
     <div class="panel lg:col-span-1 lg:sticky lg:top-4 h-fit rounded-2xl border border-gray-200 bg-white/60 backdrop-blur-sm p-4" *ngIf="seleccionada as m" [hidden]="rol==='mozo'">
       <h3>Editar mesa</h3>
-      <div class="panel-campos">
-        <mat-form-field appearance="outline">
-          <mat-label>Nombre</mat-label>
-          <input matInput [(ngModel)]="m.nombre" (ngModelChange)="onCambio()" />
-        </mat-form-field>
+      <div class="panel-campos space-y-3">
+        <label class="block text-sm text-gray-700">Nombre
+          <input [(ngModel)]="m.nombre" (ngModelChange)="onCambio()" class="mt-1 w-full rounded border-gray-300" />
+        </label>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Capacidad</mat-label>
-          <input matInput type="number" min="1" [(ngModel)]="m.capacidad" (ngModelChange)="onCambio()" />
-        </mat-form-field>
+        <label class="block text-sm text-gray-700">Capacidad
+          <input type="number" min="1" [(ngModel)]="m.capacidad" (ngModelChange)="onCambio()" class="mt-1 w-full rounded border-gray-300" />
+        </label>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Forma</mat-label>
-          <mat-select [(value)]="m.forma" (selectionChange)="onCambio()">
-            <mat-option value="cuadrada">Cuadrada</mat-option>
-            <mat-option value="rectangular">Rectangular</mat-option>
-            <mat-option value="redonda">Redonda</mat-option>
-            <mat-option value="dinosaurio">Dinosaurio</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <label class="block text-sm text-gray-700">Forma
+          <select [(ngModel)]="m.forma" (ngModelChange)="onCambio()" class="mt-1 w-full rounded border-gray-300">
+            <option value="cuadrada">Cuadrada</option>
+            <option value="rectangular">Rectangular</option>
+            <option value="redonda">Redonda</option>
+            <option value="dinosaurio">Dinosaurio</option>
+          </select>
+        </label>
 
-        <div class="fila" *ngIf="m.forma !== 'redonda'">
-          <mat-form-field appearance="outline">
-            <mat-label>Ancho (px)</mat-label>
-            <input matInput type="number" min="40" [(ngModel)]="m.ancho" (ngModelChange)="onCambio()" />
-          </mat-form-field>
-          <mat-form-field appearance="outline" *ngIf="m.forma === 'rectangular' || m.forma === 'cuadrada'">
-            <mat-label>Alto (px)</mat-label>
-            <input matInput type="number" min="40" [(ngModel)]="m.alto" (ngModelChange)="onCambio()" />
-          </mat-form-field>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" *ngIf="m.forma !== 'redonda'">
+          <label class="block text-sm text-gray-700">Ancho (px)
+            <input type="number" min="40" [(ngModel)]="m.ancho" (ngModelChange)="onCambio()" class="mt-1 w-full rounded border-gray-300" />
+          </label>
+          <label class="block text-sm text-gray-700" *ngIf="m.forma === 'rectangular' || m.forma === 'cuadrada'">Alto (px)
+            <input type="number" min="40" [(ngModel)]="m.alto" (ngModelChange)="onCambio()" class="mt-1 w-full rounded border-gray-300" />
+          </label>
         </div>
 
-        <div class="color-picker">
-          <label>Color: </label>
-          <input type="color" [(ngModel)]="m.color" (change)="onCambio()" />
-        </div>
+        <label class="block text-sm text-gray-700">Color
+          <input type="color" [(ngModel)]="m.color" (change)="onCambio()" class="mt-1 h-9 w-12 p-0 bg-transparent border border-gray-300 rounded" />
+        </label>
 
-        <mat-form-field appearance="outline" *ngIf="m.forma === 'rectangular' || m.forma === 'cuadrada'">
-          <mat-label>Rotación (°)</mat-label>
-          <input matInput type="number" min="0" max="359" [(ngModel)]="m.rotationDeg" (ngModelChange)="onCambio()" />
-        </mat-form-field>
+        <label class="block text-sm text-gray-700" *ngIf="m.forma === 'rectangular' || m.forma === 'cuadrada'">Rotación (°)
+          <input type="number" min="0" max="359" [(ngModel)]="m.rotationDeg" (ngModelChange)="onCambio()" class="mt-1 w-full rounded border-gray-300" />
+        </label>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Área</mat-label>
-          <mat-select [(ngModel)]="m.area" (ngModelChange)="onCambio()">
-            <mat-option [value]="'interior'">Interior</mat-option>
-            <mat-option [value]="'exterior'">Exterior</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <label class="block text-sm text-gray-700">Área
+          <select [(ngModel)]="m.area" (ngModelChange)="onCambio()" class="mt-1 w-full rounded border-gray-300">
+            <option [value]="'interior'">Interior</option>
+            <option [value]="'exterior'">Exterior</option>
+          </select>
+        </label>
 
-        <div class="acciones-panel">
-          <button mat-stroked-button color="primary" (click)="duplicarMesa(m)"><mat-icon>content_copy</mat-icon> Duplicar</button>
-          <button mat-stroked-button color="warn" (click)="eliminarMesa(m.id)"><mat-icon>delete</mat-icon> Eliminar</button>
+        <div class="acciones-panel flex items-center gap-2">
+          <button (click)="duplicarMesa(m)" class="px-3 py-2 rounded border border-orange-300 text-orange-700 hover:bg-orange-50 inline-flex items-center gap-2">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14h13c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+            Duplicar
+          </button>
+          <button (click)="eliminarMesa(m.id)" class="px-3 py-2 rounded border border-red-300 text-red-700 hover:bg-red-50 inline-flex items-center gap-2">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1z"/></svg>
+            Eliminar
+          </button>
         </div>
       </div>
     </div>
   </div>
-</mat-card>
+</div>
