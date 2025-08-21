@@ -4,42 +4,67 @@ import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MapaSalonApiService } from '../../../mapa-meses/services/mapa-salon-api.service';
 
 @Component({
   selector: 'app-pedidos',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatListModule, MatButtonModule],
+  imports: [CommonModule, MatCardModule, MatListModule, MatButtonModule, MatIconModule],
   template: `
-    <div class="contenedor-pedidos">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>Comandera</mat-card-title>
-          <mat-card-subtitle>Gestión de pedidos</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <div *ngIf="pedidos().length === 0; else lista">
-            <p>No hay pedidos abiertos.</p>
+    <div class="min-h-[100svh] bg-gradient-to-br from-gray-50 via-white to-orange-50 px-3 py-4 md:px-6 md:py-6">
+      <mat-card class="bg-white/90 backdrop-blur border border-orange-100 shadow-xl overflow-hidden">
+        <div class="px-4 py-4 md:px-6 md:py-5 border-b bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 text-white">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shadow">
+                <mat-icon class="text-white">receipt_long</mat-icon>
+              </div>
+              <div>
+                <div class="text-lg md:text-xl font-bold leading-tight">Órdenes</div>
+                <div class="text-white/90 text-xs">Gestión de pedidos abiertos</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button mat-stroked-button color="accent" (click)="refrescar()">
+                <mat-icon>refresh</mat-icon>&nbsp;Refrescar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3 md:p-4">
+          <div *ngIf="pedidos().length === 0; else lista" class="py-10 text-center text-gray-500">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 text-sm">
+              <mat-icon>inbox</mat-icon>
+              Sin pedidos abiertos
+            </div>
           </div>
           <ng-template #lista>
             <mat-list>
-              <mat-list-item *ngFor="let p of pedidos()" (click)="irPedido(p.pedidoId)" style="cursor:pointer;">
-                <div matListItemTitle>Pedido #{{ p.pedidoId }}</div>
-                <div matListItemLine>Mesa {{ p.mesaId }} — {{ p.area }}</div>
-              </mat-list-item>
+              <div class="divide-y">
+                <div
+                  *ngFor="let p of pedidos()"
+                  (click)="irPedido(p.pedidoId)"
+                  class="flex items-center justify-between gap-3 py-3 px-1 cursor-pointer hover:bg-orange-50 rounded-lg transition-colors">
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-2">
+                      <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-orange-100 text-orange-700 text-sm font-bold">{{ p.pedidoId }}</span>
+                      <div class="font-medium text-gray-900 truncate">Pedido #{{ p.pedidoId }}</div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-0.5">Mesa {{ p.mesaId }} • {{ p.area }}</div>
+                  </div>
+                  <mat-icon class="text-gray-400">chevron_right</mat-icon>
+                </div>
+              </div>
             </mat-list>
           </ng-template>
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-stroked-button color="primary" (click)="refrescar()">Refrescar</button>
-        </mat-card-actions>
+        </div>
       </mat-card>
     </div>
   `,
   styles: [`
-    .contenedor-pedidos {
-      padding: 20px;
-    }
+    /* No extra CSS needed; Tailwind used for layout */
   `]
 })
 export class PedidosComponent implements OnInit, OnDestroy {

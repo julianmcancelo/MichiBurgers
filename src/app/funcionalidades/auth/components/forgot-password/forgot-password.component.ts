@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Optional } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../auth.service';
 import { Router } from '@angular/router';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-forgot-password',
@@ -19,8 +20,13 @@ export class ForgotPasswordComponent {
   loading = false;
   error: string | null = null;
   ok = false;
+  // UI
+  hideNext = true;
+  hideConfirm = true;
+  capsNext = false;
+  capsConfirm = false;
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
+  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router, @Optional() private dialogRef?: MatDialogRef<ForgotPasswordComponent>) {
     this.form = this.fb.group({
       legajo: ['', [Validators.required]],
       dni: ['', [Validators.required, Validators.minLength(6)]],
@@ -44,11 +50,32 @@ export class ForgotPasswordComponent {
       next: () => {
         this.loading = false;
         this.ok = true;
+        setTimeout(() => this.close(), 600);
       },
       error: (e) => {
         this.loading = false;
         this.error = e?.error?.error || 'No se pudo recuperar la contraseña';
       }
     });
+  }
+
+  onPassKey(field: 'next' | 'confirm', event: KeyboardEvent): void {
+    const state = (event as any)?.getModifierState?.('CapsLock');
+    const on = !!state;
+    if (field === 'next') this.capsNext = on;
+    if (field === 'confirm') this.capsConfirm = on;
+  }
+
+  onPassBlur(field: 'next' | 'confirm'): void {
+    if (field === 'next') this.capsNext = false;
+    if (field === 'confirm') this.capsConfirm = false;
+  }
+
+  close(): void {
+    try {
+      if (this.dialogRef) {
+        this.dialogRef.close();
+      }
+    } catch {}
   }
 }

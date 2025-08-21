@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
 
 @Component({
   selector: 'app-login',
@@ -15,8 +17,9 @@ export class LoginComponent {
   hidePassword = true;
   cargando = false;
   errorLogin = false;
+  capsOn = false;
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router, private snack: MatSnackBar) {
+  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router, private snack: MatSnackBar, private dialog: MatDialog) {
     this.formularioLogin = this.fb.group({
       legajo: ['', [Validators.required]],
       password: ['', [Validators.required]]
@@ -65,5 +68,32 @@ export class LoginComponent {
       return 'La contraseña es requerida';
     }
     return '';
+  }
+
+  onPasswordKey(event: KeyboardEvent): void {
+    try {
+      // getModifierState is not supported in some older browsers; guard safely
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const state = event?.getModifierState?.('CapsLock');
+      this.capsOn = !!state;
+    } catch {
+      this.capsOn = false;
+    }
+  }
+
+  onPasswordBlur(): void {
+    // Ocultamos el aviso al salir del campo
+    this.capsOn = false;
+  }
+
+  openForgotPassword(): void {
+    this.dialog.open(ForgotPasswordComponent, {
+      width: '560px',
+      maxWidth: '95vw',
+      panelClass: 'dialog-elevada',
+      autoFocus: true,
+      restoreFocus: true
+    });
   }
 }

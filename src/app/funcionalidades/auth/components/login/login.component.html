@@ -1,32 +1,24 @@
 <!-- Página de login con diseño moderno Tailwind -->
-<div class="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 flex items-center justify-center p-4 relative overflow-hidden">
+<div class="min-h-screen bg-orange-50 flex items-center justify-center p-4">
 
-  <!-- Elementos decorativos de fondo -->
-  <div class="absolute inset-0 pointer-events-none">
-    <div class="absolute top-20 left-20 w-72 h-72 bg-orange-200/30 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-    <div class="absolute bottom-20 right-20 w-72 h-72 bg-orange-300/30 rounded-full mix-blend-multiply filter blur-xl animate-pulse" style="animation-delay: 2s;"></div>
-    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-orange-100/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse" style="animation-delay: 4s;"></div>
-  </div>
+  <!-- Fondo simplificado para mejor rendimiento mobile -->
 
   <!-- Tarjeta de login -->
   <div class="relative w-full max-w-md z-10">
-    <div class="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden transform transition-all duration-500 hover:scale-105">
+    <div class="bg-white rounded-2xl shadow-xl border border-orange-100 overflow-hidden">
 
       <!-- Header con branding -->
-      <div class="bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 px-8 py-12 text-center relative">
-        <div class="absolute inset-0 bg-gradient-to-r from-black/10 to-transparent"></div>
-        <div class="relative">
-          <!-- Logo -->
-          <div class="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-6 backdrop-blur-sm shadow-lg overflow-hidden">
-            <img src="/logos/logos.png" alt="Burguersaurio" class="w-14 h-14 object-contain" />
-          </div>
-          <h1 class="text-3xl font-bold text-white mb-2 tracking-wide">MichiBurgers</h1>
-          <p class="text-orange-100 font-medium">Sistema de Gestión</p>
+      <div class="bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 px-6 py-8 text-center">
+        <!-- Logo -->
+        <div class="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-4 shadow overflow-hidden">
+          <img src="/logos/logos.png" alt="MichiBurgers" class="w-12 h-12 object-contain" />
         </div>
+        <h1 class="text-2xl font-bold text-white mb-1 tracking-wide">MichiBurgers</h1>
+        <p class="text-orange-100 text-sm">Sistema de gestión</p>
       </div>
 
       <!-- Contenido del formulario -->
-      <div class="px-8 py-8">
+      <div class="px-6 py-6">
         <!-- Título del formulario -->
         <div class="text-center mb-8">
           <h2 class="text-2xl font-bold text-gray-800 mb-2">Iniciar Sesión</h2>
@@ -34,7 +26,7 @@
         </div>
 
         <!-- Formulario -->
-        <form [formGroup]="formularioLogin" (ngSubmit)="iniciarSesion()" class="space-y-6">
+        <form [formGroup]="formularioLogin" (ngSubmit)="iniciarSesion()" class="space-y-6" autocomplete="on">
 
           <!-- Campo Legajo -->
           <div class="space-y-2">
@@ -49,7 +41,12 @@
                 type="text"
                 formControlName="legajo"
                 placeholder="Ingresa tu legajo"
-                class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 bg-white/80 backdrop-blur-sm text-gray-800 placeholder-gray-500">
+                inputmode="numeric"
+                autocomplete="username"
+                autofocus
+                enterkeyhint="next"
+                aria-label="Legajo"
+                class="w-full pl-12 pr-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 bg-white text-gray-800 placeholder-gray-500">
             </div>
             <div *ngIf="formularioLogin.get('legajo')?.touched && formularioLogin.get('legajo')?.invalid"
                  class="text-red-500 text-sm font-medium">
@@ -70,7 +67,19 @@
                 [type]="hidePassword ? 'password' : 'text'"
                 formControlName="password"
                 placeholder="Ingresa tu contraseña"
-                class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 bg-white/80 backdrop-blur-sm text-gray-800 placeholder-gray-500">
+                autocomplete="current-password"
+                enterkeyhint="go"
+                (keydown)="onPasswordKey($event)"
+                (keyup)="onPasswordKey($event)"
+                (blur)="onPasswordBlur()"
+                aria-label="Contraseña"
+                class="w-full pl-12 pr-12 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 bg-white text-gray-800 placeholder-gray-500">
+              <div *ngIf="capsOn" aria-live="polite" class="absolute -bottom-6 left-0 text-xs text-orange-600 font-medium flex items-center gap-1">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                  <path d="M12 2l7 7h-4v6h-6V9H5l7-7zM5 20h14v2H5z"/>
+                </svg>
+                Mayúsculas activadas
+              </div>
               <button
                 type="button"
                 (click)="hidePassword = !hidePassword"
@@ -91,17 +100,18 @@
 
           <!-- Enlace recuperar contraseña -->
           <div class="text-center">
-            <a routerLink="/auth/recuperar"
-               class="text-orange-600 hover:text-orange-700 text-sm font-medium transition-colors duration-200 hover:underline">
+            <button type="button"
+                    (click)="openForgotPassword()"
+                    class="text-orange-600 hover:text-orange-700 text-sm font-medium transition-colors duration-200 hover:underline">
               ¿Olvidaste tu contraseña?
-            </a>
+            </button>
           </div>
 
           <!-- Botón de login -->
           <button
             type="submit"
             [disabled]="formularioLogin.invalid || cargando"
-            class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl disabled:shadow-none transition-all duration-200 transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center space-x-2">
+            class="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white font-semibold py-5 px-6 rounded-xl shadow-md disabled:shadow-none transition-colors duration-200 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base">
 
             <div *ngIf="cargando" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
             <svg *ngIf="!cargando" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
@@ -112,8 +122,8 @@
 
           <!-- Mensaje de error -->
           <div *ngIf="errorLogin"
-               class="bg-red-50 border border-red-200 rounded-xl p-4 animate-pulse">
-            <div class="flex items-center space-x-3">
+               class="bg-red-50 border border-red-200 rounded-xl p-4">
+            <div class="flex items-center gap-3">
               <div class="flex-shrink-0">
                 <svg class="w-5 h-5 text-red-500" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
                   <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
@@ -131,7 +141,7 @@
         <!-- Footer -->
         <div class="mt-8 pt-6 border-t border-gray-200 text-center">
           <p class="text-gray-500 text-xs">
-            © 2025 MichiBurgers. Sistema de gestión restaurante.
+            2025 MichiBurgers. Sistema de gestión restaurante.
           </p>
         </div>
       </div>

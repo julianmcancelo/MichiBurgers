@@ -3,6 +3,8 @@ import { isPlatformBrowser } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../../funcionalidades/auth/auth.service';
 import { Subscription } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { ChangePasswordComponent } from '../../../funcionalidades/auth/components/change-password/change-password.component';
 
 @Component({
   selector: 'app-layout-principal',
@@ -25,7 +27,7 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
   // Logo PNG empaquetado desde src/app/logos
   logoUrl: string = '/logos/logos.png';
 
-  constructor(@Inject(PLATFORM_ID) platformId: Object, private auth: AuthService, private router: Router) {
+  constructor(@Inject(PLATFORM_ID) platformId: Object, private auth: AuthService, private router: Router, private dialog: MatDialog) {
     this.isBrowser = isPlatformBrowser(platformId);
     // Semilla sincrónica para evitar parpadeo del botón "Iniciar Sesión" al refrescar
     try {
@@ -100,5 +102,15 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
 
   toggleMobileMenu() {
     this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  openChangePassword(): void {
+    this.dialog.open(ChangePasswordComponent, {
+      width: '520px',
+      maxWidth: '95vw',
+      autoFocus: false,
+      restoreFocus: true,
+      panelClass: 'dialog-elevada'
+    });
   }
 }

@@ -118,3 +118,15 @@ h4 { font-size: 1.25rem; }
 }
 
 html, body { height: 100%; }
+
+/* ===== Estilo para diálogos elevados ===== */
+.dialog-elevada {
+  .mat-mdc-dialog-container {
+    border-radius: 16px !important;
+    overflow: hidden;
+  }
+  .mdc-dialog__surface {
+    border-radius: 16px !important;
+    overflow: hidden;
+  }
+}

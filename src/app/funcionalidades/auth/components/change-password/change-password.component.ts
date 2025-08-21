@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Optional } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth.service';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-change-password',
@@ -21,8 +22,15 @@ export class ChangePasswordComponent {
   loading = false;
   error: string | null = null;
   ok = false;
+  // UI
+  hideCurrent = true;
+  hideNext = true;
+  hideConfirm = true;
+  capsCurrent = false;
+  capsNext = false;
+  capsConfirm = false;
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
+  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router, @Optional() private dialogRef?: MatDialogRef<ChangePasswordComponent>) {
     this.form = this.fb.group({
       current: ['', [Validators.required, Validators.minLength(4)]],
       next: ['', [Validators.required, Validators.minLength(6)]],
@@ -45,14 +53,35 @@ export class ChangePasswordComponent {
       next: () => {
         this.loading = false;
         this.ok = true;
-        // Opcional: desloguear tras cambiar
-        // this.auth.logout();
-        // this.router.navigate(['/auth/login']);
+        // Si estamos dentro de un diálogo, cerrarlo tras éxito
+        setTimeout(() => this.close(), 600);
       },
       error: (e) => {
         this.loading = false;
         this.error = e?.error?.error || 'No se pudo cambiar la contraseña';
       }
     });
+  }
+
+  onPassKey(field: 'current' | 'next' | 'confirm', event: KeyboardEvent): void {
+    const state = (event as any)?.getModifierState?.('CapsLock');
+    const on = !!state;
+    if (field === 'current') this.capsCurrent = on;
+    if (field === 'next') this.capsNext = on;
+    if (field === 'confirm') this.capsConfirm = on;
+  }
+
+  onPassBlur(field: 'current' | 'next' | 'confirm'): void {
+    if (field === 'current') this.capsCurrent = false;
+    if (field === 'next') this.capsNext = false;
+    if (field === 'confirm') this.capsConfirm = false;
+  }
+
+  close(): void {
+    try {
+      if (this.dialogRef) {
+        this.dialogRef.close();
+      }
+    } catch {}
   }
 }
