@@ -1,4 +1,5 @@
 <!-- Header moderno con Tailwind -->
+<ng-container *ngIf="!isLoginRoute; else soloContenido">
 <header class="bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 shadow-xl sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
@@ -146,3 +147,39 @@
     <router-outlet></router-outlet>
   </div>
 </main>
+
+<!-- Footer académico -->
+<footer class="bg-gray-100 border-t">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="text-center sm:text-left">
+      <h2 class="text-gray-800 font-semibold tracking-wide uppercase text-xs">Proyecto Académico</h2>
+    </div>
+
+    <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-700">
+      <div class="bg-white/70 rounded-lg p-4 border border-gray-200">
+        <div class="font-medium text-gray-900">Alumno</div>
+        <div>Julián Manuel Cancelo</div>
+        <div class="text-gray-600">Analista de Sistemas</div>
+      </div>
+      <div class="bg-white/70 rounded-lg p-4 border border-gray-200">
+        <div class="font-medium text-gray-900">Proyecto Final</div>
+        <div>Algoritmos y Estructura de Datos III</div>
+        <div class="text-gray-600">Profesor: Sebastián Saldivar</div>
+      </div>
+      <div class="bg-white/70 rounded-lg p-4 border border-gray-200">
+        <div class="font-medium text-gray-900">Institución</div>
+        <div>Instituto Tecnológico Beltrán</div>
+        <div class="text-gray-600">Avellaneda</div>
+      </div>
+    </div>
+
+    <div class="mt-6 border-t border-gray-200 pt-4 text-xs text-gray-500 text-center sm:text-left">
+      © {{ currentYear }} • Julián Manuel Cancelo — Proyecto Final · Instituto Tecnológico Beltrán, Avellaneda
+    </div>
+  </div>
+</footer>
+</ng-container>
+
+<ng-template #soloContenido>
+  <router-outlet></router-outlet>
+</ng-template>

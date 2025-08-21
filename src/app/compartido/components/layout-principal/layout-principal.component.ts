@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../../funcionalidades/auth/auth.service';
 import { Subscription } from 'rxjs';
 
@@ -19,6 +19,9 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
   esAdmin = false;
   mobileMenuOpen = false;
   private sub?: Subscription;
+  private subRouter?: Subscription;
+  isLoginRoute = false;
+  currentYear: number = new Date().getFullYear();
   // Logo PNG empaquetado desde src/app/logos
   logoUrl: string = '/logos/logos.png';
 
@@ -69,12 +72,25 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
       }
     });
 
+    // Determinar si estamos en la ruta de login y actualizar en cada navegación
+    const updateLoginFlag = () => {
+      const url = this.router.url || '';
+      this.isLoginRoute = url.startsWith('/auth/login');
+    };
+    updateLoginFlag();
+    this.subRouter = this.router.events.subscribe(ev => {
+      if (ev instanceof NavigationEnd) {
+        updateLoginFlag();
+      }
+    });
+
     // Indicar que ya estamos en cliente y listos para renderizar el área de usuario
     this.ready = this.isBrowser;
   }
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
+    this.subRouter?.unsubscribe();
   }
 
   logout() {
