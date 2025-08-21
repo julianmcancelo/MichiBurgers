@@ -1,0 +1,34 @@
+<mat-card>
+  <mat-card-title>Panel de Mantenimiento</mat-card-title>
+  <mat-card-subtitle>Configuración avanzada (solo con contraseña maestra)</mat-card-subtitle>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" style="margin-top:12px; max-width:720px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+    <mat-form-field appearance="outline" style="grid-column: span 2;">
+      <mat-label>Nombre del Emprendimiento</mat-label>
+      <input matInput formControlName="nombreEmprendimiento" />
+      <mat-error *ngIf="form.get('nombreEmprendimiento')?.hasError('required')">Requerido</mat-error>
+      <mat-error *ngIf="form.get('nombreEmprendimiento')?.hasError('maxlength')">Máximo 80</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Color Primario</mat-label>
+      <input matInput type="color" formControlName="colorPrimario" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Color Secundario</mat-label>
+      <input matInput type="color" formControlName="colorSecundario" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" style="grid-column: span 2;">
+      <mat-label>API Base URL</mat-label>
+      <input matInput placeholder="http://localhost:8080" formControlName="apiBaseUrl" />
+    </mat-form-field>
+
+    <div style="grid-column: span 2; display:flex; gap:10px; align-items:center;">
+      <button mat-raised-button color="primary" type="submit">Guardar</button>
+      <button mat-stroked-button color="warn" type="button" (click)="master.logout()">Cerrar sesión master</button>
+      <span *ngIf="guardado" style="color:#2e7d32; font-size:13px;">Guardado</span>
+    </div>
+  </form>
+</mat-card>

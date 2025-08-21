@@ -1,0 +1,7 @@
+.panel-mantenimiento {
+  max-width: 960px;
+}
+
+:host ::ng-deep mat-card {
+  margin: 12px auto;
+}

@@ -36,6 +36,14 @@ export class AuthService {
     );
   }
 
+  changePassword(current: string, next: string): Observable<{ ok: boolean }> {
+    return this.http.post<{ ok: boolean }>(`${BASE_URL}/auth/change-password.php`, { current, new: next });
+  }
+
+  forgotPassword(legajo: string, dni: string, next: string): Observable<{ ok: boolean }> {
+    return this.http.post<{ ok: boolean }>(`${BASE_URL}/auth/forgot-password.php`, { legajo, dni, new: next });
+  }
+
   logout() {
     if (typeof window !== 'undefined') {
       localStorage.removeItem(TOKEN_KEY);

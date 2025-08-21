@@ -36,8 +36,8 @@ interface Anotacion {
   standalone: false
 })
 export class MapaSalonComponent implements OnInit {
-  ancho = 900;
-  alto = 600;
+  ancho = 1200;
+  alto = 800;
 
   mesas: Mesa[] = [];
   seleccionada: Mesa | null = null;

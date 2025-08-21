@@ -1,40 +1,48 @@
-.navbar {
-  --nav-max-w: 1280px;
+/* Estilos complementarios para Tailwind */
+
+/* Animación fade-in personalizada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.toolbar-inner {
-  width: 100%;
-  max-width: var(--nav-max-w);
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
 }
 
-.brand {
-  font-weight: 700;
-  letter-spacing: 0.2px;
+/* Mejoras para tooltips de Material */
+.mat-mdc-tooltip {
+  background: rgba(0, 0, 0, 0.9) !important;
+  color: white !important;
+  font-size: 12px !important;
+  border-radius: 8px !important;
+  backdrop-filter: blur(10px);
 }
 
-.nav a.active {
-  background: color-mix(in oklab, var(--mat-sys-on-primary) 10%, #0000);
+/* Asegurar que los botones de Material funcionen bien con Tailwind */
+button[mat-button], 
+button[mat-raised-button], 
+button[mat-stroked-button], 
+button[mat-icon-button] {
+  border-radius: inherit !important;
 }
 
-.nav a {
-  border-radius: 8px;
-  height: 36px;
+/* Transiciones suaves para elementos interactivos */
+a, button {
+  transition: all 0.2s ease-in-out;
 }
 
-.espaciador {
-  flex: 1 1 auto;
+/* Mejoras para el menú móvil */
+.max-h-0 {
+  max-height: 0;
 }
 
-.contenido-principal {
-  padding: 20px;
-  min-height: calc(100vh - 64px);
-}
-
-@media (max-width: 800px) {
-  .welcome { display: none; }
-  .nav a { min-width: unset; padding: 0 8px; }
+.max-h-96 {
+  max-height: 24rem;
 }

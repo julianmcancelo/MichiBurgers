@@ -13,4 +13,7 @@ export class InicioComponent {
   get usuario$() {
     return this.auth.usuario$;
   }
+
+  // Logo PNG empaquetado desde src/app/logos
+  logoUrl: string = '/logos/logos.png';
 }

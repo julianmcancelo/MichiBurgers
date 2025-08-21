@@ -109,3 +109,34 @@ CREATE OR REPLACE VIEW v_mesas_ocupadas AS
 SELECT p.area, p.mesa_id, p.id AS pedido_id, p.mozo_legajo, p.created_at
 FROM pedidos p
 WHERE p.estado = 'abierto';
+
+-- =============================
+-- Mantenimiento: contraseña maestra y configuración de app
+-- =============================
+
+-- Password maestra (una única fila id=1)
+CREATE TABLE IF NOT EXISTS master_secret (
+  id TINYINT UNSIGNED NOT NULL PRIMARY KEY,
+  password_hash VARCHAR(255) NOT NULL,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Configuración de la aplicación (clave-valor)
+CREATE TABLE IF NOT EXISTS app_config (
+  `key` VARCHAR(100) NOT NULL PRIMARY KEY,
+  `value` TEXT NOT NULL,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Seed: contraseña maestra por defecto (cambiar luego). Hash de 'master12345'
+INSERT INTO master_secret (id, password_hash)
+VALUES (1, '$2y$10$0n4C1b2wSx2a4Yt2V4h1rO9m9Gm6n5n8q6j3lN5zQbW9C6w7bEGIy')
+ON DUPLICATE KEY UPDATE password_hash = password_hash;
+
+-- Seed: configuración básica por defecto
+INSERT INTO app_config (`key`, `value`) VALUES
+  ('nombreEmprendimiento', 'Burguersaurio'),
+  ('colorPrimario', '#3f51b5'),
+  ('colorSecundario', '#e91e63'),
+  ('apiBaseUrl', 'https://burguersaurio.jcancelo.dev/api')
+ON DUPLICATE KEY UPDATE `value` = `value`;

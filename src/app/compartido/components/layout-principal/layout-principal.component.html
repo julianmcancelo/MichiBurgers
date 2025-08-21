@@ -1,25 +1,148 @@
-<mat-toolbar color="primary" class="navbar">
-  <div class="toolbar-inner">
-    <button mat-button class="brand" routerLink="/">Burguersaurio</button>
+<!-- Header moderno con Tailwind -->
+<header class="bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 shadow-xl sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      
+      <!-- Logo y marca -->
+      <div class="flex items-center">
+        <button 
+          class="flex items-center space-x-3 text-white hover:text-orange-100 transition-colors duration-200 font-bold text-xl"
+          routerLink="/">
+          <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm overflow-hidden">
+            <img [src]="logoUrl" alt="Burguersaurio" class="w-8 h-8 object-contain" />
+          </div>
+          <span class="hidden sm:block tracking-wide">Burguersaurio</span>
+        </button>
+      </div>
 
-    <nav class="nav">
-      <a mat-button routerLink="/admin" routerLinkActive="active">Administración</a>
-      <a mat-button routerLink="/mapa-meses" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Mapa de Mesas</a>
-      <a mat-button routerLink="/mapa-meses/salon" routerLinkActive="active">Mapa del Salón</a>
-    </nav>
+      <!-- Navegación principal (desktop) -->
+      <nav class="hidden md:flex items-center space-x-1">
+        <a 
+          routerLink="/admin" 
+          routerLinkActive="bg-white/20 text-white"
+          class="flex items-center space-x-2 px-4 py-2 rounded-lg text-white/90 hover:text-white hover:bg-white/10 transition-all duration-200 font-medium">
+          <mat-icon class="text-lg">admin_panel_settings</mat-icon>
+          <span>Administración</span>
+        </a>
+        <a 
+          routerLink="/mapa-meses" 
+          routerLinkActive="bg-white/20 text-white"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="flex items-center space-x-2 px-4 py-2 rounded-lg text-white/90 hover:text-white hover:bg-white/10 transition-all duration-200 font-medium">
+          <mat-icon class="text-lg">table_restaurant</mat-icon>
+          <span>Mapa de Mesas</span>
+        </a>
+        <a 
+          routerLink="/mapa-meses/salon" 
+          routerLinkActive="bg-white/20 text-white"
+          class="flex items-center space-x-2 px-4 py-2 rounded-lg text-white/90 hover:text-white hover:bg-white/10 transition-all duration-200 font-medium">
+          <mat-icon class="text-lg">map</mat-icon>
+          <span>Mapa del Salón</span>
+        </a>
+        <a 
+          *ngIf="esAdmin"
+          routerLink="/mantenimiento/ingresar" 
+          routerLinkActive="bg-white/20 text-white"
+          class="flex items-center space-x-2 px-4 py-2 rounded-lg text-white/90 hover:text-white hover:bg-white/10 transition-all duration-200 font-medium">
+          <mat-icon class="text-lg">build</mat-icon>
+          <span>Mantenimiento</span>
+        </a>
+      </nav>
 
-    <span class="espaciador"></span>
+      <!-- Área de usuario -->
+      <div class="flex items-center space-x-3" [class.opacity-0]="!ready">
+        <ng-container *ngIf="ready">
+          <ng-container *ngIf="loggedIn">
+            <!-- Info del usuario (desktop) -->
+            <div class="hidden lg:flex items-center space-x-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2">
+              <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                <mat-icon class="text-white text-sm">person</mat-icon>
+              </div>
+              <div class="text-white">
+                <div class="text-xs opacity-80">Bienvenido,</div>
+                <div class="font-semibold text-sm">{{ nombreCompleto }}</div>
+              </div>
+            </div>
+            
+            <!-- Botones de acción -->
+            <div class="flex items-center space-x-2">
+              <button 
+                routerLink="/auth/cambiar-clave"
+                class="w-10 h-10 flex items-center justify-center text-white hover:bg-white/10 rounded-lg transition-colors duration-200"
+                matTooltip="Cambiar contraseña">
+                <mat-icon class="text-lg">key</mat-icon>
+              </button>
+              <button 
+                (click)="logout()"
+                class="flex items-center space-x-2 px-4 py-2 text-white border border-white/30 hover:bg-white/10 hover:border-white/50 rounded-lg transition-all duration-200 font-medium">
+                <mat-icon class="text-lg">logout</mat-icon>
+                <span class="hidden sm:inline">Salir</span>
+              </button>
+            </div>
+          </ng-container>
+          
+          <ng-container *ngIf="!loggedIn && !hasToken">
+            <button 
+              routerLink="/auth/login"
+              class="flex items-center space-x-2 bg-white text-orange-600 hover:bg-orange-50 px-6 py-2 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
+              <mat-icon class="text-lg">login</mat-icon>
+              <span>Iniciar Sesión</span>
+            </button>
+          </ng-container>
+        </ng-container>
+      </div>
 
-    <ng-container *ngIf="usuario$ | async as u; else loginLink">
-      <span class="welcome">Bienvenido, {{ u.nombreCompleto }} ({{ u.rol }})</span>
-      <button mat-stroked-button color="accent" (click)="logout()">Salir</button>
-    </ng-container>
-    <ng-template #loginLink>
-      <button mat-stroked-button color="accent" routerLink="/auth/login">Iniciar Sesión</button>
-    </ng-template>
+      <!-- Botón menú móvil -->
+      <button 
+        (click)="toggleMobileMenu()"
+        class="md:hidden w-10 h-10 flex items-center justify-center text-white hover:bg-white/10 rounded-lg transition-colors duration-200">
+        <mat-icon class="text-2xl">menu</mat-icon>
+      </button>
+    </div>
+
+    <!-- Menú móvil -->
+    <div 
+      class="md:hidden overflow-hidden transition-all duration-300 ease-in-out"
+      [class.max-h-0]="!mobileMenuOpen"
+      [class.max-h-96]="mobileMenuOpen">
+      <div class="py-4 space-y-2 bg-white/5 backdrop-blur-sm rounded-xl mt-2 mb-4 px-4">
+        <a 
+          routerLink="/admin" 
+          routerLinkActive="bg-white/20"
+          class="flex items-center space-x-3 w-full text-left text-white hover:bg-white/10 rounded-lg px-3 py-3 transition-colors duration-200">
+          <mat-icon>admin_panel_settings</mat-icon>
+          <span class="font-medium">Administración</span>
+        </a>
+        <a 
+          routerLink="/mapa-meses" 
+          routerLinkActive="bg-white/20"
+          class="flex items-center space-x-3 w-full text-left text-white hover:bg-white/10 rounded-lg px-3 py-3 transition-colors duration-200">
+          <mat-icon>table_restaurant</mat-icon>
+          <span class="font-medium">Mapa de Mesas</span>
+        </a>
+        <a 
+          routerLink="/mapa-meses/salon" 
+          routerLinkActive="bg-white/20"
+          class="flex items-center space-x-3 w-full text-left text-white hover:bg-white/10 rounded-lg px-3 py-3 transition-colors duration-200">
+          <mat-icon>map</mat-icon>
+          <span class="font-medium">Mapa del Salón</span>
+        </a>
+        <a 
+          *ngIf="esAdmin"
+          routerLink="/mantenimiento/ingresar" 
+          routerLinkActive="bg-white/20"
+          class="flex items-center space-x-3 w-full text-left text-white hover:bg-white/10 rounded-lg px-3 py-3 transition-colors duration-200">
+          <mat-icon>build</mat-icon>
+          <span class="font-medium">Mantenimiento</span>
+        </a>
+      </div>
+    </div>
   </div>
-</mat-toolbar>
+</header>
 
-<main class="contenido-principal">
-  <router-outlet></router-outlet>
+<!-- Contenido principal -->
+<main class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50">
+  <div class="animate-fade-in">
+    <router-outlet></router-outlet>
+  </div>
 </main>

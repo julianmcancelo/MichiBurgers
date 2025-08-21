@@ -1,49 +1,140 @@
-<div class="contenedor-login">
-  <mat-card class="tarjeta-login">
-    <mat-card-header class="header-login">
-      <div class="logo-container">
-        <img src="URL_DE_TU_LOGO.png" alt="Logo Burguersaurio">
+<!-- Página de login con diseño moderno Tailwind -->
+<div class="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 flex items-center justify-center p-4 relative overflow-hidden">
+  
+  <!-- Elementos decorativos de fondo -->
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-20 left-20 w-72 h-72 bg-orange-200/30 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
+    <div class="absolute bottom-20 right-20 w-72 h-72 bg-orange-300/30 rounded-full mix-blend-multiply filter blur-xl animate-pulse" style="animation-delay: 2s;"></div>
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-orange-100/20 rounded-full mix-blend-multiply filter blur-xl animate-pulse" style="animation-delay: 4s;"></div>
+  </div>
+
+  <!-- Tarjeta de login -->
+  <div class="relative w-full max-w-md z-10">
+    <div class="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden transform transition-all duration-500 hover:scale-105">
+      
+      <!-- Header con branding -->
+      <div class="bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 px-8 py-12 text-center relative">
+        <div class="absolute inset-0 bg-gradient-to-r from-black/10 to-transparent"></div>
+        <div class="relative">
+          <!-- Logo -->
+          <div class="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-6 backdrop-blur-sm shadow-lg overflow-hidden">
+            <img src="/logos/logos.png" alt="Burguersaurio" class="w-14 h-14 object-contain" />
+          </div>
+          <h1 class="text-3xl font-bold text-white mb-2 tracking-wide">Burguersaurio</h1>
+          <p class="text-orange-100 font-medium">Sistema de Gestión</p>
+        </div>
       </div>
-      <mat-card-title>Iniciar Sesión</mat-card-title>
-      <mat-card-subtitle>Sistema de Gestión Burguersaurio</mat-card-subtitle>
-    </mat-card-header>
 
-    <mat-card-content>
-      <form [formGroup]="formularioLogin" (ngSubmit)="iniciarSesion()">
-        <mat-form-field appearance="outline" class="campo-completo">
-          <mat-label>Legajo</mat-label>
-          <mat-icon matPrefix>badge</mat-icon>
-          <input matInput formControlName="legajo" placeholder="Ingresa tu legajo">
-          <mat-error *ngIf="formularioLogin.get('legajo')?.touched && formularioLogin.get('legajo')?.invalid">
-            {{ obtenerErrorLegajo() }}
-          </mat-error>
-        </mat-form-field>
+      <!-- Contenido del formulario -->
+      <div class="px-8 py-8">
+        <!-- Título del formulario -->
+        <div class="text-center mb-8">
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">Iniciar Sesión</h2>
+          <p class="text-gray-600">Ingresa tus credenciales para continuar</p>
+        </div>
 
-        <mat-form-field appearance="outline" class="campo-completo">
-          <mat-label>Contraseña</mat-label>
-          <mat-icon matPrefix>lock</mat-icon>
-          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
-          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
-            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+        <!-- Formulario -->
+        <form [formGroup]="formularioLogin" (ngSubmit)="iniciarSesion()" class="space-y-6">
+          
+          <!-- Campo Legajo -->
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Legajo</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="w-5 h-5 text-orange-500" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                  <path d="M20 6h-5.31l-1.9-1.9c-.37-.37-.88-.6-1.42-.6H8c-1.1 0-2 .9-2 2v.5H4c-1.1 0-2 .9-2 2V18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10zM8 10h8v2H8v-2zm0 4h5v2H8v-2z"/>
+                </svg>
+              </div>
+              <input 
+                type="text"
+                formControlName="legajo"
+                placeholder="Ingresa tu legajo"
+                class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 bg-white/80 backdrop-blur-sm text-gray-800 placeholder-gray-500">
+            </div>
+            <div *ngIf="formularioLogin.get('legajo')?.touched && formularioLogin.get('legajo')?.invalid" 
+                 class="text-red-500 text-sm font-medium">
+              {{ obtenerErrorLegajo() }}
+            </div>
+          </div>
+
+          <!-- Campo Contraseña -->
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Contraseña</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="w-5 h-5 text-orange-500" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                  <path d="M12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm6-6h-1V9a5 5 0 0 0-10 0v2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zm-3 0H9V9a3 3 0 0 1 6 0v2z"/>
+                </svg>
+              </div>
+              <input 
+                [type]="hidePassword ? 'password' : 'text'"
+                formControlName="password"
+                placeholder="Ingresa tu contraseña"
+                class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 bg-white/80 backdrop-blur-sm text-gray-800 placeholder-gray-500">
+              <button 
+                type="button"
+                (click)="hidePassword = !hidePassword"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-orange-500 transition-colors duration-200">
+                <svg *ngIf="hidePassword" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                  <path d="M12 5c-7 0-11 7-11 7s2.5 4.5 7 6l-1.5 1.5 1.4 1.4L20.5 4.3l-1.4-1.4L15.6 6.9C14.6 6.3 13.4 6 12 6zm0 3a4 4 0 0 1 4 4c0 .7-.2 1.4-.5 2l-5.5-5.5c.6-.3 1.3-.5 2-.5zm-7.9 4c.9-1.5 3.2-4 7.9-4 .8 0 1.6.1 2.3.3l-1.7 1.7c-.2 0-.4-.1-.6-.1a3 3 0 1 0 3 3c0-.2 0-.4-.1-.6l1.7-1.7c.2.7.3 1.5.3 2.4 0 0-2.5 4.5-7.9 4-3.9-.4-6.2-3.2-6.9-4z"/>
+                </svg>
+                <svg *ngIf="!hidePassword" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                  <path d="M12 5C5 5 1 12 1 12s4 7 11 7 11-7 11-7-4-7-11-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+                </svg>
+              </button>
+            </div>
+            <div *ngIf="formularioLogin.get('password')?.hasError('required')" 
+                 class="text-red-500 text-sm font-medium">
+              La contraseña es requerida.
+            </div>
+          </div>
+
+          <!-- Enlace recuperar contraseña -->
+          <div class="text-center">
+            <a routerLink="/auth/recuperar" 
+               class="text-orange-600 hover:text-orange-700 text-sm font-medium transition-colors duration-200 hover:underline">
+              ¿Olvidaste tu contraseña?
+            </a>
+          </div>
+
+          <!-- Botón de login -->
+          <button 
+            type="submit"
+            [disabled]="formularioLogin.invalid || cargando"
+            class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl disabled:shadow-none transition-all duration-200 transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center space-x-2">
+            
+            <div *ngIf="cargando" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+            <svg *ngIf="!cargando" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M10 17l5-5-5-5v3H3v4h7v3zm9-12h-8v2h8v10h-8v2h8a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"/>
+            </svg>
+            <span class="font-semibold">{{ cargando ? 'Ingresando...' : 'Ingresar' }}</span>
           </button>
-          <mat-error *ngIf="formularioLogin.get('password')?.hasError('required')">
-            La contraseña es requerida.
-          </mat-error>
-        </mat-form-field>
 
-        <div class="opciones-extra">
-            <a href="#">¿Problemas para ingresar?</a>
+          <!-- Mensaje de error -->
+          <div *ngIf="errorLogin" 
+               class="bg-red-50 border border-red-200 rounded-xl p-4 animate-pulse">
+            <div class="flex items-center space-x-3">
+              <div class="flex-shrink-0">
+                <svg class="w-5 h-5 text-red-500" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                  <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-red-700 text-sm font-medium">
+                  Las credenciales son incorrectas. Por favor, inténtalo de nuevo.
+                </p>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <!-- Footer -->
+        <div class="mt-8 pt-6 border-t border-gray-200 text-center">
+          <p class="text-gray-500 text-xs">
+            © 2024 Burguersaurio. Sistema de gestión restaurante.
+          </p>
         </div>
-
-        <button mat-raised-button color="primary" type="submit" class="boton-login" [disabled]="formularioLogin.invalid || cargando">
-          <span *ngIf="!cargando">Ingresar</span>
-          <mat-progress-spinner *ngIf="cargando" mode="indeterminate" diameter="24"></mat-progress-spinner>
-        </button>
-
-        <div *ngIf="errorLogin" class="error-login">
-          Las credenciales son incorrectas. Por favor, inténtalo de nuevo.
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+      </div>
+    </div>
+  </div>
 </div>

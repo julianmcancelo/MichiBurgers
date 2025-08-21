@@ -1,97 +1,205 @@
-<section class="inicio">
-  <div class="hero">
-    <div class="titulo">
-      <h1>Burguersaurio</h1>
-      <p class="sub">Gestión ágil para tu restaurante</p>
-      <ng-container *ngIf="usuario$ | async as u; else visitante">
-        <p class="bienvenida">Bienvenido, <strong>{{ u.nombreCompleto }}</strong> ({{ u.rol }})</p>
-      </ng-container>
-      <ng-template #visitante>
-        <p class="bienvenida">Iniciá sesión para acceder a tus herramientas</p>
-      </ng-template>
+<!-- Página de inicio con diseño Tailwind moderno -->
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50">
+  
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700">
+    <!-- Elementos decorativos de fondo -->
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+      <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-white/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse" style="animation-delay: 2s;"></div>
+      <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white/5 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse" style="animation-delay: 4s;"></div>
     </div>
-  </div>
+    
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div class="text-center text-white">
+        <!-- Logo principal -->
+        <div class="w-24 h-24 bg-white/20 rounded-3xl flex items-center justify-center mx-auto mb-8 backdrop-blur-sm shadow-2xl transform hover:scale-110 transition-transform duration-300 overflow-hidden">
+          <img [src]="logoUrl" alt="Burguersaurio" class="w-16 h-16 object-contain" />
+        </div>
+        
+        <h1 class="text-5xl md:text-6xl font-bold mb-6 tracking-tight">
+          Burguersaurio
+        </h1>
+        <p class="text-xl md:text-2xl text-orange-100 mb-12 max-w-3xl mx-auto font-medium">
+          Gestión ágil y moderna para tu restaurante
+        </p>
+        
+        <!-- Mensaje de bienvenida personalizado -->
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 max-w-lg mx-auto border border-white/20 shadow-xl">
+          <ng-container *ngIf="usuario$ | async as u; else visitante">
+            <div class="flex items-center justify-center space-x-4 mb-4">
+              <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center shadow-lg">
+                <mat-icon class="text-white text-2xl">person</mat-icon>
+              </div>
+              <div class="text-left">
+                <p class="text-white font-bold text-xl">¡Bienvenido!</p>
+                <p class="text-orange-100 text-lg">{{ u.nombreCompleto }}</p>
+              </div>
+            </div>
+            <div class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-white/20 text-white border border-white/30">
+              <mat-icon class="w-5 h-5 mr-2">{{ u.rol === 'admin' ? 'admin_panel_settings' : 'person' }}</mat-icon>
+              {{ u.rol === 'admin' ? 'Administrador' : 'Usuario' }}
+            </div>
+          </ng-container>
+          <ng-template #visitante>
+            <div class="text-center">
+              <mat-icon class="text-white text-4xl mb-4">login</mat-icon>
+              <p class="text-white font-semibold text-lg">Iniciá sesión para acceder a tus herramientas</p>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <div class="grid">
-    <mat-card class="card acceso" routerLink="/comandera" appearance="outlined">
-      <mat-card-header>
-        <mat-icon fontIcon="receipt_long"></mat-icon>
-        <mat-card-title>Comandera</mat-card-title>
-        <mat-card-subtitle>Tomar y gestionar pedidos</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        Flujo rápido para mozos y caja.
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button color="primary">Ir</button>
-      </mat-card-actions>
-    </mat-card>
+  <!-- Grid de funcionalidades -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+    <div class="text-center mb-10 sm:mb-16">
+      <h2 class="text-4xl font-bold text-gray-900 mb-4">Panel de Control</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Accede rápidamente a todas las funcionalidades del sistema de gestión
+      </p>
+    </div>
 
-    <mat-card class="card acceso" routerLink="/cocina" appearance="outlined">
-      <mat-card-header>
-        <mat-icon fontIcon="restaurant"></mat-icon>
-        <mat-card-title>Cocina</mat-card-title>
-        <mat-card-subtitle>Pedidos en preparación</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        Vista optimizada para el equipo de cocina.
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button color="primary">Ir</button>
-      </mat-card-actions>
-    </mat-card>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+      
+      <!-- Comandera -->
+      <div class="group cursor-pointer select-none transform transition-all duration-300 md:hover:scale-105 focus-within:scale-[1.02]" routerLink="/comandera">
+        <div class="bg-white rounded-3xl shadow-xl md:group-hover:shadow-2xl border border-gray-100 overflow-hidden h-full flex flex-col ring-1 ring-gray-100 focus-within:ring-2 focus-within:ring-blue-500/50">
+          <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-6 sm:p-8 text-white relative overflow-hidden min-h-40 sm:min-h-44 flex items-start">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+            <div class="relative">
+              <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg">
+                <mat-icon class="text-white text-3xl">receipt_long</mat-icon>
+              </div>
+              <h3 class="text-2xl font-bold mb-1 sm:mb-2">Comandera</h3>
+              <p class="text-blue-100 font-medium">Tomar y gestionar pedidos</p>
+            </div>
+          </div>
+          <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
+            <p class="text-gray-600 mb-5 sm:mb-6 text-base sm:text-lg">Flujo rápido y eficiente para mozos y personal de caja.</p>
+            <div class="flex items-center text-blue-600 font-semibold md:group-hover:text-blue-700 transition-colors">
+              <span class="text-base sm:text-lg">Acceder</span>
+              <mat-icon class="ml-2 transform md:group-hover:translate-x-2 transition-transform duration-300">arrow_forward</mat-icon>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <mat-card class="card acceso" routerLink="/mapa-meses" appearance="outlined">
-      <mat-card-header>
-        <mat-icon fontIcon="map"></mat-icon>
-        <mat-card-title>Mapa de Meses</mat-card-title>
-        <mat-card-subtitle>Distribución y estado de mesas</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        Organización de salón en tiempo real.
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button color="primary">Ir</button>
-      </mat-card-actions>
-    </mat-card>
+      <!-- Cocina -->
+      <div class="group cursor-pointer select-none transform transition-all duration-300 md:hover:scale-105 focus-within:scale-[1.02]" routerLink="/cocina">
+        <div class="bg-white rounded-3xl shadow-xl md:group-hover:shadow-2xl border border-gray-100 overflow-hidden h-full flex flex-col ring-1 ring-gray-100 focus-within:ring-2 focus-within:ring-green-500/50">
+          <div class="bg-gradient-to-br from-green-500 to-green-600 p-6 sm:p-8 text-white relative overflow-hidden min-h-40 sm:min-h-44 flex items-start">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+            <div class="relative">
+              <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg">
+                <mat-icon class="text-white text-3xl">restaurant</mat-icon>
+              </div>
+              <h3 class="text-2xl font-bold mb-1 sm:mb-2">Cocina</h3>
+              <p class="text-green-100 font-medium">Pedidos en preparación</p>
+            </div>
+          </div>
+          <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
+            <p class="text-gray-600 mb-5 sm:mb-6 text-base sm:text-lg">Vista optimizada para el equipo de cocina y seguimiento de pedidos.</p>
+            <div class="flex items-center text-green-600 font-semibold md:group-hover:text-green-700 transition-colors">
+              <span class="text-base sm:text-lg">Acceder</span>
+              <mat-icon class="ml-2 transform md:group-hover:translate-x-2 transition-transform duration-300">arrow_forward</mat-icon>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <mat-card class="card acceso" routerLink="/admin" appearance="outlined" *ngIf="(usuario$ | async)?.rol === 'admin'">
-      <mat-card-header>
-        <mat-icon fontIcon="admin_panel_settings"></mat-icon>
-        <mat-card-title>Administración</mat-card-title>
-        <mat-card-subtitle>Productos, usuarios y configuración</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        Gestioná el catálogo, usuarios y más.
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button color="primary">Ir</button>
-      </mat-card-actions>
-    </mat-card>
+      <!-- Mapa de Mesas -->
+      <div class="group cursor-pointer select-none transform transition-all duration-300 md:hover:scale-105 focus-within:scale-[1.02]" routerLink="/mapa-meses">
+        <div class="bg-white rounded-3xl shadow-xl md:group-hover:shadow-2xl border border-gray-100 overflow-hidden h-full flex flex-col ring-1 ring-gray-100 focus-within:ring-2 focus-within:ring-purple-500/50">
+          <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-6 sm:p-8 text-white relative overflow-hidden min-h-40 sm:min-h-44 flex items-start">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+            <div class="relative">
+              <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg">
+                <mat-icon class="text-white text-3xl">map</mat-icon>
+              </div>
+              <h3 class="text-2xl font-bold mb-1 sm:mb-2">Mapa de Mesas</h3>
+              <p class="text-purple-100 font-medium">Distribución y estado</p>
+            </div>
+          </div>
+          <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
+            <p class="text-gray-600 mb-5 sm:mb-6 text-base sm:text-lg">Organización del salón y estado de mesas en tiempo real.</p>
+            <div class="flex items-center text-purple-600 font-semibold md:group-hover:text-purple-700 transition-colors">
+              <span class="text-base sm:text-lg">Acceder</span>
+              <mat-icon class="ml-2 transform md:group-hover:translate-x-2 transition-transform duration-300">arrow_forward</mat-icon>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <mat-card class="card acceso" routerLink="/admin/usuarios/registrar" appearance="outlined" *ngIf="(usuario$ | async)?.rol === 'admin'">
-      <mat-card-header>
-        <mat-icon fontIcon="person_add"></mat-icon>
-        <mat-card-title>Registrar Usuario</mat-card-title>
-        <mat-card-subtitle>Crear nuevos usuarios del sistema</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        Alta rápida de personal con roles.
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button color="primary">Ir</button>
-      </mat-card-actions>
-    </mat-card>
+      <!-- Administración (solo admin) -->
+      <div class="group cursor-pointer select-none transform transition-all duration-300 md:hover:scale-105 focus-within:scale-[1.02]" routerLink="/admin" *ngIf="(usuario$ | async)?.rol === 'admin'">
+        <div class="bg-white rounded-3xl shadow-xl md:group-hover:shadow-2xl border border-gray-100 overflow-hidden h-full flex flex-col ring-1 ring-gray-100 focus-within:ring-2 focus-within:ring-orange-500/50">
+          <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-6 sm:p-8 text-white relative overflow-hidden min-h-40 sm:min-h-44 flex items-start">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+            <div class="relative">
+              <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg">
+                <mat-icon class="text-white text-3xl">admin_panel_settings</mat-icon>
+              </div>
+              <h3 class="text-2xl font-bold mb-1 sm:mb-2">Administración</h3>
+              <p class="text-orange-100 font-medium">Productos y configuración</p>
+            </div>
+          </div>
+          <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
+            <p class="text-gray-600 mb-5 sm:mb-6 text-base sm:text-lg">Gestiona el catálogo, usuarios y configuración del sistema.</p>
+            <div class="flex items-center text-orange-600 font-semibold md:group-hover:text-orange-700 transition-colors">
+              <span class="text-base sm:text-lg">Acceder</span>
+              <mat-icon class="ml-2 transform md:group-hover:translate-x-2 transition-transform duration-300">arrow_forward</mat-icon>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <mat-card class="card acceso" routerLink="/auth/login" appearance="outlined" *ngIf="!(usuario$ | async)">
-      <mat-card-header>
-        <mat-icon fontIcon="login"></mat-icon>
-        <mat-card-title>Iniciar Sesión</mat-card-title>
-        <mat-card-subtitle>Accedé a tus herramientas</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-actions>
-        <button mat-stroked-button color="primary">Ingresar</button>
-      </mat-card-actions>
-    </mat-card>
-  </div>
-</section>
+      <!-- Registrar Usuario (solo admin) -->
+      <div class="group cursor-pointer select-none transform transition-all duration-300 md:hover:scale-105 focus-within:scale-[1.02]" routerLink="/admin/usuarios/registrar" *ngIf="(usuario$ | async)?.rol === 'admin'">
+        <div class="bg-white rounded-3xl shadow-xl md:group-hover:shadow-2xl border border-gray-100 overflow-hidden h-full flex flex-col ring-1 ring-gray-100 focus-within:ring-2 focus-within:ring-indigo-500/50">
+          <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 p-6 sm:p-8 text-white relative overflow-hidden min-h-40 sm:min-h-44 flex items-start">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+            <div class="relative">
+              <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg">
+                <mat-icon class="text-white text-3xl">person_add</mat-icon>
+              </div>
+              <h3 class="text-2xl font-bold mb-1 sm:mb-2">Registrar Usuario</h3>
+              <p class="text-indigo-100 font-medium">Crear nuevos usuarios</p>
+            </div>
+          </div>
+          <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
+            <p class="text-gray-600 mb-5 sm:mb-6 text-base sm:text-lg">Alta rápida de personal con roles y permisos.</p>
+            <div class="flex items-center text-indigo-600 font-semibold md:group-hover:text-indigo-700 transition-colors">
+              <span class="text-base sm:text-lg">Acceder</span>
+              <mat-icon class="ml-2 transform md:group-hover:translate-x-2 transition-transform duration-300">arrow_forward</mat-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Iniciar Sesión (solo visitantes) -->
+      <div class="group cursor-pointer select-none transform transition-all duration-300 md:hover:scale-105 focus-within:scale-[1.02]" routerLink="/auth/login" *ngIf="!(usuario$ | async)">
+        <div class="bg-white rounded-3xl shadow-xl md:group-hover:shadow-2xl border border-gray-100 overflow-hidden h-full flex flex-col ring-1 ring-gray-100 focus-within:ring-2 focus-within:ring-gray-500/50">
+          <div class="bg-gradient-to-br from-gray-500 to-gray-600 p-6 sm:p-8 text-white relative overflow-hidden min-h-40 sm:min-h-44 flex items-start">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+            <div class="relative">
+              <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg">
+                <mat-icon class="text-white text-3xl">login</mat-icon>
+              </div>
+              <h3 class="text-2xl font-bold mb-1 sm:mb-2">Iniciar Sesión</h3>
+              <p class="text-gray-100 font-medium">Accede a tus herramientas</p>
+            </div>
+          </div>
+          <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
+            <p class="text-gray-600 mb-5 sm:mb-6 text-base sm:text-lg">Ingresa con tus credenciales para acceder al sistema.</p>
+            <div class="flex items-center text-gray-600 font-semibold md:group-hover:text-gray-700 transition-colors">
+              <span class="text-base sm:text-lg">Ingresar</span>
+              <mat-icon class="ml-2 transform md:group-hover:translate-x-2 transition-transform duration-300">arrow_forward</mat-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

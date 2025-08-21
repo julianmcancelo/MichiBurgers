@@ -11,10 +11,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { LoginComponent } from './components/login/login.component';
+import { ChangePasswordComponent } from './components/change-password/change-password.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { authGuard } from './auth.guard';
 
 @NgModule({
   declarations: [
-    LoginComponent
+    LoginComponent,
+    ChangePasswordComponent,
+    ForgotPasswordComponent
   ],
   imports: [
     CommonModule,
@@ -28,6 +33,8 @@ import { LoginComponent } from './components/login/login.component';
     MatSnackBarModule,
     RouterModule.forChild([
       { path: 'login', component: LoginComponent },
+      { path: 'cambiar-clave', component: ChangePasswordComponent, canActivate: [authGuard] },
+      { path: 'recuperar', component: ForgotPasswordComponent },
       { path: '', redirectTo: 'login', pathMatch: 'full' }
     ])
   ]

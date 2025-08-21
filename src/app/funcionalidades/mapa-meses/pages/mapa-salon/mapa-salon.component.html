@@ -2,22 +2,22 @@
   <mat-card-title>Mapa de Mesas</mat-card-title>
   <mat-card-subtitle>Arrastra y suelta para reubicar mesas. Los cambios se guardan automáticamente.</mat-card-subtitle>
 
-  <div class="acciones">
+  <div class="acciones flex flex-wrap items-center gap-2 mb-4">
     <button mat-raised-button color="primary" (click)="agregarMesa()" *ngIf="rol !== 'mozo'">
       <mat-icon>add</mat-icon> Agregar mesa
     </button>
     <button mat-button color="warn" (click)="resetearMapa()" *ngIf="rol !== 'mozo'">
       <mat-icon>refresh</mat-icon> Resetear mapa
     </button>
-    <span style="flex:1 1 auto"></span>
-    <mat-button-toggle-group [(ngModel)]="modo" (change)="onCambioModo()" *ngIf="rol !== 'mozo'">
+    <span class="flex-1"></span>
+    <mat-button-toggle-group class="shrink-0" [(ngModel)]="modo" (change)="onCambioModo()" *ngIf="rol !== 'mozo'">
       <mat-button-toggle value="seleccion"><mat-icon>mouse</mat-icon> Selección</mat-button-toggle>
       <mat-button-toggle value="dibujo"><mat-icon>gesture</mat-icon> Dibujo</mat-button-toggle>
     </mat-button-toggle-group>
-    <div style="display:flex;align-items:center;gap:8px;margin:0 8px;" *ngIf="rol !== 'mozo'">
+    <div class="flex items-center gap-2 mx-2" *ngIf="rol !== 'mozo'">
       <label>Color:</label>
       <input type="color" [(ngModel)]="brushColor"/>
-      <mat-form-field appearance="outline" style="width:90px;">
+      <mat-form-field appearance="outline" class="w-24">
         <mat-label>Grosor</mat-label>
         <mat-select [(ngModel)]="brushWidth">
           <mat-option [value]="2">2</mat-option>
@@ -31,22 +31,22 @@
         <mat-icon>layers_clear</mat-icon> Borrar marcas área
       </button>
     </div>
-    <mat-button-toggle-group [(ngModel)]="areaActiva" (change)="onCambioArea()">
+    <mat-button-toggle-group class="shrink-0" [(ngModel)]="areaActiva" (change)="onCambioArea()">
       <mat-button-toggle value="interior"><mat-icon>store</mat-icon> Interior</mat-button-toggle>
       <mat-button-toggle value="exterior"><mat-icon>deck</mat-icon> Exterior</mat-button-toggle>
     </mat-button-toggle-group>
-    <mat-checkbox style="margin-left:8px;" [(ngModel)]="permitirEditarExterior" (change)="onCambio()" *ngIf="rol !== 'mozo'">
+    <mat-checkbox class="ml-2" [(ngModel)]="permitirEditarExterior" (change)="onCambio()" *ngIf="rol !== 'mozo'">
       Permitir editar afuera
     </mat-checkbox>
-    <mat-checkbox [(ngModel)]="snapToGrid" (change)="onCambio()" *ngIf="rol !== 'mozo'">Snap a grilla</mat-checkbox>
-    <mat-form-field appearance="outline" style="width:100px; margin-left:8px;" *ngIf="rol !== 'mozo'">
+    <mat-checkbox class="ml-2" [(ngModel)]="snapToGrid" (change)="onCambio()" *ngIf="rol !== 'mozo'">Snap a grilla</mat-checkbox>
+    <mat-form-field appearance="outline" class="w-28 ml-2" *ngIf="rol !== 'mozo'">
       <mat-label>Grilla</mat-label>
       <input matInput type="number" min="5" max="200" [(ngModel)]="gridSize" (ngModelChange)="onCambio()" />
     </mat-form-field>
   </div>
 
-  <div class="layout">
-    <div class="canvas" [style.width.px]="ancho" [style.height.px]="alto">
+  <div class="layout grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <div class="canvas lg:col-span-2 relative rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden" [style.width.px]="ancho" [style.height.px]="alto">
       <!-- Overlay SVG para dibujo -->
       <svg class="overlay" [attr.width]="ancho" [attr.height]="alto"
            (mousedown)="onSvgDown($event)" (mousemove)="onSvgMove($event)" (mouseup)="onSvgUp()"
@@ -95,21 +95,21 @@
         </div>
         <div class="detalles">
           Cap.: {{ mesa.capacidad }} – {{ mesa.forma }}
-          <span class="chip" [class.ocupada]="estadoMesas.get(mesa.id)?.estado === 'ocupada'">
+          <span class="chip ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" [class.ocupada]="estadoMesas.get(mesa.id)?.estado === 'ocupada'">
             {{ estadoMesas.get(mesa.id)?.estado === 'ocupada' ? 'Ocupada' : 'Libre' }}
           </span>
         </div>
         <div class="dino" *ngIf="mesa.forma === 'dinosaurio'"></div>
       </div>
-      <div *ngIf="mesasArea.length === 0" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#757575;">
-        <div>
-          <div style="font-weight:600; text-align:center;">No hay mesas para el área "{{ areaActiva }}"</div>
-          <div style="text-align:center; font-size:13px;">Si el backend aún no tiene layout guardado, se muestra el local.</div>
+      <div *ngIf="mesasArea.length === 0" class="absolute inset-0 flex items-center justify-center text-gray-500">
+        <div class="text-center">
+          <div class="font-semibold">No hay mesas para el área "{{ areaActiva }}"</div>
+          <div class="text-xs">Si el backend aún no tiene layout guardado, se muestra el local.</div>
         </div>
       </div>
     </div>
 
-    <div class="panel" *ngIf="seleccionada as m" [hidden]="rol==='mozo'">
+    <div class="panel lg:col-span-1 lg:sticky lg:top-4 h-fit rounded-2xl border border-gray-200 bg-white/60 backdrop-blur-sm p-4" *ngIf="seleccionada as m" [hidden]="rol==='mozo'">
       <h3>Editar mesa</h3>
       <div class="panel-campos">
         <mat-form-field appearance="outline">

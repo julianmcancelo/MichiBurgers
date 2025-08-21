@@ -53,6 +53,10 @@ import { NotFoundComponent } from './not-found/not-found.component';
         data: { roles: ['admin', 'cocina'] }
       },
       {
+        path: 'mantenimiento',
+        loadChildren: () => import('./mantenimiento/mantenimiento.module').then(m => m.MantenimientoModule)
+      },
+      {
         path: '**',
         component: NotFoundComponent
       }
