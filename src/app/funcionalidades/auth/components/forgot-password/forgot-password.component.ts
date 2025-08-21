@@ -1,13 +1,7 @@
 import { Component, Optional } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 import { AuthService } from '../../auth.service';
-import { Router } from '@angular/router';
-import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-forgot-password',
@@ -26,7 +20,7 @@ export class ForgotPasswordComponent {
   capsNext = false;
   capsConfirm = false;
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router, @Optional() private dialogRef?: MatDialogRef<ForgotPasswordComponent>) {
+  constructor(private fb: FormBuilder, private auth: AuthService, @Optional() private dialogRef?: MatDialogRef<ForgotPasswordComponent>) {
     this.form = this.fb.group({
       legajo: ['', [Validators.required]],
       dni: ['', [Validators.required, Validators.minLength(6)]],
