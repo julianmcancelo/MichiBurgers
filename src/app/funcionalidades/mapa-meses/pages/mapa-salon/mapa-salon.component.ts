@@ -254,6 +254,19 @@ export class MapaSalonComponent implements OnInit {
     this.seleccionada = m;
   }
 
+  atenderMesa(m: Mesa) {
+    // Para administradores: iniciar/continuar pedido sin salir del modo edición general
+    const est = this.estadoMesas.get(m.id);
+    if (est && est.estado === 'ocupada' && est.pedidoId) {
+      this.router.navigate(['/comandera/pedido', est.pedidoId]);
+      return;
+    }
+    this.api.abrirMesa(this.areaActiva, m.id).subscribe({
+      next: (res) => this.router.navigate(['/comandera/pedido', res.pedidoId]),
+      error: () => {}
+    });
+  }
+
   onCambio() {
     // Llamar cuando cambien inputs del panel
     this.guardar();
@@ -270,6 +283,8 @@ export class MapaSalonComponent implements OnInit {
     this.guardarPrefs();
     // Cargar las mesas del área seleccionada desde la API
     this.cargarDesdeApi(this.areaActiva);
+    // Refrescar inmediatamente el estado de ocupación para el área nueva
+    this.cargarEstadoMesas();
   }
 
   onCambioModo() {

@@ -81,6 +81,10 @@
         <div class="mesa-header">
           <div class="nombre">{{ mesa.nombre }}</div>
           <span class="acciones-mesa">
+            <button mat-stroked-button color="primary" (click)="$event.stopPropagation(); atenderMesa(mesa)" *ngIf="rol !== 'mozo'">
+              <mat-icon>restaurant</mat-icon>
+              Atender
+            </button>
             <button mat-icon-button color="primary" (click)="$event.stopPropagation(); duplicarMesa(mesa)" *ngIf="rol !== 'mozo'">
               <mat-icon>content_copy</mat-icon>
             </button>
@@ -95,7 +99,7 @@
             {{ estadoMesas.get(mesa.id)?.estado === 'ocupada' ? 'Ocupada' : 'Libre' }}
           </span>
         </div>
-        <div class="dino" *ngIf="mesa.forma === 'dinosaurio'">🦖</div>
+        <div class="dino" *ngIf="mesa.forma === 'dinosaurio'"></div>
       </div>
       <div *ngIf="mesasArea.length === 0" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#757575;">
         <div>

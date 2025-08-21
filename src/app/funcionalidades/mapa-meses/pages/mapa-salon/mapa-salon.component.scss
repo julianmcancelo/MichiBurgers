@@ -2,20 +2,36 @@
   display: flex;
   gap: 12px;
   margin-bottom: 12px;
+  align-items: center;
+}
+
+/* Boton toggles más sobrios */
+.acciones .mat-mdc-button-toggle-group {
+  border-radius: 10px;
+  overflow: hidden;
+}
+.acciones .mat-mdc-button-toggle {
+  height: 36px;
 }
 
 .layout {
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: auto 320px;
   gap: 16px;
+  max-width: 1280px;
+  margin: 0 auto;
+  align-items: start;
 }
 
 .canvas {
   position: relative;
-  border: 2px dashed #bdbdbd;
-  background: repeating-conic-gradient(#fafafa 0% 25%, #f5f5f5 0% 50%) 50% / 40px 40px;
-  border-radius: 8px;
+  border: 1px dashed rgba(0,0,0,0.16);
+  background: linear-gradient(0deg, rgba(0,0,0,0.018) 50%, rgba(0,0,0,0.012) 50%),
+              linear-gradient(90deg, rgba(0,0,0,0.018) 50%, rgba(0,0,0,0.012) 50%);
+  background-size: 40px 40px;
+  border-radius: 10px;
   overflow: hidden;
+  justify-self: center;
 }
 
 .overlay {
@@ -27,15 +43,18 @@
 .mesa {
   position: absolute;
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  border: 1px solid #e0e0e0;
-  padding: 8px;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid rgba(0,0,0,0.08);
+  padding: 10px 12px 12px;
+  min-width: 160px;
   cursor: move;
   user-select: none;
-  transition: box-shadow .15s ease, transform .1s ease;
+  transition: box-shadow .15s ease, transform .1s ease, border-color .15s ease;
   z-index: 3;
 }
+
+.mesa:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.14); }
 
 .mesa.redonda {
   border-radius: 50%;
@@ -55,7 +74,18 @@
 }
 
 .mesa.seleccionada {
-  box-shadow: 0 0 0 3px #3f51b5 inset, 0 4px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--mat-sys-primary) 86%, #0000) inset,
+              0 4px 10px rgba(0,0,0,0.16);
+}
+
+/* Estados de ocupación claros pero sobrios */
+.mesa.estado-ocupada {
+  border-color: rgba(198, 40, 40, 0.35);
+  background: linear-gradient(0deg, rgba(198,40,40,0.05), rgba(198,40,40,0.03));
+}
+.mesa.estado-libre {
+  border-color: rgba(0,0,0,0.08);
+  background: white;
 }
 
 .mesa.bloqueada {
@@ -72,9 +102,23 @@
   margin-bottom: 6px;
 }
 
+.mesa.estado-ocupada .mesa-header .nombre::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c62828;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
 .detalles {
   font-size: 12px;
   color: #616161;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .dino {
@@ -85,7 +129,14 @@
 }
 
 .panel {
-  padding: 8px 0;
+  padding: 12px;
+  background: white;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 72px;
+  align-self: start;
 }
 
 .panel h3 {
@@ -115,4 +166,44 @@
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+/* Chips de estado más formales */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: #f6f7f9;
+  color: #37474f;
+}
+.chip.ocupada {
+  background: rgba(230, 74, 25, 0.08);
+  color: #c62828;
+  border-color: rgba(198, 40, 40, 0.25);
+}
+
+/* Botonera sobre la mesa: pill, compacta */
+.mesa-header .acciones-mesa {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.mesa-header .acciones-mesa .mat-mdc-stroked-button {
+  height: 32px;
+  border-radius: 999px;
+  padding: 0 10px;
+}
+.mesa-header .acciones-mesa .mat-mdc-icon-button {
+  width: 34px;
+  height: 34px;
+}
+
+/* Forma dinosaurio sin emoji: mantener distinción sutil */
+.mesa.dinosaurio {
+  border: 1px dashed rgba(76,175,80,0.35);
+  background: linear-gradient(135deg, rgba(139,195,74,0.09), rgba(76,175,80,0.06));
 }

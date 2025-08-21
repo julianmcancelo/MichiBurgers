@@ -1,7 +1,7 @@
 <section class="inicio">
   <div class="hero">
     <div class="titulo">
-      <h1>Burguersaurio 🦖🍔</h1>
+      <h1>Burguersaurio</h1>
       <p class="sub">Gestión ágil para tu restaurante</p>
       <ng-container *ngIf="usuario$ | async as u; else visitante">
         <p class="bienvenida">Bienvenido, <strong>{{ u.nombreCompleto }}</strong> ({{ u.rol }})</p>
