@@ -4,7 +4,7 @@
     <ion-buttons slot="end">
       <ion-chip *ngIf="user" color="light">
         <ion-icon name="person" color="primary"></ion-icon>
-        <ion-label>{{ user?.nombreCompleto || user?.legajo }}</ion-label>
+        <ion-label>{{ user.nombreCompleto || user.legajo }}</ion-label>
       </ion-chip>
       <ion-button fill="clear" (click)="logout()">
         <ion-icon slot="start" name="log-out-outline"></ion-icon>

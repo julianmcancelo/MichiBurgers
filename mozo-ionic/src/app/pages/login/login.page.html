@@ -1,28 +1,30 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Iniciar sesión</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="login-bg">
+  <div class="login-wrapper">
+    <div class="brand">
+      <ion-icon name="restaurant" aria-hidden="true"></ion-icon>
+      <h1>BURGERSAURIO</h1>
+      <p class="muted">Acceso para mozos y administradores</p>
+    </div>
 
-<ion-content [fullscreen]="true" class="ion-padding">
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Bienvenido</ion-card-title>
-      <ion-card-subtitle>Ingresá tus credenciales</ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list lines="none">
-        <ion-item>
-          <ion-input label="Legajo" labelPlacement="stacked" [(ngModel)]="legajo" inputmode="text" autocomplete="username"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-input label="Password" labelPlacement="stacked" [(ngModel)]="password" type="password" autocomplete="current-password"></ion-input>
-        </ion-item>
-      </ion-list>
-      <ion-button expand="block" color="primary" [disabled]="loading" (click)="submit()">
-        <ion-spinner *ngIf="loading" name="crescent" slot="start"></ion-spinner>
-        Ingresar
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
+    <ion-card class="login-card">
+      <ion-card-header>
+        <ion-card-title>Iniciar sesión</ion-card-title>
+        <ion-card-subtitle>Ingresá tus credenciales</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="none">
+          <ion-item class="field">
+            <ion-input label="Legajo" labelPlacement="stacked" [(ngModel)]="legajo" inputmode="text" autocomplete="username" placeholder="Ej: 102"></ion-input>
+          </ion-item>
+          <ion-item class="field">
+            <ion-input label="Password" labelPlacement="stacked" [(ngModel)]="password" type="password" autocomplete="current-password" placeholder="••••••••"></ion-input>
+          </ion-item>
+        </ion-list>
+        <ion-button class="submit" expand="block" color="primary" [disabled]="loading" (click)="submit()">
+          <ion-spinner *ngIf="loading" name="crescent" slot="start"></ion-spinner>
+          Ingresar
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>
