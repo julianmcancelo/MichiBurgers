@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "https://burguersaurio.jcancelo.dev",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

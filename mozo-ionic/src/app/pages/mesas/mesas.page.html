@@ -1,0 +1,69 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Mesas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <ion-row class="ion-justify-content-between ion-align-items-center">
+      <ion-col size="6">
+        <ion-segment [value]="area" (ionChange)="onAreaChange($event)">
+          <ion-segment-button value="interior">Interior</ion-segment-button>
+          <ion-segment-button value="exterior">Exterior</ion-segment-button>
+        </ion-segment>
+      </ion-col>
+      <ion-col size="6" class="ion-text-right">
+        <ion-button size="small" fill="clear" (click)="fetch()">
+          <ion-icon slot="start" name="refresh"></ion-icon>
+          Actualizar
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="loading" class="ion-justify-content-center ion-padding">
+      <ion-spinner></ion-spinner>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12" *ngIf="!loading && mesas.length === 0" class="ion-text-center ion-padding">
+        <ion-note>No hay mesas configuradas.</ion-note>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="6" sizeMd="4" sizeLg="3" *ngFor="let m of mesas">
+        <ion-card [color]="m.estado === 'ocupada' ? (m.pagado ? 'warning' : 'danger') : 'success'">
+          <ion-card-header>
+            <ion-card-title>Mesa {{ m.mesaId }}</ion-card-title>
+            <ion-card-subtitle>
+              <span class="estado-chip">{{ m.estado }}</span>
+              <ng-container *ngIf="m.pedidoId">Pedido #{{ m.pedidoId }}</ng-container>
+            </ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-button expand="block" size="small" color="primary" *ngIf="m.estado === 'libre'" (click)="abrir(m)">
+              <ion-icon slot="start" name="enter"></ion-icon>
+              Abrir
+            </ion-button>
+
+            <ion-button expand="block" size="small" color="medium" *ngIf="m.estado === 'ocupada' && !m.pagado" (click)="pagar(m)">
+              <ion-icon slot="start" name="cash"></ion-icon>
+              Cobrar
+            </ion-button>
+
+            <ion-button expand="block" size="small" color="tertiary" *ngIf="m.estado === 'ocupada' && m.pagado" (click)="liberar(m)">
+              <ion-icon slot="start" name="exit"></ion-icon>
+              Liberar
+            </ion-button>
+
+            <ion-button expand="block" size="small" fill="outline" color="secondary" *ngIf="m.pedidoId" (click)="openPedido(m)">
+              <ion-icon slot="start" name="receipt"></ion-icon>
+              Ver pedido
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

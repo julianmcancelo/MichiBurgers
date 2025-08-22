@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Pedido #{{ pedidoId }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="load(); $event.target.complete()">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-list *ngIf="!loading && (data?.items?.length || 0) > 0; else emptyOrLoading">
+    <ion-item *ngFor="let it of (data?.items || [])">
+      <ion-label>
+        <h2>{{ it.nombre }}</h2>
+        <p>Cant: {{ it.cantidad }} • Precio: {{ it.precio | currency:'ARS':'symbol-narrow' }}</p>
+      </ion-label>
+      <ion-badge color="light">{{ (it.cantidad * it.precio) | number:'1.0-2' }}</ion-badge>
+    </ion-item>
+    <ion-item lines="full">
+      <ion-label><strong>Total</strong></ion-label>
+      <ion-note slot="end"><strong>{{ total | currency:'ARS':'symbol-narrow' }}</strong></ion-note>
+    </ion-item>
+  </ion-list>
+
+  <ng-template #emptyOrLoading>
+    <ion-list *ngIf="loading">
+      <ion-item><ion-skeleton-text animated style="width: 60%"></ion-skeleton-text></ion-item>
+      <ion-item><ion-skeleton-text animated style="width: 40%"></ion-skeleton-text></ion-item>
+      <ion-item><ion-skeleton-text animated style="width: 80%"></ion-skeleton-text></ion-item>
+    </ion-list>
+    <div *ngIf="!loading" class="ion-text-center ion-padding">
+      <ion-note>Sin items en este pedido.</ion-note>
+    </div>
+  </ng-template>
+</ion-content>

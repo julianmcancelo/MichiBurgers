@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Iniciar sesión</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Bienvenido</ion-card-title>
+      <ion-card-subtitle>Ingresá tus credenciales</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="none">
+        <ion-item>
+          <ion-input label="Legajo" labelPlacement="stacked" [(ngModel)]="legajo" inputmode="text" autocomplete="username"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Password" labelPlacement="stacked" [(ngModel)]="password" type="password" autocomplete="current-password"></ion-input>
+        </ion-item>
+      </ion-list>
+      <ion-button expand="block" color="primary" [disabled]="loading" (click)="submit()">
+        <ion-spinner *ngIf="loading" name="crescent" slot="start"></ion-spinner>
+        Ingresar
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
