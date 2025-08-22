@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Configuración</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Marca de la empresa</ion-card-title>
+      <ion-card-subtitle>Visible en la app</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="none">
+        <ion-item>
+          <ion-input label="Nombre de la empresa" labelPlacement="stacked" [(ngModel)]="companyName" placeholder="Ej: Burgersaurio"></ion-input>
+        </ion-item>
+        <ion-item class="logo-row">
+          <ion-avatar slot="start">
+            <img [src]="logoUrl" alt="Logo" />
+          </ion-avatar>
+          <ion-label>
+            Logo actual
+            <p>/assets/logos/logos.png</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+      <ion-button expand="block" color="primary" (click)="save()">Guardar</ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

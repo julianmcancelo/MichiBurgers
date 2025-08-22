@@ -7,7 +7,7 @@ export const environment = {
   // Set this to your backend base URL for dev (can be empty to use proxy or same origin)
   // Example LAN: 'http://192.168.0.10/cocina/burgersaurio'
   apiBase: 'https://burguersaurio.jcancelo.dev'
-};
+  };
 
 /*
  * For easier debugging in development mode, you can import the following file

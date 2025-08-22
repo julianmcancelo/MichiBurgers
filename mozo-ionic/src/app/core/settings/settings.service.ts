@@ -11,7 +11,7 @@ const SETTINGS_KEY = 'app_settings';
 export class SettingsService {
   private settings: AppSettings = {
     companyName: 'BURGERSAURIO',
-    logoPath: 'logos/logo.png',
+    logoPath: 'logos/logos.png',
   };
 
   constructor() {

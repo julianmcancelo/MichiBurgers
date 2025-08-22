@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './core/auth/auth.guard';
+import { AdminGuard } from './core/auth/admin.guard';
 
 const routes: Routes = [
   {
@@ -17,6 +18,11 @@ const routes: Routes = [
     path: 'pedido/:id',
     loadComponent: () => import('./pages/pedido/pedido.page').then(m => m.PedidoPage),
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'admin',
+    loadComponent: () => import('./pages/admin-config/admin-config.page').then(m => m.AdminConfigPage),
+    canActivate: [AuthGuard, AdminGuard]
   },
   {
     path: 'login',
