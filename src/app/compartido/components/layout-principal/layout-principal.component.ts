@@ -19,6 +19,7 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
   private isBrowser = false;
   hasToken = false;
   esAdmin = false;
+  esMozo = false;
   mobileMenuOpen = false;
   private sub?: Subscription;
   private subRouter?: Subscription;
@@ -39,6 +40,7 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
           this.loggedIn = true;
           this.nombreCompleto = u?.nombreCompleto || '';
           this.esAdmin = u?.rol === 'admin';
+          this.esMozo = u?.rol === 'mozo';
         }
       }
     } catch {}
@@ -52,6 +54,7 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
       this.nombreCompleto = u0.nombreCompleto || '';
       this.hasToken = true;
       this.esAdmin = u0.rol === 'admin';
+      this.esMozo = u0.rol === 'mozo';
     } else if (this.isBrowser && this.auth.token) {
       // Si hay token pero no usuario en memoria, recuperar desde la API
       this.auth.me().subscribe({
@@ -67,10 +70,12 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
         this.loggedIn = true;
         this.nombreCompleto = u.nombreCompleto || '';
         this.esAdmin = u.rol === 'admin';
+        this.esMozo = u.rol === 'mozo';
       } else {
         this.loggedIn = false;
         this.nombreCompleto = '';
         this.esAdmin = false;
+        this.esMozo = false;
       }
     });
 

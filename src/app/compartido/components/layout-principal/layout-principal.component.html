@@ -38,6 +38,16 @@
           <span class="pointer-events-none absolute left-4 right-4 -bottom-1 h-0.5 bg-orange-500/80 rounded-full transition-opacity duration-200" [class.opacity-100]="rlaAdmin.isActive" [class.opacity-0]="!rlaAdmin.isActive"></span>
         </a>
         <a
+          #rlaEstado="routerLinkActive"
+          *ngIf="esAdmin || esMozo"
+          routerLink="/mapa-meses/estado"
+          routerLinkActive="text-orange-700"
+          class="relative flex items-center gap-2 px-4 py-2 rounded-full text-gray-700 hover:text-orange-700 hover:bg-orange-50 transition-all duration-200 font-medium border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300">
+          <mat-icon class="text-lg text-orange-600">monitor_heart</mat-icon>
+          <span>Estado</span>
+          <span class="pointer-events-none absolute left-4 right-4 -bottom-1 h-0.5 bg-orange-500/80 rounded-full transition-opacity duration-200" [class.opacity-100]="rlaEstado.isActive" [class.opacity-0]="!rlaEstado.isActive"></span>
+        </a>
+        <a
           #rlaSalon="routerLinkActive"
           *ngIf="esAdmin"
           routerLink="/mapa-meses/salon"
@@ -48,16 +58,7 @@
           <span class="ml-2 text-[10px] uppercase tracking-wide bg-orange-200/70 text-orange-800 px-2 py-0.5 rounded-full">Editar</span>
           <span class="pointer-events-none absolute left-4 right-4 -bottom-1 h-0.5 bg-orange-500/80 rounded-full transition-opacity duration-200" [class.opacity-100]="rlaSalon.isActive" [class.opacity-0]="!rlaSalon.isActive"></span>
         </a>
-        <a
-          #rlaMant="routerLinkActive"
-          *ngIf="esAdmin"
-          routerLink="/mantenimiento/ingresar"
-          routerLinkActive="text-orange-700"
-          class="relative flex items-center gap-2 px-4 py-2 rounded-full text-gray-700 hover:text-orange-700 hover:bg-orange-50 transition-all duration-200 font-medium border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300">
-          <mat-icon class="text-lg text-orange-600">build</mat-icon>
-          <span>Mantenimiento</span>
-          <span class="pointer-events-none absolute left-4 right-4 -bottom-1 h-0.5 bg-orange-500/80 rounded-full transition-opacity duration-200" [class.opacity-100]="rlaMant.isActive" [class.opacity-0]="!rlaMant.isActive"></span>
-        </a>
+        
       </nav>
 
       <!-- Área de usuario -->
@@ -142,6 +143,14 @@
           <span class="font-medium">Administración</span>
         </a>
         <a
+          *ngIf="esAdmin || esMozo"
+          routerLink="/mapa-meses/estado"
+          routerLinkActive="bg-orange-50"
+          class="flex items-center space-x-3 w-full text-left text-gray-800 hover:bg-gray-50 rounded-xl px-3 py-3 transition-colors duration-200 border border-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300">
+          <mat-icon class="text-orange-600">monitor_heart</mat-icon>
+          <span class="font-medium">Estado</span>
+        </a>
+        <a
           *ngIf="esAdmin"
           routerLink="/mapa-meses/salon"
           routerLinkActive="bg-orange-50"
@@ -150,14 +159,7 @@
           <span class="font-medium">Salón</span>
           <span class="ml-auto text-[10px] uppercase tracking-wide bg-orange-200/70 text-orange-800 px-2 py-0.5 rounded-full">Editar</span>
         </a>
-        <a
-          *ngIf="esAdmin"
-          routerLink="/mantenimiento/ingresar"
-          routerLinkActive="bg-orange-50"
-          class="flex items-center space-x-3 w-full text-left text-gray-800 hover:bg-gray-50 rounded-xl px-3 py-3 transition-colors duration-200 border border-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300">
-          <mat-icon class="text-orange-600">build</mat-icon>
-          <span class="font-medium">Mantenimiento</span>
-        </a>
+        
       </div>
     </div>
   </div>

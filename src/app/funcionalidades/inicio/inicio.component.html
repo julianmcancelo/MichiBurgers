@@ -4,9 +4,9 @@
   <!-- Hero Section dividido -->
   <section class="relative">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-      <div class="grid grid-cols-1 md:grid-cols-10 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 lg:gap-6">
         <!-- Panel naranja a la izquierda -->
-        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 text-white p-5 sm:p-6 lg:p-8 md:col-span-3">
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 text-white p-5 sm:p-6 lg:p-8 md:col-span-5 lg:col-span-4 ring-1 ring-white/10 shadow-lg">
           <!-- Decorativos ocultos en mobile -->
           <div class="absolute inset-0 pointer-events-none">
             <div class="hidden sm:block absolute -top-28 -right-28 w-64 h-64 bg-white/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
@@ -14,22 +14,22 @@
           </div>
 
           <div class="relative text-center md:text-left">
-            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-3 sm:mb-4 mx-auto md:mx-0 shadow">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-3 sm:mb-4 mx-auto md:mx-0 shadow ring-1 ring-white/25">
               <img [src]="logoUrl" alt="MichiBurgers" class="w-8 h-8 object-contain" />
             </div>
-            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight mb-2">MichiBurgers</h1>
-            <p class="text-white/90 text-sm sm:text-base mb-4">Gestión ágil y moderna para tu restaurante</p>
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-2">MichiBurgers</h1>
+            <p class="text-white/90 text-sm sm:text-base lg:text-lg mb-4">Gestión ágil y moderna para tu restaurante</p>
 
             <!-- Bienvenida / CTA -->
-            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4 inline-block border border-white/20 shadow">
+            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4 inline-block md:inline-block w-full sm:w-auto border border-white/20 shadow">
               <ng-container *ngIf="usuario$ | async as u; else visitante">
                 <div class="flex items-center space-x-3">
-                  <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                  <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center ring-1 ring-white/25">
                     <mat-icon class="text-white">person</mat-icon>
                   </div>
                   <div>
-                    <p class="text-white font-semibold leading-tight">¡Bienvenido!</p>
-                    <p class="text-orange-100 text-sm">{{ u.nombreCompleto }}</p>
+                    <p class="text-white font-semibold leading-tight text-sm sm:text-base">¡Bienvenido!</p>
+                    <p class="text-orange-100 text-sm sm:text-base">{{ (u.nombreCompleto || '').split(' ')[0] | titlecase }}</p>
                   </div>
                 </div>
                 <div class="mt-3 inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-white/20 text-white border border-white/30">
@@ -44,18 +44,20 @@
                 </div>
               </ng-template>
             </div>
+
+            
           </div>
         </div>
 
         <!-- Panel claro a la derecha: Panel de Control compacto -->
-        <div class="rounded-2xl bg-white/60 p-5 sm:p-6 lg:p-8 border border-orange-100 hidden md:block md:col-span-7">
+        <div class="rounded-2xl bg-white/60 p-5 sm:p-6 lg:p-8 border border-orange-100 hidden md:block md:col-span-7 lg:col-span-8">
           <div class="h-full flex flex-col">
             <div class="flex items-center justify-between mb-4">
-              <h3 class="text-gray-800 font-semibold text-lg">Panel de Control</h3>
-              <span class="text-xs text-gray-500">Accesos rápidos</span>
+              <h3 class="text-gray-800 font-semibold text-base sm:text-lg">Panel de Control</h3>
+              <span class="text-[11px] sm:text-xs text-gray-500">Accesos rápidos</span>
             </div>
 
-            <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
+            <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               <!-- Órdenes -->
               <a routerLink="/comandera" aria-label="Ir a Órdenes" class="group rounded-xl bg-white border border-gray-200/70 p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/30">
                 <div class="flex items-center justify-between">
@@ -127,15 +129,14 @@
               </a>
             </div>
 
-            <!-- Nota (solo mobile) -->
-            <div class="mt-4 text-[11px] text-gray-500 md:hidden">Sugerencia: también podés usar los accesos grandes debajo.</div>
+            
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Grid de funcionalidades -->
+  <!-- Grid de funcionalidades (mobile como fuente única de accesos rápidos) -->
   <section class="md:hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
     <div class="text-center mb-10 sm:mb-16">
       <h2 class="text-4xl font-bold text-gray-900 mb-4">Panel de Control</h2>

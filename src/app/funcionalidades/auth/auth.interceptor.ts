@@ -12,13 +12,6 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
     catchError(err => {
       if (err?.status === 401) {
         const url = cloned.url || '';
-        // Evitar redirección para endpoints de mantenimiento con token maestro
-        const isMaintenance = url.includes('/auth/master-login.php')
-          || url.includes('/config/app.php')
-          || url.includes('/auth/master-change.php');
-        if (isMaintenance) {
-          return throwError(() => err);
-        }
         // token inválido/expirado
         if (typeof window !== 'undefined') {
           localStorage.removeItem('auth_token');

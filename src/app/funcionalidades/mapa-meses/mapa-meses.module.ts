@@ -9,8 +9,8 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -20,12 +20,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { ListaMesesComponent } from './pages/lista-meses/lista-meses.component';
 import { EditarMesComponent } from './pages/editar-mes/editar-mes.component';
 import { MapaSalonComponent } from './pages/mapa-salon/mapa-salon.component';
+import { EstadoMesasComponent } from './pages/estado-mesas/estado-mesas.component';
 
 @NgModule({
   declarations: [
     ListaMesesComponent,
     EditarMesComponent,
-    MapaSalonComponent
+    MapaSalonComponent,
+    EstadoMesasComponent
   ],
   imports: [
     CommonModule,
@@ -48,7 +50,8 @@ import { MapaSalonComponent } from './pages/mapa-salon/mapa-salon.component';
       { path: '', component: ListaMesesComponent },
       { path: 'nuevo', component: EditarMesComponent },
       { path: 'editar/:id', component: EditarMesComponent },
-      { path: 'salon', component: MapaSalonComponent }
+      { path: 'salon', component: MapaSalonComponent },
+      { path: 'estado', component: EstadoMesasComponent }
     ])
   ]
 })

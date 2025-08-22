@@ -51,6 +51,11 @@ export class MapaSalonApiService {
     return this.http.post<{ ok: boolean }>(`${BASE_URL}/mesas/pagar.php`, { pedidoId, metodo, monto, token });
   }
 
+  liberarMesa(area: 'interior'|'exterior', mesaId: string): Observable<{ ok: boolean }>{
+    const token = typeof window !== 'undefined' ? (localStorage.getItem('auth_token') || '') : '';
+    return this.http.post<{ ok: boolean }>(`${BASE_URL}/mesas/liberar.php`, { area, mesaId, token });
+  }
+
   listarProductos(): Observable<{ categorias: any[]; productos: any[] }>{
     return this.http.get<{ categorias: any[]; productos: any[] }>(`${BASE_URL}/productos/listar.php`);
   }
