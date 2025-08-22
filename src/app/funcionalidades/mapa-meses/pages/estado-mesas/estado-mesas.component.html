@@ -44,7 +44,7 @@
           </button>
         </ng-container>
         <ng-template #accionesOcupada>
-          <button mat-stroked-button color="primary" class="!h-9 !rounded-lg flex-1" (click)="irAPedido(m)">
+          <button mat-stroked-button color="primary" class="!h-9 !rounded-lg flex-1" (click)="verPedido(m)">
             <mat-icon>visibility</mat-icon>
             <span class="ml-1">Ver</span>
           </button>
@@ -61,3 +61,11 @@
     </div>
   </div>
 </div>
+
+<!-- Diálogo: Pedido embebido -->
+<ng-template #dlgPedido>
+  <div class="p-0 max-w-[1024px] w-[100vw] sm:w-[86vw] h-[100svh] sm:h-auto overflow-hidden">
+    <app-pedido [pedidoIdInput]="pedidoIdDialog || undefined"></app-pedido>
+  </div>
+  
+</ng-template>

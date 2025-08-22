@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, Input, OnChanges, OnInit, SimpleChanges, signal, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -43,6 +43,10 @@ import { MapaSalonApiService } from '../../../mapa-meses/services/mapa-salon-api
         <div class="text-right text-sm">
           <div class="opacity-90">Total</div>
           <div class="font-extrabold tracking-tight">$ {{ pedido()?.pedido?.total | number:'1.2-2' }}</div>
+          <div *ngIf="isPagado()" class="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-emerald-100 text-emerald-800 ring-1 ring-emerald-200">
+            <mat-icon class="!text-base">verified</mat-icon>
+            Pagado
+          </div>
         </div>
       </div>
     </div>
@@ -93,14 +97,14 @@ import { MapaSalonApiService } from '../../../mapa-meses/services/mapa-salon-api
               <mat-form-field appearance="fill" style="width:100%" class="sm:col-span-2">
                 <mat-label>Buscar</mat-label>
                 <mat-icon matPrefix class="text-orange-500">search</mat-icon>
-                <input matInput type="text" [(ngModel)]="busqueda" placeholder="Nombre del producto..." aria-label="Buscar producto" />
+                <input matInput type="text" [(ngModel)]="busqueda" placeholder="Nombre del producto..." aria-label="Buscar producto" [disabled]="isPagado()"/>
                 <mat-hint>Podés escribir parte del nombre</mat-hint>
               </mat-form-field>
 
               <mat-form-field appearance="fill" style="width:100%">
                 <mat-label>Categoría</mat-label>
                 <mat-icon matPrefix class="text-orange-500">category</mat-icon>
-                <mat-select [(ngModel)]="catSelId" aria-label="Seleccionar categoría" panelClass="pedido-select-panel">
+                <mat-select [(ngModel)]="catSelId" aria-label="Seleccionar categoría" panelClass="pedido-select-panel" [disabled]="isPagado()">
                   <mat-option [value]="'all'">Todas</mat-option>
                   <mat-option *ngFor="let c of categorias()" [value]="c.id">{{ c.nombre }}</mat-option>
                 </mat-select>
@@ -110,7 +114,7 @@ import { MapaSalonApiService } from '../../../mapa-meses/services/mapa-salon-api
               <mat-form-field appearance="fill" style="width:100%" class="sm:col-span-2">
                 <mat-label>Producto</mat-label>
                 <mat-icon matPrefix class="text-orange-500">restaurant_menu</mat-icon>
-                <mat-select [(ngModel)]="productoSelId" aria-label="Seleccionar producto" panelClass="pedido-select-panel">
+                <mat-select [(ngModel)]="productoSelId" aria-label="Seleccionar producto" panelClass="pedido-select-panel" [disabled]="isPagado()">
                   <mat-option *ngFor="let p of productosFiltrados()" [value]="p.id">{{ p.nombre }}</mat-option>
                 </mat-select>
                 <mat-hint>Elegí un producto de la lista</mat-hint>
@@ -119,12 +123,12 @@ import { MapaSalonApiService } from '../../../mapa-meses/services/mapa-salon-api
               <mat-form-field appearance="fill" style="width:100%">
                 <mat-label>Cantidad</mat-label>
                 <mat-icon matPrefix class="text-orange-500">counter_1</mat-icon>
-                <input matInput type="number" min="1" [(ngModel)]="cantidad" aria-label="Cantidad" />
+                <input matInput type="number" min="1" [(ngModel)]="cantidad" aria-label="Cantidad" [disabled]="isPagado()"/>
                 <mat-hint>Valor mínimo 1</mat-hint>
               </mat-form-field>
               </div>
 
-              <button mat-raised-button color="primary" class="w-full !h-12 !font-semibold shadow-md !rounded-xl" (click)="agregar()" [disabled]="!productoSelId">
+              <button mat-raised-button color="primary" class="w-full !h-12 !font-semibold shadow-md !rounded-xl" (click)="agregar()" [disabled]="!productoSelId || isPagado()">
                 <mat-icon>add_circle</mat-icon>&nbsp;Agregar al pedido
               </button>
             </div>
@@ -152,7 +156,7 @@ import { MapaSalonApiService } from '../../../mapa-meses/services/mapa-salon-api
     </div>
 
     <!-- Bottom actions -->
-    <div class="sticky bottom-0 z-40 bg-white/90 backdrop-blur-xl border-t shadow-inner">
+    <div class="sticky bottom-0 z-40 bg-white/90 backdrop-blur-xl border-t shadow-inner" *ngIf="!isPagado()">
       <div class="px-3 py-3 grid grid-cols-3 gap-2 md:max-w-3xl md:mx-auto">
         <button mat-stroked-button color="accent" class="!h-12 !font-semibold" (click)="confirmarPago('efectivo')"><mat-icon>attach_money</mat-icon>&nbsp;Efectivo</button>
         <button mat-stroked-button color="accent" class="!h-12 !font-semibold" (click)="confirmarPago('tarjeta')"><mat-icon>credit_card</mat-icon>&nbsp;Tarjeta</button>
@@ -255,7 +259,7 @@ import { MapaSalonApiService } from '../../../mapa-meses/services/mapa-salon-api
     }
   `]
 })
-export class PedidoComponent implements OnInit {
+export class PedidoComponent implements OnInit, OnChanges {
   @ViewChild('dlgConfirmCobro') dlgConfirmCobro!: TemplateRef<any>;
   @ViewChild('dlgPostPago') dlgPostPago!: TemplateRef<any>;
   @ViewChild('dlgFactura') dlgFactura!: TemplateRef<any>;
@@ -270,6 +274,8 @@ export class PedidoComponent implements OnInit {
   categorias = signal<any[]>([]);
   productos = signal<any[]>([]);
 
+  @Input() pedidoIdInput?: number;
+
   mozoNombre = '';
   mozoRol = '';
   private facturaMostrada = false;
@@ -280,8 +286,13 @@ export class PedidoComponent implements OnInit {
   catSelId: number | 'all' = 'all';
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id')) || 0;
-    if (id > 0) this.cargar(id);
+    // Cargar por ruta si existe
+    const idRuta = Number(this.route.snapshot.paramMap.get('id')) || 0;
+    if (idRuta > 0) this.cargar(idRuta);
+    // Cargar por input si viene embebido
+    if (!idRuta && this.pedidoIdInput && this.pedidoIdInput > 0) {
+      this.cargar(this.pedidoIdInput);
+    }
     // Cargar datos de usuario (mozo)
     try {
       const raw = typeof window !== 'undefined' ? localStorage.getItem('auth_user') : null;
@@ -297,6 +308,12 @@ export class PedidoComponent implements OnInit {
         this.productos.set(res.productos || []);
       },
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['pedidoIdInput'] && this.pedidoIdInput && this.pedidoIdInput > 0) {
+      this.cargar(this.pedidoIdInput);
+    }
   }
 
   productosPorCat(catId: number) {
@@ -321,14 +338,14 @@ export class PedidoComponent implements OnInit {
 
   agregar() {
     const ped = this.pedido();
-    if (!ped || !this.productoSelId) return;
+    if (!ped || !this.productoSelId || this.isPagado()) return;
     this.api.agregarItem(ped.pedido.id, this.productoSelId, this.cantidad || 1).subscribe({
       next: () => this.cargar(ped.pedido.id)
     });
   }
 
   confirmarPago(metodo: 'efectivo'|'tarjeta'|'qr'|'mixto') {
-    // Si viene desde el resumen, cerrar primero
+    // Si viene desde otro diálogo (ej. factura), cerrarlo primero
     this.dialogRef?.close();
     const ped = this.pedido();
     if (!ped) return;
@@ -342,27 +359,12 @@ export class PedidoComponent implements OnInit {
     this.dialogRef = refConfirm;
     refConfirm.afterClosed().subscribe((cobrado) => {
       this.dialogRef = null;
-      if (cobrado !== true) {
-        return; // cancelado por el mozo
-      }
-      // 2) Registrar el pago
+      if (cobrado !== true) return; // cancelado por el mozo
+      // 2) Registrar el pago (solo marca pagado, no libera mesa)
       this.api.pagarPedido(ped.pedido.id, metodo).subscribe({
         next: () => {
-          // 3) Preguntar flujo de mesa
-          const ref = this.dialog.open<'liberar'|'seguir'>(this.dlgPostPago, {
-            panelClass: 'dialog-elevada',
-            autoFocus: false,
-            restoreFocus: true
-          });
-          this.dialogRef = ref;
-          ref.afterClosed().subscribe((accion) => {
-            this.dialogRef = null;
-            if (accion === 'liberar') {
-              this.router.navigate(['/mapa-meses/salon']);
-            } else {
-              this.cargar(ped.pedido.id);
-            }
-          });
+          // 3) Refrescar el pedido para reflejar estado 'pagado'
+          this.cargar(ped.pedido.id);
         }
       });
     });
@@ -384,6 +386,10 @@ export class PedidoComponent implements OnInit {
 
   confirmarPagoDesdeFactura(metodo: 'efectivo'|'tarjeta'|'qr') {
     this.confirmarPago(metodo);
+  }
+
+  isPagado(): boolean {
+    return (this.pedido()?.pedido?.estado || '') === 'pagado';
   }
 
   volver() { this.router.navigate(['/comandera/pedidos']); }

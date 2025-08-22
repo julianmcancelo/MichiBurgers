@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -21,6 +22,7 @@ import { ListaMesesComponent } from './pages/lista-meses/lista-meses.component';
 import { EditarMesComponent } from './pages/editar-mes/editar-mes.component';
 import { MapaSalonComponent } from './pages/mapa-salon/mapa-salon.component';
 import { EstadoMesasComponent } from './pages/estado-mesas/estado-mesas.component';
+import { PedidoComponent } from '../comandera/components/pedido/pedido.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +44,7 @@ import { EstadoMesasComponent } from './pages/estado-mesas/estado-mesas.componen
     MatButtonModule,
     MatIconModule,
     MatCardModule,
+    MatDialogModule,
     DragDropModule,
     MatCheckboxModule,
     MatButtonToggleModule,
@@ -52,7 +55,9 @@ import { EstadoMesasComponent } from './pages/estado-mesas/estado-mesas.componen
       { path: 'editar/:id', component: EditarMesComponent },
       { path: 'salon', component: MapaSalonComponent },
       { path: 'estado', component: EstadoMesasComponent }
-    ])
+    ]),
+    // Standalone component used inside templates
+    PedidoComponent
   ]
 })
 export class MapaMesesModule { }

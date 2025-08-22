@@ -1,7 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { interval, Subject, switchMap, takeUntil, startWith } from 'rxjs';
 import { MapaSalonApiService } from '../../services/mapa-salon-api.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 interface EstadoMesaItem {
   mesaId: string;
@@ -20,10 +21,14 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
   filtro: 'todas'|'libres'|'ocupadas' = 'todas';
   listado: EstadoMesaItem[] = [];
   cargando = false;
+  pedidoIdDialog: number | null = null;
+  dialogRef: MatDialogRef<any> | null = null;
+
+  @ViewChild('dlgPedido') dlgPedido!: TemplateRef<any>;
 
   private destroy$ = new Subject<void>();
 
-  constructor(private api: MapaSalonApiService, private router: Router) {}
+  constructor(private api: MapaSalonApiService, private router: Router, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     interval(5000)
@@ -86,6 +91,23 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
     }
   }
 
+  verPedido(m: EstadoMesaItem) {
+    if (!m.pedidoId) return;
+    this.pedidoIdDialog = m.pedidoId;
+    const ref = this.dialog.open(this.dlgPedido, {
+      panelClass: ['dialog-elevada','dialog-movil'],
+      autoFocus: false,
+      restoreFocus: true,
+      maxWidth: '1024px'
+    });
+    this.dialogRef = ref;
+    ref.afterClosed().subscribe(() => {
+      this.dialogRef = null;
+      this.pedidoIdDialog = null;
+      this.refrescarUnaVez();
+    });
+  }
+
   actualizarAhora() { this.refrescarUnaVez(); }
 
   tomarPedido(m: EstadoMesaItem) {
@@ -95,7 +117,20 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.cargando = false;
         if (res?.ok && res?.pedidoId) {
-          this.router.navigate(['/comandera/pedido', res.pedidoId]);
+          // Abrir modal con el pedido recién creado
+          this.pedidoIdDialog = res.pedidoId;
+          const ref = this.dialog.open(this.dlgPedido, {
+            panelClass: ['dialog-elevada','dialog-movil'],
+            autoFocus: false,
+            restoreFocus: true,
+            maxWidth: '1024px'
+          });
+          this.dialogRef = ref;
+          ref.afterClosed().subscribe(() => {
+            this.dialogRef = null;
+            this.pedidoIdDialog = null;
+            this.refrescarUnaVez();
+          });
         } else {
           this.refrescarUnaVez();
         }

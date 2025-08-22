@@ -53,13 +53,12 @@ try {
     $pg->execute([':pid' => $pedidoId, ':met' => $metodo, ':mon' => $monto]);
   }
 
-  // Cerrar pedido
+  // Cerrar pedido (marcar como pagado)
   $c = $pdo->prepare("UPDATE pedidos SET estado='pagado', closed_at=CURRENT_TIMESTAMP WHERE id = :id");
   $c->execute([':id' => $pedidoId]);
 
-  // Liberar mesa
-  $m = $pdo->prepare("UPDATE mesas_estado SET estado='libre', pedido_id=NULL WHERE area=:area AND mesa_id=:mesa");
-  $m->execute([':area' => $pedido['area'], ':mesa' => $pedido['mesa_id']]);
+  // Importante: NO liberar la mesa automáticamente.
+  // El mozo decidirá cuándo liberar desde 'liberar.php'.
 
   $pdo->commit();
   echo json_encode(['ok' => true]);
