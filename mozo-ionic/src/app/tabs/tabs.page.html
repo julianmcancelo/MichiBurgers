@@ -7,7 +7,12 @@
       </div>
     </ion-title>
     <ion-buttons slot="end">
-      <ion-button *ngIf="isAdmin" fill="clear" routerLink="/admin">
+      <ion-button *ngIf="isKitchen" fill="clear" (click)="goCocina()" routerDirection="forward">
+        <ion-icon slot="start" name="flame-outline"></ion-icon>
+        Cocina
+        <ion-badge *ngIf="pendingCount > 0" color="danger" style="margin-left:6px;">{{ pendingCount }}</ion-badge>
+      </ion-button>
+      <ion-button *ngIf="isAdmin" fill="clear" (click)="goAdmin()" routerDirection="forward">
         <ion-icon slot="start" name="settings-outline"></ion-icon>
         Admin
       </ion-button>
