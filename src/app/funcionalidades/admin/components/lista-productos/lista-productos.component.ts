@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { ProductosService, ProductoDTO } from '../../services/productos.service';
+import { MatDialog } from '@angular/material/dialog';
+import { NuevoProductoDialogComponent } from '../nuevo-producto-dialog/nuevo-producto-dialog.component';
 
-export interface Producto {
-  id: number;
-  nombre: string;
-  precio: number;
-}
+export interface Producto extends ProductoDTO {}
 
 @Component({
   selector: 'app-lista-productos',
@@ -14,27 +13,60 @@ export interface Producto {
   standalone: false
 })
 export class ListaProductosComponent {
-  columnasTabla: string[] = ['nombre', 'precio', 'acciones'];
-  productos: Producto[] = [
-    { id: 1, nombre: 'Hamburguesa Clásica', precio: 8500 },
-    { id: 2, nombre: 'Hamburguesa BBQ', precio: 9500 },
-    { id: 3, nombre: 'Hamburguesa Vegetariana', precio: 8000 },
-    { id: 4, nombre: 'Papas Fritas', precio: 3500 },
-    { id: 5, nombre: 'Nuggets de Pollo', precio: 4500 }
-  ];
+  columnasTabla: string[] = ['foto', 'nombre', 'precio', 'acciones'];
+  productos: Producto[] = [];
+  loading = true;
+  error: string | null = null;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private productosSvc: ProductosService, private dialog: MatDialog) {
+    this.cargar();
+  }
+
+  cargar(): void {
+    this.loading = true;
+    this.error = null;
+    this.productosSvc.listar().subscribe({
+      next: (resp) => {
+        this.productos = resp.productos.map(p => ({ ...p }));
+        this.loading = false;
+      },
+      error: () => {
+        this.error = 'No se pudieron cargar los productos';
+        this.loading = false;
+      }
+    });
+  }
 
   editarProducto(id: number): void {
     this.router.navigate(['/admin/editar', id]);
   }
 
   eliminarProducto(id: number): void {
-    this.productos = this.productos.filter(producto => producto.id !== id);
-    console.log(`Producto con ID ${id} eliminado`);
+    this.productosSvc.eliminar(id).subscribe({
+      next: () => {
+        this.productos = this.productos.filter(producto => producto.id !== id);
+      },
+      error: () => {
+        this.error = 'No se pudo eliminar el producto';
+      }
+    });
   }
 
   nuevoProducto(): void {
-    this.router.navigate(['/admin/nuevo']);
+    const ref = this.dialog.open(NuevoProductoDialogComponent, {
+      width: '520px',
+      panelClass: 'tight-dialog',
+      disableClose: true
+    });
+    ref.afterClosed().subscribe(res => {
+      if (res?.ok) this.cargar();
+    });
+  }
+
+  onImgError(ev: Event): void {
+    const img = ev.target as HTMLImageElement | null;
+    if (img && img.src !== '/favicon.ico') {
+      img.src = '/favicon.ico';
+    }
   }
 }

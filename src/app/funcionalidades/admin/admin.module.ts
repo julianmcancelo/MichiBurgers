@@ -9,6 +9,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { RouterModule } from '@angular/router';
 import { authGuard } from '../auth/auth.guard';
 import { HttpClientModule } from '@angular/common/http';
@@ -16,6 +18,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ListaProductosComponent } from './components/lista-productos/lista-productos.component';
 import { FormularioProductoComponent } from './components/formulario-producto/formulario-producto.component';
 import { RegistroUsuarioComponent } from './components/registro-usuario/registro-usuario.component';
+import { NuevoProductoDialogComponent } from './components/nuevo-producto-dialog/nuevo-producto-dialog.component';
 
 @NgModule({
   declarations: [
@@ -33,8 +36,11 @@ import { RegistroUsuarioComponent } from './components/registro-usuario/registro
     MatInputModule,
     MatSelectModule,
     MatSnackBarModule,
+    MatDialogModule,
+    MatCheckboxModule,
     HttpClientModule,
     RegistroUsuarioComponent,
+    NuevoProductoDialogComponent,
     RouterModule.forChild([
       { path: '', component: ListaProductosComponent, canActivate: [authGuard], data: { roles: ['admin'] } },
       { path: 'nuevo', component: FormularioProductoComponent, canActivate: [authGuard], data: { roles: ['admin'] } },
