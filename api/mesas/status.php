@@ -34,13 +34,35 @@ try {
   $q = 'SELECT mesa_id, estado, pedido_id FROM mesas_estado WHERE area = :area';
   $st2 = db()->prepare($q);
   $st2->execute([':area' => $area]);
+  $pedidoIds = [];
   while ($r = $st2->fetch()) {
     $mid = $r['mesa_id'];
     if (!isset($mesas[$mid])) {
       $mesas[$mid] = ['mesaId' => $mid, 'estado' => 'libre', 'pedidoId' => null];
     }
     $mesas[$mid]['estado'] = $r['estado'];
-    $mesas[$mid]['pedidoId'] = $r['pedido_id'] ? (int)$r['pedido_id'] : null;
+    $pid = $r['pedido_id'] ? (int)$r['pedido_id'] : null;
+    $mesas[$mid]['pedidoId'] = $pid;
+    if ($pid) { $pedidoIds[$pid] = true; }
+  }
+
+  // Cargar estado de pedidos en lote para las mesas ocupadas
+  if (!empty($pedidoIds)) {
+    $ids = array_keys($pedidoIds);
+    $in = implode(',', array_fill(0, count($ids), '?'));
+    $st3 = db()->prepare("SELECT id, estado FROM pedidos WHERE id IN ($in)");
+    $st3->execute($ids);
+    $map = [];
+    while ($p = $st3->fetch()) {
+      $map[(int)$p['id']] = (string)$p['estado'];
+    }
+    foreach ($mesas as &$m) {
+      if (!empty($m['pedidoId']) && isset($map[(int)$m['pedidoId']])) {
+        $m['pedidoEstado'] = $map[(int)$m['pedidoId']];
+        $m['pagado'] = ($m['pedidoEstado'] === 'pagado');
+      }
+    }
+    unset($m);
   }
 
   echo json_encode(['area' => $area, 'mesas' => array_values($mesas)]);

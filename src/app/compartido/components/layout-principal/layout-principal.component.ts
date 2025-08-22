@@ -20,6 +20,7 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
   hasToken = false;
   esAdmin = false;
   esMozo = false;
+  rolActual: 'admin'|'mozo'|'cocina'|'caja'|'' = '';
   mobileMenuOpen = false;
   private sub?: Subscription;
   private subRouter?: Subscription;
@@ -41,6 +42,7 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
           this.nombreCompleto = u?.nombreCompleto || '';
           this.esAdmin = u?.rol === 'admin';
           this.esMozo = u?.rol === 'mozo';
+          this.rolActual = (u?.rol as any) || '';
         }
       }
     } catch {}
@@ -55,6 +57,7 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
       this.hasToken = true;
       this.esAdmin = u0.rol === 'admin';
       this.esMozo = u0.rol === 'mozo';
+      this.rolActual = (u0.rol as any) || '';
     } else if (this.isBrowser && this.auth.token) {
       // Si hay token pero no usuario en memoria, recuperar desde la API
       this.auth.me().subscribe({
@@ -71,11 +74,13 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
         this.nombreCompleto = u.nombreCompleto || '';
         this.esAdmin = u.rol === 'admin';
         this.esMozo = u.rol === 'mozo';
+        this.rolActual = (u.rol as any) || '';
       } else {
         this.loggedIn = false;
         this.nombreCompleto = '';
         this.esAdmin = false;
         this.esMozo = false;
+        this.rolActual = '';
       }
     });
 
