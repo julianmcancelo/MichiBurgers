@@ -172,11 +172,37 @@
 </header>
 
 <!-- Contenido principal -->
-<main class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50">
+<main class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50 pb-16 md:pb-0">
   <div class="animate-fade-in">
     <router-outlet></router-outlet>
   </div>
 </main>
+
+<!-- Bottom navigation (móvil) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-t border-gray-200 safe-bottom">
+  <div class="max-w-7xl mx-auto grid grid-cols-4">
+    <a routerLink="/" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="text-orange-700"
+       class="flex flex-col items-center justify-center py-2 text-[11px] text-gray-700 hover:text-orange-700">
+      <mat-icon class="!text-base text-orange-600">space_dashboard</mat-icon>
+      <span>Panel</span>
+    </a>
+    <a *ngIf="esAdmin || esMozo" routerLink="/mapa-meses/estado" routerLinkActive="text-orange-700"
+       class="flex flex-col items-center justify-center py-2 text-[11px] text-gray-700 hover:text-orange-700">
+      <mat-icon class="!text-base text-orange-600">monitor_heart</mat-icon>
+      <span>Estado</span>
+    </a>
+    <a *ngIf="esAdmin" routerLink="/mapa-meses/salon" routerLinkActive="text-orange-700"
+       class="flex flex-col items-center justify-center py-2 text-[11px] text-gray-700 hover:text-orange-700">
+      <mat-icon class="!text-base text-orange-600">map</mat-icon>
+      <span>Salón</span>
+    </a>
+    <a routerLink="/admin" routerLinkActive="text-orange-700"
+       class="flex flex-col items-center justify-center py-2 text-[11px] text-gray-700 hover:text-orange-700">
+      <mat-icon class="!text-base text-orange-600">admin_panel_settings</mat-icon>
+      <span>Admin</span>
+    </a>
+  </div>
+</nav>
 
 <!-- Footer académico -->
 <footer class="bg-gray-100 border-t">
