@@ -1,4 +1,4 @@
-# 🍔 Burgersaurio - Sistema de Gestión de Restaurante
+# 🍔 MichiBurgers - Sistema de Gestión de Restaurante
 
 **Proyecto Final de Examen - Desarrollo Web con Angular**
 
