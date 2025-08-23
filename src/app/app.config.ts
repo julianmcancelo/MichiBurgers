@@ -1,4 +1,8 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  provideBrowserGlobalErrorListeners,
+  provideZonelessChangeDetection,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
@@ -11,10 +15,10 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-    provideRouter(routes), 
+    provideRouter(routes),
     provideClientHydration(),
     // Deshabilitar animaciones para evitar dependencia de @angular/animations en deploys SSR
     provideNoopAnimations(),
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor]))
-  ]
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
+  ],
 };

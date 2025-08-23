@@ -6,7 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
   selector: 'app-formulario-producto',
   templateUrl: './formulario-producto.component.html',
   styleUrls: ['./formulario-producto.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class FormularioProductoComponent implements OnInit {
   formularioProducto: FormGroup;
@@ -16,11 +16,11 @@ export class FormularioProductoComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {
     this.formularioProducto = this.fb.group({
       nombre: ['', [Validators.required]],
-      precio: ['', [Validators.required, Validators.min(0.01)]]
+      precio: ['', [Validators.required, Validators.min(0.01)]],
     });
   }
 
@@ -37,14 +37,14 @@ export class FormularioProductoComponent implements OnInit {
     const productosEjemplo = [
       { id: 1, nombre: 'Hamburguesa Clásica', precio: 8500 },
       { id: 2, nombre: 'Hamburguesa BBQ', precio: 9500 },
-      { id: 3, nombre: 'Hamburguesa Vegetariana', precio: 8000 }
+      { id: 3, nombre: 'Hamburguesa Vegetariana', precio: 8000 },
     ];
 
-    const producto = productosEjemplo.find(p => p.id === +id);
+    const producto = productosEjemplo.find((p) => p.id === +id);
     if (producto) {
       this.formularioProducto.patchValue({
         nombre: producto.nombre,
-        precio: producto.precio
+        precio: producto.precio,
       });
     }
   }
@@ -52,13 +52,13 @@ export class FormularioProductoComponent implements OnInit {
   guardarProducto(): void {
     if (this.formularioProducto.valid) {
       const datosProducto = this.formularioProducto.value;
-      
+
       if (this.esEdicion) {
         console.log('Editando producto:', { id: this.idProducto, ...datosProducto });
       } else {
         console.log('Creando nuevo producto:', datosProducto);
       }
-      
+
       this.router.navigate(['/admin']);
     } else {
       console.log('Formulario inválido');

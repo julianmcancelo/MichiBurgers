@@ -28,7 +28,7 @@ const masterGuard = () => {
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'ingresar' },
   { path: 'ingresar', component: LoginMasterComponent },
-  { path: 'panel', component: PanelMantenimientoComponent, canActivate: [masterGuard] }
+  { path: 'panel', component: PanelMantenimientoComponent, canActivate: [masterGuard] },
 ];
 
 @NgModule({
@@ -43,7 +43,7 @@ const routes: Routes = [
     MatIconModule,
     LoginMasterComponent,
     PanelMantenimientoComponent,
-    RouterModule.forChild(routes)
-  ]
+    RouterModule.forChild(routes),
+  ],
 })
 export class MantenimientoModule {}

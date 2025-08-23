@@ -16,11 +16,7 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
 import { authGuard } from './auth.guard';
 
 @NgModule({
-  declarations: [
-    LoginComponent,
-    ChangePasswordComponent,
-    ForgotPasswordComponent
-  ],
+  declarations: [LoginComponent, ChangePasswordComponent, ForgotPasswordComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -35,8 +31,8 @@ import { authGuard } from './auth.guard';
       { path: 'login', component: LoginComponent },
       { path: 'cambiar-clave', component: ChangePasswordComponent, canActivate: [authGuard] },
       { path: 'recuperar', component: ForgotPasswordComponent },
-      { path: '', redirectTo: 'login', pathMatch: 'full' }
-    ])
-  ]
+      { path: '', redirectTo: 'login', pathMatch: 'full' },
+    ]),
+  ],
 })
-export class AuthModule { }
+export class AuthModule {}

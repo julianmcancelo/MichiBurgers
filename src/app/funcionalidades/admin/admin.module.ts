@@ -22,11 +22,7 @@ import { NuevoProductoDialogComponent } from './components/nuevo-producto-dialog
 import { QrGeneratorComponent } from './components/qr-generator/qr-generator.component';
 
 @NgModule({
-  declarations: [
-    ListaProductosComponent,
-    FormularioProductoComponent,
-    QrGeneratorComponent
-  ],
+  declarations: [ListaProductosComponent, FormularioProductoComponent, QrGeneratorComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -44,12 +40,37 @@ import { QrGeneratorComponent } from './components/qr-generator/qr-generator.com
     RegistroUsuarioComponent,
     NuevoProductoDialogComponent,
     RouterModule.forChild([
-      { path: '', component: ListaProductosComponent, canActivate: [authGuard], data: { roles: ['admin'] } },
-      { path: 'nuevo', component: FormularioProductoComponent, canActivate: [authGuard], data: { roles: ['admin'] } },
-      { path: 'editar/:id', component: FormularioProductoComponent, canActivate: [authGuard], data: { roles: ['admin'] } },
-      { path: 'usuarios/registrar', component: RegistroUsuarioComponent, canActivate: [authGuard], data: { roles: ['admin'] } },
-      { path: 'qr', component: QrGeneratorComponent, canActivate: [authGuard], data: { roles: ['admin'] } }
-    ])
-  ]
+      {
+        path: '',
+        component: ListaProductosComponent,
+        canActivate: [authGuard],
+        data: { roles: ['admin'] },
+      },
+      {
+        path: 'nuevo',
+        component: FormularioProductoComponent,
+        canActivate: [authGuard],
+        data: { roles: ['admin'] },
+      },
+      {
+        path: 'editar/:id',
+        component: FormularioProductoComponent,
+        canActivate: [authGuard],
+        data: { roles: ['admin'] },
+      },
+      {
+        path: 'usuarios/registrar',
+        component: RegistroUsuarioComponent,
+        canActivate: [authGuard],
+        data: { roles: ['admin'] },
+      },
+      {
+        path: 'qr',
+        component: QrGeneratorComponent,
+        canActivate: [authGuard],
+        data: { roles: ['admin'] },
+      },
+    ]),
+  ],
 })
-export class AdminModule { }
+export class AdminModule {}

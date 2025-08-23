@@ -34,7 +34,12 @@
       <div><strong>Firma:</strong> {{ resultado?.sig }}</div>
       <div class="url-row">
         <strong>Path/URL:</strong>
-        <a *ngIf="resultado?.url; else onlyPath" [href]="resultado?.url!" target="_blank" rel="noopener">
+        <a
+          *ngIf="resultado?.url; else onlyPath"
+          [href]="resultado?.url!"
+          target="_blank"
+          rel="noopener"
+        >
           {{ resultado?.url }}
         </a>
         <ng-template #onlyPath>

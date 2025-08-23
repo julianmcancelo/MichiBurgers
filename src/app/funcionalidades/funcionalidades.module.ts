@@ -9,10 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { NotFoundComponent } from './not-found/not-found.component';
 
 @NgModule({
-  declarations: [
-    InicioComponent,
-    NotFoundComponent
-  ],
+  declarations: [InicioComponent, NotFoundComponent],
   imports: [
     CommonModule,
     MatButtonModule,
@@ -22,41 +19,41 @@ import { NotFoundComponent } from './not-found/not-found.component';
       {
         path: '',
         component: InicioComponent,
-        canActivate: [authGuard]
+        canActivate: [authGuard],
       },
       {
         path: 'mapa-meses',
-        loadChildren: () => import('./mapa-meses/mapa-meses.module').then(m => m.MapaMesesModule),
+        loadChildren: () => import('./mapa-meses/mapa-meses.module').then((m) => m.MapaMesesModule),
         canActivate: [authGuard],
-        data: { roles: ['admin', 'mozo'] }
+        data: { roles: ['admin', 'mozo'] },
       },
       {
         path: 'auth',
-        loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
+        loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule),
       },
       {
         path: 'admin',
-        loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
+        loadChildren: () => import('./admin/admin.module').then((m) => m.AdminModule),
         canActivate: [authGuard],
-        data: { roles: ['admin'] }
+        data: { roles: ['admin'] },
       },
       {
         path: 'comandera',
-        loadChildren: () => import('./comandera/comandera.module').then(m => m.ComanderaModule),
+        loadChildren: () => import('./comandera/comandera.module').then((m) => m.ComanderaModule),
         canActivate: [authGuard],
-        data: { roles: ['admin', 'mozo', 'caja'] }
+        data: { roles: ['admin', 'mozo', 'caja'] },
       },
       {
         path: 'cocina',
-        loadChildren: () => import('./cocina/cocina.module').then(m => m.CocinaModule),
+        loadChildren: () => import('./cocina/cocina.module').then((m) => m.CocinaModule),
         canActivate: [authGuard],
-        data: { roles: ['admin', 'cocina'] }
+        data: { roles: ['admin', 'cocina'] },
       },
       {
         path: '**',
-        component: NotFoundComponent
-      }
-    ])
-  ]
+        component: NotFoundComponent,
+      },
+    ]),
+  ],
 })
-export class FuncionalidadesModule { }
+export class FuncionalidadesModule {}

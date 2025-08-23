@@ -25,12 +25,7 @@ import { EstadoMesasComponent } from './pages/estado-mesas/estado-mesas.componen
 import { PedidoComponent } from '../comandera/components/pedido/pedido.component';
 
 @NgModule({
-  declarations: [
-    ListaMesesComponent,
-    EditarMesComponent,
-    MapaSalonComponent,
-    EstadoMesasComponent
-  ],
+  declarations: [ListaMesesComponent, EditarMesComponent, MapaSalonComponent, EstadoMesasComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -54,10 +49,10 @@ import { PedidoComponent } from '../comandera/components/pedido/pedido.component
       { path: 'nuevo', component: EditarMesComponent },
       { path: 'editar/:id', component: EditarMesComponent },
       { path: 'salon', component: MapaSalonComponent },
-      { path: 'estado', component: EstadoMesasComponent }
+      { path: 'estado', component: EstadoMesasComponent },
     ]),
     // Standalone component used inside templates
-    PedidoComponent
-  ]
+    PedidoComponent,
+  ],
 })
-export class MapaMesesModule { }
+export class MapaMesesModule {}

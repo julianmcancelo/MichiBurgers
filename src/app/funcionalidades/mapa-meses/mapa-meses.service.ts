@@ -13,9 +13,9 @@ export class MapaMesesService {
       notas: 'Temporada alta',
       items: [
         { dia: 1, nombre: 'Feriado', tipo: 'admin' },
-        { dia: 5, nombre: 'Mantención cocina', tipo: 'cocina' }
-      ]
-    }
+        { dia: 5, nombre: 'Mantención cocina', tipo: 'cocina' },
+      ],
+    },
   ];
 
   private subject = new BehaviorSubject<MapaMes[]>([...this.data]);
@@ -26,7 +26,7 @@ export class MapaMesesService {
   }
 
   obtenerPorId(id: string): MapaMes | undefined {
-    return this.data.find(m => m.id === id);
+    return this.data.find((m) => m.id === id);
   }
 
   crear(mes: MapaMes) {
@@ -35,7 +35,7 @@ export class MapaMesesService {
   }
 
   actualizar(id: string, mes: Partial<MapaMes>) {
-    const idx = this.data.findIndex(m => m.id === id);
+    const idx = this.data.findIndex((m) => m.id === id);
     if (idx >= 0) {
       this.data[idx] = { ...this.data[idx], ...mes } as MapaMes;
       this.subject.next([...this.data]);
@@ -43,7 +43,7 @@ export class MapaMesesService {
   }
 
   eliminar(id: string) {
-    this.data = this.data.filter(m => m.id !== id);
+    this.data = this.data.filter((m) => m.id !== id);
     this.subject.next([...this.data]);
   }
 }

@@ -17,21 +17,24 @@ import { MasterAuthService } from '../../services/master-auth.service';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
   ],
   templateUrl: './panel-mantenimiento.component.html',
-  styleUrls: ['./panel-mantenimiento.component.scss']
+  styleUrls: ['./panel-mantenimiento.component.scss'],
 })
 export class PanelMantenimientoComponent implements OnInit {
   // Formulario de configuración básica (placeholder)
   form!: FormGroup;
 
-  constructor(private fb: FormBuilder, public master: MasterAuthService) {
+  constructor(
+    private fb: FormBuilder,
+    public master: MasterAuthService,
+  ) {
     this.form = this.fb.group({
       nombreEmprendimiento: ['', [Validators.required, Validators.maxLength(80)]],
       colorPrimario: ['#0b57d0'],
       colorSecundario: ['#00a36c'],
-      apiBaseUrl: ['http://localhost:8080']
+      apiBaseUrl: ['http://localhost:8080'],
     });
   }
 
@@ -50,7 +53,7 @@ export class PanelMantenimientoComponent implements OnInit {
       error: () => {
         this.cargando = false;
         this.error = 'No se pudo cargar la configuración';
-      }
+      },
     });
   }
 
@@ -67,7 +70,7 @@ export class PanelMantenimientoComponent implements OnInit {
       },
       error: () => {
         this.error = 'No se pudo guardar la configuración';
-      }
+      },
     });
   }
 }

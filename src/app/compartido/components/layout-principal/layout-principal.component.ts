@@ -6,32 +6,53 @@ import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ChangePasswordComponent } from '../../../funcionalidades/auth/components/change-password/change-password.component';
 
+/**
+ * LayoutPrincipalComponent
+ * 
+ * Contenedor de layout principal (header/nav + outlet de rutas).
+ * - Se sincroniza con `AuthService` para mostrar estado de sesión y rol actual.
+ * - Evita parpadeos SSR utilizando `isPlatformBrowser` y semillas de estado tempranas.
+ * - Controla menú mobile y navegación a login/logout.
+ * - Abre el diálogo de cambio de contraseña.
+ */
+
 @Component({
   selector: 'app-layout-principal',
   templateUrl: './layout-principal.component.html',
   styleUrls: ['./layout-principal.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class LayoutPrincipalComponent implements OnInit, OnDestroy {
-  loggedIn = false;
-  nombreCompleto = '';
-  ready = false; // solo true en browser para evitar flash SSR
-  private isBrowser = false;
-  hasToken = false;
-  esAdmin = false;
-  esMozo = false;
-  rolActual: 'admin'|'mozo'|'cocina'|'caja'|'' = '';
-  mobileMenuOpen = false;
+  // Estado de autenticación y UI
+  loggedIn = false;             // Usuario autenticado
+  nombreCompleto = '';          // Nombre para mostrar en header
+  ready = false;                // true en browser para evitar flash SSR
+  private isBrowser = false;    // Flag de plataforma
+  hasToken = false;             // Hay token almacenado
+  esAdmin = false;              // Conveniencia para toggles de UI
+  esMozo = false;               // Conveniencia para toggles de UI
+  rolActual: 'admin' | 'mozo' | 'cocina' | 'caja' | '' = '';
+  mobileMenuOpen = false;       // Control del menú en móvil
+
+  // Subscripciones a observables (para limpiar en OnDestroy)
   private sub?: Subscription;
   private subRouter?: Subscription;
-  isLoginRoute = false;
-  currentYear: number = new Date().getFullYear();
-  // Logo PNG empaquetado desde src/app/logos
-  logoUrl: string = '/logos/logos.png';
 
-  constructor(@Inject(PLATFORM_ID) platformId: Object, private auth: AuthService, private router: Router, private dialog: MatDialog) {
+  // Ruta actual es login (para ocultar elementos del layout)
+  isLoginRoute = false;
+
+  // Datos de UI
+  currentYear: number = new Date().getFullYear();
+  logoUrl: string = '/logos/logos.png'; // Logo empaquetado desde `src/app/logos`
+
+  constructor(
+    @Inject(PLATFORM_ID) platformId: Object,
+    private auth: AuthService,
+    private router: Router,
+    private dialog: MatDialog,
+  ) {
     this.isBrowser = isPlatformBrowser(platformId);
-    // Semilla sincrónica para evitar parpadeo del botón "Iniciar Sesión" al refrescar
+    // Semilla sincrónica: evita parpadeo del botón "Iniciar Sesión" al refrescar o hidratar
     try {
       if (this.isBrowser) {
         this.hasToken = !!this.auth.token;
@@ -61,12 +82,14 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
     } else if (this.isBrowser && this.auth.token) {
       // Si hay token pero no usuario en memoria, recuperar desde la API
       this.auth.me().subscribe({
-        next: () => { this.hasToken = true; },
-        error: () => {}
+        next: () => {
+          this.hasToken = true;
+        },
+        error: () => {},
       });
     }
 
-    // Mantenerse en sync con AuthService
+    // Mantenerse en sync con AuthService (stream de usuario)
     this.sub = this.auth.usuario$.subscribe((u: any) => {
       this.hasToken = this.isBrowser ? !!this.auth.token : false;
       if (u) {
@@ -90,7 +113,7 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
       this.isLoginRoute = url.startsWith('/auth/login');
     };
     updateLoginFlag();
-    this.subRouter = this.router.events.subscribe(ev => {
+    this.subRouter = this.router.events.subscribe((ev) => {
       if (ev instanceof NavigationEnd) {
         updateLoginFlag();
       }
@@ -106,21 +129,24 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
   }
 
   logout() {
+    // Cierra sesión y redirige a login
     this.auth.logout();
     this.router.navigate(['/auth/login']);
   }
 
   toggleMobileMenu() {
+    // Alterna visibilidad del menú en pantallas pequeñas
     this.mobileMenuOpen = !this.mobileMenuOpen;
   }
 
   openChangePassword(): void {
+    // Abre diálogo de cambio de contraseña en modo centrado y ancho fijo
     this.dialog.open(ChangePasswordComponent, {
       width: '520px',
       maxWidth: '95vw',
       autoFocus: false,
       restoreFocus: true,
-      panelClass: 'dialog-elevada'
+      panelClass: 'dialog-elevada',
     });
   }
 }

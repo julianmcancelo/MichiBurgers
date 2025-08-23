@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
   selector: 'app-lista-meses',
   templateUrl: './lista-meses.component.html',
   styleUrls: ['./lista-meses.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class ListaMesesComponent implements OnInit {
   columnas = ['anio', 'mes', 'titulo', 'acciones'];
@@ -23,7 +23,10 @@ export class ListaMesesComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private srv: MapaMesesService, private router: Router) {}
+  constructor(
+    private srv: MapaMesesService,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.dataSource.data = this.srv.obtenerTodos();
@@ -43,9 +46,16 @@ export class ListaMesesComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
-  crear() { this.router.navigate(['/mapa-meses/nuevo']); }
-  editar(row: MapaMes) { this.router.navigate(['/mapa-meses/editar', row.id]); }
-  eliminar(row: MapaMes) { this.srv.eliminar(row.id); this.dataSource.data = this.srv.obtenerTodos(); }
+  crear() {
+    this.router.navigate(['/mapa-meses/nuevo']);
+  }
+  editar(row: MapaMes) {
+    this.router.navigate(['/mapa-meses/editar', row.id]);
+  }
+  eliminar(row: MapaMes) {
+    this.srv.eliminar(row.id);
+    this.dataSource.data = this.srv.obtenerTodos();
+  }
 
   aplicarFiltro() {
     const payload = { anio: this.filtroAnio, mes: this.filtroMes };

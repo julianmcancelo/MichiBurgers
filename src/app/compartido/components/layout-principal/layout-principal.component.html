@@ -1,239 +1,317 @@
 <!-- Header moderno con Tailwind -->
 <ng-container *ngIf="!isLoginRoute; else soloContenido">
-<header class="bg-transparent sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16 bg-white/90 backdrop-blur-md rounded-2xl shadow-md ring-1 ring-gray-200 my-2 px-3 sm:px-4">
+  <header class="bg-transparent sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div
+        class="flex items-center justify-between h-16 bg-white/90 backdrop-blur-md rounded-2xl shadow-md ring-1 ring-gray-200 my-2 px-3 sm:px-4"
+      >
+        <!-- Logo y marca -->
+        <div class="flex items-center">
+          <button
+            class="flex items-center space-x-3 text-gray-900 hover:text-orange-600 transition-colors duration-200 font-bold text-xl"
+            routerLink="/"
+          >
+            <div
+              class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center overflow-hidden ring-1 ring-orange-200"
+            >
+              <img [src]="logoUrl" alt="MichiBurgers" class="w-8 h-8 object-contain" />
+            </div>
+            <span class="hidden sm:block tracking-wide">MichiBurgers</span>
+          </button>
+        </div>
 
-      <!-- Logo y marca -->
-      <div class="flex items-center">
+        <!-- Navegación principal (desktop) -->
+        <nav class="hidden md:flex items-center space-x-1">
+          <a
+            #rlaHome="routerLinkActive"
+            routerLink="/"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLinkActive="text-orange-700"
+            class="relative flex items-center gap-2 px-4 py-2 rounded-full text-gray-700 hover:text-orange-700 hover:bg-orange-50 transition-all duration-200 font-medium border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
+          >
+            <mat-icon class="text-lg text-orange-600">space_dashboard</mat-icon>
+            <span>Panel de Control</span>
+            <span
+              class="pointer-events-none absolute left-4 right-4 -bottom-1 h-0.5 bg-orange-500/80 rounded-full transition-opacity duration-200"
+              [class.opacity-100]="rlaHome.isActive"
+              [class.opacity-0]="!rlaHome.isActive"
+            ></span>
+          </a>
+          <a
+            #rlaAdmin="routerLinkActive"
+            routerLink="/admin"
+            routerLinkActive="text-orange-700"
+            class="relative flex items-center gap-2 px-4 py-2 rounded-full text-gray-700 hover:text-orange-700 hover:bg-orange-50 transition-all duration-200 font-medium border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
+          >
+            <mat-icon class="text-lg text-orange-600">admin_panel_settings</mat-icon>
+            <span>Administración</span>
+            <span
+              class="pointer-events-none absolute left-4 right-4 -bottom-1 h-0.5 bg-orange-500/80 rounded-full transition-opacity duration-200"
+              [class.opacity-100]="rlaAdmin.isActive"
+              [class.opacity-0]="!rlaAdmin.isActive"
+            ></span>
+          </a>
+          <a
+            #rlaEstado="routerLinkActive"
+            *ngIf="esAdmin || esMozo"
+            routerLink="/mapa-meses/estado"
+            routerLinkActive="text-orange-700"
+            class="relative flex items-center gap-2 px-4 py-2 rounded-full text-gray-700 hover:text-orange-700 hover:bg-orange-50 transition-all duration-200 font-medium border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
+          >
+            <mat-icon class="text-lg text-orange-600">monitor_heart</mat-icon>
+            <span>Estado</span>
+            <span
+              class="pointer-events-none absolute left-4 right-4 -bottom-1 h-0.5 bg-orange-500/80 rounded-full transition-opacity duration-200"
+              [class.opacity-100]="rlaEstado.isActive"
+              [class.opacity-0]="!rlaEstado.isActive"
+            ></span>
+          </a>
+          <a
+            #rlaSalon="routerLinkActive"
+            *ngIf="esAdmin"
+            routerLink="/mapa-meses/salon"
+            routerLinkActive="text-orange-700"
+            class="relative flex items-center gap-2 px-4 py-2 rounded-full text-gray-800 bg-orange-50 hover:bg-orange-100 transition-all duration-200 font-semibold border border-orange-200 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
+          >
+            <mat-icon class="text-lg text-orange-600">map</mat-icon>
+            <span>Salón</span>
+            <span
+              class="ml-2 text-[10px] uppercase tracking-wide bg-orange-200/70 text-orange-800 px-2 py-0.5 rounded-full"
+              >Editar</span
+            >
+            <span
+              class="pointer-events-none absolute left-4 right-4 -bottom-1 h-0.5 bg-orange-500/80 rounded-full transition-opacity duration-200"
+              [class.opacity-100]="rlaSalon.isActive"
+              [class.opacity-0]="!rlaSalon.isActive"
+            ></span>
+          </a>
+        </nav>
+
+        <!-- Área de usuario -->
+        <div class="flex items-center space-x-3" [class.opacity-0]="!ready">
+          <ng-container *ngIf="ready">
+            <ng-container *ngIf="loggedIn">
+              <!-- Info del usuario (desktop) -->
+              <div
+                class="hidden lg:flex items-center space-x-3 bg-gray-50 rounded-xl px-4 py-2 ring-1 ring-gray-200"
+              >
+                <div
+                  class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center ring-1 ring-orange-200"
+                >
+                  <mat-icon class="text-orange-700 text-sm">person</mat-icon>
+                </div>
+                <div class="text-gray-800 min-w-0">
+                  <div class="text-[11px] text-gray-500">Hola,</div>
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="font-semibold text-sm truncate max-w-[140px] sm:max-w-[180px] lg:max-w-[220px]"
+                      [matTooltip]="nombreCompleto"
+                      >{{ (nombreCompleto || '').split(' ')[0] | titlecase }}</span
+                    >
+                    <span
+                      *ngIf="esAdmin; else rolUsuario"
+                      class="text-[10px] uppercase tracking-wide bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full ring-1 ring-orange-200"
+                      >Admin</span
+                    >
+                    <ng-template #rolUsuario>
+                      <span
+                        class="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full"
+                        [ngClass]="{
+                          'bg-blue-100 text-blue-800 ring-1 ring-blue-200': rolActual === 'mozo',
+                          'bg-purple-100 text-purple-800 ring-1 ring-purple-200':
+                            rolActual === 'cocina',
+                          'bg-teal-100 text-teal-800 ring-1 ring-teal-200': rolActual === 'caja',
+                          'bg-gray-100 text-gray-700 ring-1 ring-gray-200': !rolActual,
+                        }"
+                        >{{ rolActual || 'Usuario' | uppercase }}</span
+                      >
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botones de acción -->
+              <div class="flex items-center space-x-2">
+                <button
+                  (click)="openChangePassword()"
+                  class="w-10 h-10 flex items-center justify-center text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
+                  matTooltip="Cambiar contraseña"
+                  aria-label="Cambiar contraseña"
+                >
+                  <mat-icon class="text-lg text-orange-600">key</mat-icon>
+                </button>
+                <button
+                  (click)="logout()"
+                  class="flex items-center space-x-2 px-4 py-2 text-orange-700 border border-orange-300 hover:bg-orange-50 hover:border-orange-400 rounded-lg transition-all duration-200 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
+                >
+                  <mat-icon class="text-lg text-orange-600">logout</mat-icon>
+                  <span class="hidden sm:inline">Salir</span>
+                </button>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="!loggedIn && !hasToken">
+              <button
+                routerLink="/auth/login"
+                class="flex items-center space-x-2 bg-white text-orange-600 hover:bg-orange-50 px-6 py-2 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+              >
+                <mat-icon class="text-lg">login</mat-icon>
+                <span>Iniciar Sesión</span>
+              </button>
+            </ng-container>
+          </ng-container>
+        </div>
+
+        <!-- Botón menú móvil -->
         <button
-          class="flex items-center space-x-3 text-gray-900 hover:text-orange-600 transition-colors duration-200 font-bold text-xl"
-          routerLink="/">
-          <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center overflow-hidden ring-1 ring-orange-200">
-            <img [src]="logoUrl" alt="MichiBurgers" class="w-8 h-8 object-contain" />
-          </div>
-          <span class="hidden sm:block tracking-wide">MichiBurgers</span>
+          (click)="toggleMobileMenu()"
+          class="md:hidden w-10 h-10 flex items-center justify-center text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
+          [attr.aria-expanded]="mobileMenuOpen"
+          aria-controls="menu-movil"
+        >
+          <mat-icon class="text-2xl text-orange-600">menu</mat-icon>
         </button>
       </div>
 
-      <!-- Navegación principal (desktop) -->
-      <nav class="hidden md:flex items-center space-x-1">
-        <a
-          #rlaHome="routerLinkActive"
-          routerLink="/"
-          [routerLinkActiveOptions]="{ exact: true }"
-          routerLinkActive="text-orange-700"
-          class="relative flex items-center gap-2 px-4 py-2 rounded-full text-gray-700 hover:text-orange-700 hover:bg-orange-50 transition-all duration-200 font-medium border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300">
-          <mat-icon class="text-lg text-orange-600">space_dashboard</mat-icon>
-          <span>Panel de Control</span>
-          <span class="pointer-events-none absolute left-4 right-4 -bottom-1 h-0.5 bg-orange-500/80 rounded-full transition-opacity duration-200" [class.opacity-100]="rlaHome.isActive" [class.opacity-0]="!rlaHome.isActive"></span>
-        </a>
-        <a
-          #rlaAdmin="routerLinkActive"
-          routerLink="/admin"
-          routerLinkActive="text-orange-700"
-          class="relative flex items-center gap-2 px-4 py-2 rounded-full text-gray-700 hover:text-orange-700 hover:bg-orange-50 transition-all duration-200 font-medium border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300">
-          <mat-icon class="text-lg text-orange-600">admin_panel_settings</mat-icon>
-          <span>Administración</span>
-          <span class="pointer-events-none absolute left-4 right-4 -bottom-1 h-0.5 bg-orange-500/80 rounded-full transition-opacity duration-200" [class.opacity-100]="rlaAdmin.isActive" [class.opacity-0]="!rlaAdmin.isActive"></span>
-        </a>
-        <a
-          #rlaEstado="routerLinkActive"
-          *ngIf="esAdmin || esMozo"
-          routerLink="/mapa-meses/estado"
-          routerLinkActive="text-orange-700"
-          class="relative flex items-center gap-2 px-4 py-2 rounded-full text-gray-700 hover:text-orange-700 hover:bg-orange-50 transition-all duration-200 font-medium border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300">
-          <mat-icon class="text-lg text-orange-600">monitor_heart</mat-icon>
-          <span>Estado</span>
-          <span class="pointer-events-none absolute left-4 right-4 -bottom-1 h-0.5 bg-orange-500/80 rounded-full transition-opacity duration-200" [class.opacity-100]="rlaEstado.isActive" [class.opacity-0]="!rlaEstado.isActive"></span>
-        </a>
-        <a
-          #rlaSalon="routerLinkActive"
-          *ngIf="esAdmin"
-          routerLink="/mapa-meses/salon"
-          routerLinkActive="text-orange-700"
-          class="relative flex items-center gap-2 px-4 py-2 rounded-full text-gray-800 bg-orange-50 hover:bg-orange-100 transition-all duration-200 font-semibold border border-orange-200 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300">
-          <mat-icon class="text-lg text-orange-600">map</mat-icon>
-          <span>Salón</span>
-          <span class="ml-2 text-[10px] uppercase tracking-wide bg-orange-200/70 text-orange-800 px-2 py-0.5 rounded-full">Editar</span>
-          <span class="pointer-events-none absolute left-4 right-4 -bottom-1 h-0.5 bg-orange-500/80 rounded-full transition-opacity duration-200" [class.opacity-100]="rlaSalon.isActive" [class.opacity-0]="!rlaSalon.isActive"></span>
-        </a>
-        
-      </nav>
-
-      <!-- Área de usuario -->
-      <div class="flex items-center space-x-3" [class.opacity-0]="!ready">
-        <ng-container *ngIf="ready">
-          <ng-container *ngIf="loggedIn">
-            <!-- Info del usuario (desktop) -->
-            <div class="hidden lg:flex items-center space-x-3 bg-gray-50 rounded-xl px-4 py-2 ring-1 ring-gray-200">
-              <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center ring-1 ring-orange-200">
-                <mat-icon class="text-orange-700 text-sm">person</mat-icon>
-              </div>
-              <div class="text-gray-800 min-w-0">
-                <div class="text-[11px] text-gray-500">Hola,</div>
-                <div class="flex items-center gap-2">
-                  <span class="font-semibold text-sm truncate max-w-[140px] sm:max-w-[180px] lg:max-w-[220px]" [matTooltip]="nombreCompleto">{{ (nombreCompleto || '').split(' ')[0] | titlecase }}</span>
-                  <span *ngIf="esAdmin; else rolUsuario" class="text-[10px] uppercase tracking-wide bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full ring-1 ring-orange-200">Admin</span>
-                  <ng-template #rolUsuario>
-                    <span class="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full"
-                          [ngClass]="{
-                            'bg-blue-100 text-blue-800 ring-1 ring-blue-200': rolActual==='mozo',
-                            'bg-purple-100 text-purple-800 ring-1 ring-purple-200': rolActual==='cocina',
-                            'bg-teal-100 text-teal-800 ring-1 ring-teal-200': rolActual==='caja',
-                            'bg-gray-100 text-gray-700 ring-1 ring-gray-200': !rolActual
-                          }">{{ (rolActual || 'Usuario') | uppercase }}</span>
-                  </ng-template>
-                </div>
-              </div>
-            </div>
-
-            <!-- Botones de acción -->
-            <div class="flex items-center space-x-2">
-              <button
-                (click)="openChangePassword()"
-                class="w-10 h-10 flex items-center justify-center text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
-                matTooltip="Cambiar contraseña"
-                aria-label="Cambiar contraseña">
-                <mat-icon class="text-lg text-orange-600">key</mat-icon>
-              </button>
-              <button
-                (click)="logout()"
-                class="flex items-center space-x-2 px-4 py-2 text-orange-700 border border-orange-300 hover:bg-orange-50 hover:border-orange-400 rounded-lg transition-all duration-200 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300">
-                <mat-icon class="text-lg text-orange-600">logout</mat-icon>
-                <span class="hidden sm:inline">Salir</span>
-              </button>
-            </div>
-          </ng-container>
-
-          <ng-container *ngIf="!loggedIn && !hasToken">
-            <button
-              routerLink="/auth/login"
-              class="flex items-center space-x-2 bg-white text-orange-600 hover:bg-orange-50 px-6 py-2 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
-              <mat-icon class="text-lg">login</mat-icon>
-              <span>Iniciar Sesión</span>
-            </button>
-          </ng-container>
-        </ng-container>
-      </div>
-
-      <!-- Botón menú móvil -->
-      <button
-        (click)="toggleMobileMenu()"
-        class="md:hidden w-10 h-10 flex items-center justify-center text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
-        [attr.aria-expanded]="mobileMenuOpen"
-        aria-controls="menu-movil">
-        <mat-icon class="text-2xl text-orange-600">menu</mat-icon>
-      </button>
-    </div>
-
-    <!-- Menú móvil -->
-    <div
-      class="md:hidden overflow-hidden transition-all duration-300 ease-in-out"
-      [class.max-h-0]="!mobileMenuOpen"
-      [class.max-h-96]="mobileMenuOpen">
-      <div id="menu-movil" class="py-4 space-y-2 bg-white rounded-xl mt-2 mb-4 px-4 ring-1 ring-gray-200 shadow">
-        <a
-          routerLink="/"
-          [routerLinkActiveOptions]="{ exact: true }"
-          routerLinkActive="bg-orange-50"
-          class="flex items-center space-x-3 w-full text-left text-gray-800 hover:bg-gray-50 rounded-xl px-3 py-3 transition-colors duration-200 border border-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300">
-          <mat-icon class="text-orange-600">space_dashboard</mat-icon>
-          <span class="font-medium">Panel de Control</span>
-        </a>
-        <a
-          routerLink="/admin"
-          routerLinkActive="bg-orange-50"
-          class="flex items-center space-x-3 w-full text-left text-gray-800 hover:bg-gray-50 rounded-xl px-3 py-3 transition-colors duration-200 border border-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300">
-          <mat-icon class="text-orange-600">admin_panel_settings</mat-icon>
-          <span class="font-medium">Administración</span>
-        </a>
-        <a
-          *ngIf="esAdmin || esMozo"
-          routerLink="/mapa-meses/estado"
-          routerLinkActive="bg-orange-50"
-          class="flex items-center space-x-3 w-full text-left text-gray-800 hover:bg-gray-50 rounded-xl px-3 py-3 transition-colors duration-200 border border-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300">
-          <mat-icon class="text-orange-600">monitor_heart</mat-icon>
-          <span class="font-medium">Estado</span>
-        </a>
-        <a
-          *ngIf="esAdmin"
-          routerLink="/mapa-meses/salon"
-          routerLinkActive="bg-orange-50"
-          class="flex items-center space-x-3 w-full text-left text-gray-800 rounded-xl px-3 py-3 transition-colors duration-200 bg-orange-50 hover:bg-orange-100 border border-orange-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300">
-          <mat-icon class="text-orange-600">map</mat-icon>
-          <span class="font-medium">Salón</span>
-          <span class="ml-auto text-[10px] uppercase tracking-wide bg-orange-200/70 text-orange-800 px-2 py-0.5 rounded-full">Editar</span>
-        </a>
-        
+      <!-- Menú móvil -->
+      <div
+        class="md:hidden overflow-hidden transition-all duration-300 ease-in-out"
+        [class.max-h-0]="!mobileMenuOpen"
+        [class.max-h-96]="mobileMenuOpen"
+      >
+        <div
+          id="menu-movil"
+          class="py-4 space-y-2 bg-white rounded-xl mt-2 mb-4 px-4 ring-1 ring-gray-200 shadow"
+        >
+          <a
+            routerLink="/"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLinkActive="bg-orange-50"
+            class="flex items-center space-x-3 w-full text-left text-gray-800 hover:bg-gray-50 rounded-xl px-3 py-3 transition-colors duration-200 border border-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
+          >
+            <mat-icon class="text-orange-600">space_dashboard</mat-icon>
+            <span class="font-medium">Panel de Control</span>
+          </a>
+          <a
+            routerLink="/admin"
+            routerLinkActive="bg-orange-50"
+            class="flex items-center space-x-3 w-full text-left text-gray-800 hover:bg-gray-50 rounded-xl px-3 py-3 transition-colors duration-200 border border-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
+          >
+            <mat-icon class="text-orange-600">admin_panel_settings</mat-icon>
+            <span class="font-medium">Administración</span>
+          </a>
+          <a
+            *ngIf="esAdmin || esMozo"
+            routerLink="/mapa-meses/estado"
+            routerLinkActive="bg-orange-50"
+            class="flex items-center space-x-3 w-full text-left text-gray-800 hover:bg-gray-50 rounded-xl px-3 py-3 transition-colors duration-200 border border-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
+          >
+            <mat-icon class="text-orange-600">monitor_heart</mat-icon>
+            <span class="font-medium">Estado</span>
+          </a>
+          <a
+            *ngIf="esAdmin"
+            routerLink="/mapa-meses/salon"
+            routerLinkActive="bg-orange-50"
+            class="flex items-center space-x-3 w-full text-left text-gray-800 rounded-xl px-3 py-3 transition-colors duration-200 bg-orange-50 hover:bg-orange-100 border border-orange-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
+          >
+            <mat-icon class="text-orange-600">map</mat-icon>
+            <span class="font-medium">Salón</span>
+            <span
+              class="ml-auto text-[10px] uppercase tracking-wide bg-orange-200/70 text-orange-800 px-2 py-0.5 rounded-full"
+              >Editar</span
+            >
+          </a>
+        </div>
       </div>
     </div>
-  </div>
-</header>
+  </header>
 
-<!-- Contenido principal -->
-<main class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50 pb-16 md:pb-0">
-  <div class="animate-fade-in">
-    <router-outlet></router-outlet>
-  </div>
-</main>
-
-<!-- Bottom navigation (móvil) -->
-<nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-t border-gray-200 safe-bottom">
-  <div class="max-w-7xl mx-auto grid grid-cols-4">
-    <a routerLink="/" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="text-orange-700"
-       class="flex flex-col items-center justify-center py-2 text-[11px] text-gray-700 hover:text-orange-700">
-      <mat-icon class="!text-base text-orange-600">space_dashboard</mat-icon>
-      <span>Panel</span>
-    </a>
-    <a *ngIf="esAdmin || esMozo" routerLink="/mapa-meses/estado" routerLinkActive="text-orange-700"
-       class="flex flex-col items-center justify-center py-2 text-[11px] text-gray-700 hover:text-orange-700">
-      <mat-icon class="!text-base text-orange-600">monitor_heart</mat-icon>
-      <span>Estado</span>
-    </a>
-    <a *ngIf="esAdmin" routerLink="/mapa-meses/salon" routerLinkActive="text-orange-700"
-       class="flex flex-col items-center justify-center py-2 text-[11px] text-gray-700 hover:text-orange-700">
-      <mat-icon class="!text-base text-orange-600">map</mat-icon>
-      <span>Salón</span>
-    </a>
-    <a routerLink="/admin" routerLinkActive="text-orange-700"
-       class="flex flex-col items-center justify-center py-2 text-[11px] text-gray-700 hover:text-orange-700">
-      <mat-icon class="!text-base text-orange-600">admin_panel_settings</mat-icon>
-      <span>Admin</span>
-    </a>
-  </div>
-</nav>
-
-<!-- Footer académico -->
-<footer class="bg-gray-100 border-t">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="text-center sm:text-left">
-      <h2 class="text-gray-800 font-semibold tracking-wide uppercase text-xs">Proyecto Académico</h2>
+  <!-- Contenido principal -->
+  <main class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50 pb-16 md:pb-0">
+    <div class="animate-fade-in">
+      <router-outlet></router-outlet>
     </div>
+  </main>
 
-    <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-700">
-      <div class="bg-white/70 rounded-lg p-4 border border-gray-200">
-        <div class="font-medium text-gray-900">Alumno</div>
-        <div>Julián Manuel Cancelo</div>
-        <div class="text-gray-600">Analista de Sistemas</div>
+  <!-- Bottom navigation (móvil) -->
+  <nav
+    class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-t border-gray-200 safe-bottom"
+  >
+    <div class="max-w-7xl mx-auto grid grid-cols-4">
+      <a
+        routerLink="/"
+        [routerLinkActiveOptions]="{ exact: true }"
+        routerLinkActive="text-orange-700"
+        class="flex flex-col items-center justify-center py-2 text-[11px] text-gray-700 hover:text-orange-700"
+      >
+        <mat-icon class="!text-base text-orange-600">space_dashboard</mat-icon>
+        <span>Panel</span>
+      </a>
+      <a
+        *ngIf="esAdmin || esMozo"
+        routerLink="/mapa-meses/estado"
+        routerLinkActive="text-orange-700"
+        class="flex flex-col items-center justify-center py-2 text-[11px] text-gray-700 hover:text-orange-700"
+      >
+        <mat-icon class="!text-base text-orange-600">monitor_heart</mat-icon>
+        <span>Estado</span>
+      </a>
+      <a
+        *ngIf="esAdmin"
+        routerLink="/mapa-meses/salon"
+        routerLinkActive="text-orange-700"
+        class="flex flex-col items-center justify-center py-2 text-[11px] text-gray-700 hover:text-orange-700"
+      >
+        <mat-icon class="!text-base text-orange-600">map</mat-icon>
+        <span>Salón</span>
+      </a>
+      <a
+        routerLink="/admin"
+        routerLinkActive="text-orange-700"
+        class="flex flex-col items-center justify-center py-2 text-[11px] text-gray-700 hover:text-orange-700"
+      >
+        <mat-icon class="!text-base text-orange-600">admin_panel_settings</mat-icon>
+        <span>Admin</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Footer académico -->
+  <footer class="bg-gray-100 border-t">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="text-center sm:text-left">
+        <h2 class="text-gray-800 font-semibold tracking-wide uppercase text-xs">
+          Proyecto Académico
+        </h2>
       </div>
-      <div class="bg-white/70 rounded-lg p-4 border border-gray-200">
-        <div class="font-medium text-gray-900">Proyecto Final</div>
-        <div>Algoritmos y Estructura de Datos III</div>
-        <div class="text-gray-600">Profesor: Sebastián Saldivar</div>
+
+      <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-700">
+        <div class="bg-white/70 rounded-lg p-4 border border-gray-200">
+          <div class="font-medium text-gray-900">Alumno</div>
+          <div>Julián Manuel Cancelo</div>
+          <div class="text-gray-600">Analista de Sistemas</div>
+        </div>
+        <div class="bg-white/70 rounded-lg p-4 border border-gray-200">
+          <div class="font-medium text-gray-900">Proyecto Final</div>
+          <div>Algoritmos y Estructura de Datos III</div>
+          <div class="text-gray-600">Profesor: Sebastián Saldivar</div>
+        </div>
+        <div class="bg-white/70 rounded-lg p-4 border border-gray-200">
+          <div class="font-medium text-gray-900">Institución</div>
+          <div>Instituto Tecnológico Beltrán</div>
+          <div class="text-gray-600">Avellaneda</div>
+        </div>
       </div>
-      <div class="bg-white/70 rounded-lg p-4 border border-gray-200">
-        <div class="font-medium text-gray-900">Institución</div>
-        <div>Instituto Tecnológico Beltrán</div>
-        <div class="text-gray-600">Avellaneda</div>
+
+      <div
+        class="mt-6 border-t border-gray-200 pt-4 text-xs text-gray-500 text-center sm:text-left"
+      >
+        © {{ currentYear }} • Julián Manuel Cancelo — Proyecto Final · Instituto Tecnológico
+        Beltrán, Avellaneda
       </div>
     </div>
-
-    <div class="mt-6 border-t border-gray-200 pt-4 text-xs text-gray-500 text-center sm:text-left">
-      © {{ currentYear }} • Julián Manuel Cancelo — Proyecto Final · Instituto Tecnológico Beltrán, Avellaneda
-    </div>
-  </div>
-</footer>
+  </footer>
 </ng-container>
 
 <ng-template #soloContenido>

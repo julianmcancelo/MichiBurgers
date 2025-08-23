@@ -3,13 +3,16 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, catchError, throwError } from 'rxjs';
 
-export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
+export const authInterceptor: HttpInterceptorFn = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn,
+): Observable<HttpEvent<unknown>> => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
   const cloned = token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
   const router = inject(Router);
 
   return next(cloned).pipe(
-    catchError(err => {
+    catchError((err) => {
       if (err?.status === 401) {
         const url = cloned.url || '';
         // token inválido/expirado
@@ -20,6 +23,6 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
         router.navigateByUrl('/auth/login');
       }
       return throwError(() => err);
-    })
+    }),
   );
 };

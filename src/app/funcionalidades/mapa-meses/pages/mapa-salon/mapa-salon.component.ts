@@ -12,7 +12,7 @@ interface Mesa {
   y: number; // px
   forma: 'redonda' | 'cuadrada' | 'rectangular' | 'dinosaurio';
   ancho?: number; // px (solo para rectangular/cuadrada)
-  alto?: number;  // px (solo para rectangular)
+  alto?: number; // px (solo para rectangular)
   color?: string;
   rotationDeg?: number; // rotación para cuadrada/rectangular
   area?: 'interior' | 'exterior';
@@ -33,7 +33,7 @@ interface Anotacion {
   selector: 'app-mapa-salon',
   templateUrl: './mapa-salon.component.html',
   styleUrls: ['./mapa-salon.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class MapaSalonComponent implements OnInit {
   ancho = 1200;
@@ -52,7 +52,7 @@ export class MapaSalonComponent implements OnInit {
 
   get mesasArea(): Mesa[] {
     const area = this.areaActiva;
-    return this.mesas.filter(m => (m.area || 'interior') === area);
+    return this.mesas.filter((m) => (m.area || 'interior') === area);
   }
 
   private cargarEstadoMesas() {
@@ -60,10 +60,13 @@ export class MapaSalonComponent implements OnInit {
       next: (lista) => {
         this.estadoMesas.clear();
         for (const m of lista) {
-          this.estadoMesas.set(m.mesaId, { estado: m.estado, pedidoId: (m.pedidoId ?? null) as any });
+          this.estadoMesas.set(m.mesaId, {
+            estado: m.estado,
+            pedidoId: (m.pedidoId ?? null) as any,
+          });
         }
       },
-      error: () => {}
+      error: () => {},
     });
   }
 
@@ -78,23 +81,29 @@ export class MapaSalonComponent implements OnInit {
   brushWidth = 4;
   anotaciones: Anotacion[] = [];
   get anotacionesArea(): Anotacion[] {
-    return this.anotaciones.filter(a => a.area === this.areaActiva);
+    return this.anotaciones.filter((a) => a.area === this.areaActiva);
   }
   dibujoEnCurso: string | null = null;
 
   // Estado mesas por id (libre/ocupada y pedido actual)
-  estadoMesas = new Map<string, { estado: 'libre'|'ocupada'; pedidoId: number|null }>();
+  estadoMesas = new Map<string, { estado: 'libre' | 'ocupada'; pedidoId: number | null }>();
   private destroy$ = new Subject<void>();
-  rol: 'admin'|'mozo'|'cocina'|'caja'|null = null;
+  rol: 'admin' | 'mozo' | 'cocina' | 'caja' | null = null;
 
-  constructor(@Optional() private route: ActivatedRoute, private api: MapaSalonApiService, private router: Router) {}
+  constructor(
+    @Optional() private route: ActivatedRoute,
+    private api: MapaSalonApiService,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     // Rol del usuario (para habilitar flujo mozo)
     try {
       const raw = typeof window !== 'undefined' ? localStorage.getItem('auth_user') : null;
       this.rol = raw ? (JSON.parse(raw).rol as any) : null;
-    } catch { this.rol = null; }
+    } catch {
+      this.rol = null;
+    }
 
     // Cargar preferencias guardadas
     const prefs = this.cargarPrefs();
@@ -102,7 +111,6 @@ export class MapaSalonComponent implements OnInit {
       this.areaActiva = prefs.areaActiva ?? this.areaActiva;
       this.permitirEditarExterior = prefs.permitirEditarExterior ?? this.permitirEditarExterior;
     }
-
 
     // Leer query params si hay ActivatedRoute disponible
     if (this.route?.queryParamMap) {
@@ -114,7 +122,8 @@ export class MapaSalonComponent implements OnInit {
         const permitirExt = params.get('permitirExterior');
         if (permitirExt !== null) {
           const val = permitirExt.toLowerCase();
-          this.permitirEditarExterior = val === '1' || val === 'true' || val === 'si' || val === 'sí';
+          this.permitirEditarExterior =
+            val === '1' || val === 'true' || val === 'si' || val === 'sí';
         }
         this.guardarPrefs();
         // Cargar desde API para el área actual
@@ -134,17 +143,19 @@ export class MapaSalonComponent implements OnInit {
     // Debounce de guardado a API
     this.saveTrigger$.pipe(debounceTime(500)).subscribe(() => {
       const area = this.areaActiva;
-      const mesasArea = this.mesas.filter(m => (m.area || 'interior') === area);
+      const mesasArea = this.mesas.filter((m) => (m.area || 'interior') === area);
       this.api.saveLayout(area, mesasArea).subscribe({
         next: () => {},
         error: () => {
           // Si falla, mantenemos localStorage como fallback
-        }
+        },
       });
     });
 
     // Polling de estado de mesas para pintar ocupación (mozo y admin ven estado)
-    interval(3000).pipe(takeUntil(this.destroy$)).subscribe(() => this.cargarEstadoMesas());
+    interval(3000)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.cargarEstadoMesas());
     // Cargar inmediatamente
     this.cargarEstadoMesas();
   }
@@ -158,9 +169,45 @@ export class MapaSalonComponent implements OnInit {
     }
     // Datos de ejemplo iniciales
     return [
-      { id: 'M1', nombre: 'Mesa 1', capacidad: 4, x: 40, y: 40, forma: 'cuadrada', ancho: 120, alto: 90, color: '#ffffff', rotationDeg: 0, area: 'interior' },
-      { id: 'M2', nombre: 'Mesa 2', capacidad: 2, x: 220, y: 120, forma: 'redonda', ancho: 100, alto: 100, color: '#ffffff', rotationDeg: 0, area: 'interior' },
-      { id: 'M3', nombre: 'Mesa 3', capacidad: 6, x: 380, y: 240, forma: 'rectangular', ancho: 160, alto: 90, color: '#ffffff', rotationDeg: 0, area: 'exterior' }
+      {
+        id: 'M1',
+        nombre: 'Mesa 1',
+        capacidad: 4,
+        x: 40,
+        y: 40,
+        forma: 'cuadrada',
+        ancho: 120,
+        alto: 90,
+        color: '#ffffff',
+        rotationDeg: 0,
+        area: 'interior',
+      },
+      {
+        id: 'M2',
+        nombre: 'Mesa 2',
+        capacidad: 2,
+        x: 220,
+        y: 120,
+        forma: 'redonda',
+        ancho: 100,
+        alto: 100,
+        color: '#ffffff',
+        rotationDeg: 0,
+        area: 'interior',
+      },
+      {
+        id: 'M3',
+        nombre: 'Mesa 3',
+        capacidad: 6,
+        x: 380,
+        y: 240,
+        forma: 'rectangular',
+        ancho: 160,
+        alto: 90,
+        color: '#ffffff',
+        rotationDeg: 0,
+        area: 'exterior',
+      },
     ];
   }
 
@@ -175,7 +222,7 @@ export class MapaSalonComponent implements OnInit {
     const pos = ev.source.getFreeDragPosition();
     // Dimensiones reales según forma
     const w = mesa.ancho || (mesa.forma === 'redonda' ? 100 : 120);
-    const h = mesa.alto || (mesa.forma === 'redonda' ? (mesa.ancho || 100) : 90);
+    const h = mesa.alto || (mesa.forma === 'redonda' ? mesa.ancho || 100 : 90);
     // Limitar dentro del contenedor
     const maxX = this.ancho - w;
     const maxY = this.alto - h;
@@ -213,14 +260,14 @@ export class MapaSalonComponent implements OnInit {
       alto: 90,
       color: '#ffffff',
       rotationDeg: 0,
-      area: this.areaActiva
+      area: this.areaActiva,
     };
     this.mesas = [...this.mesas, nueva];
     this.guardar();
   }
 
   eliminarMesa(id: string) {
-    this.mesas = this.mesas.filter(m => m.id !== id);
+    this.mesas = this.mesas.filter((m) => m.id !== id);
     this.guardar();
     if (this.seleccionada?.id === id) this.seleccionada = null;
     this.saveTrigger$.next();
@@ -246,7 +293,7 @@ export class MapaSalonComponent implements OnInit {
       // abrir mesa
       this.api.abrirMesa(this.areaActiva, m.id).subscribe({
         next: (res) => this.router.navigate(['/comandera/pedido', res.pedidoId]),
-        error: () => {}
+        error: () => {},
       });
       return;
     }
@@ -263,7 +310,7 @@ export class MapaSalonComponent implements OnInit {
     }
     this.api.abrirMesa(this.areaActiva, m.id).subscribe({
       next: (res) => this.router.navigate(['/comandera/pedido', res.pedidoId]),
-      error: () => {}
+      error: () => {},
     });
   }
 
@@ -294,7 +341,10 @@ export class MapaSalonComponent implements OnInit {
     }
   }
 
-  private cargarPrefs(): { areaActiva?: 'interior' | 'exterior'; permitirEditarExterior?: boolean } | null {
+  private cargarPrefs(): {
+    areaActiva?: 'interior' | 'exterior';
+    permitirEditarExterior?: boolean;
+  } | null {
     if (typeof window === 'undefined' || !('localStorage' in window)) return null;
     try {
       const raw = localStorage.getItem(PREFS_KEY);
@@ -309,7 +359,7 @@ export class MapaSalonComponent implements OnInit {
     try {
       const prefs = {
         areaActiva: this.areaActiva,
-        permitirEditarExterior: this.permitirEditarExterior
+        permitirEditarExterior: this.permitirEditarExterior,
       };
       localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
     } catch {}
@@ -324,11 +374,19 @@ export class MapaSalonComponent implements OnInit {
           return;
         }
         // Reemplazar solo las mesas del área indicada, mantener otras áreas
-        const otras = this.mesas.filter(m => (m.area || 'interior') !== area);
+        const otras = this.mesas.filter((m) => (m.area || 'interior') !== area);
         const normalizadas = (mesasApi as Mesa[]).map((m) => {
           const forma = m.forma || 'cuadrada';
-          const ancho = Number.isFinite(Number(m.ancho)) ? Number(m.ancho) : (forma === 'redonda' ? 100 : 120);
-          const alto = Number.isFinite(Number(m.alto)) ? Number(m.alto) : (forma === 'redonda' ? (Number(m.ancho) || 100) : 90);
+          const ancho = Number.isFinite(Number(m.ancho))
+            ? Number(m.ancho)
+            : forma === 'redonda'
+              ? 100
+              : 120;
+          const alto = Number.isFinite(Number(m.alto))
+            ? Number(m.alto)
+            : forma === 'redonda'
+              ? Number(m.ancho) || 100
+              : 90;
           // Limitar dentro del canvas visible
           const maxX = Math.max(0, this.ancho - ancho);
           const maxY = Math.max(0, this.alto - alto);
@@ -339,7 +397,8 @@ export class MapaSalonComponent implements OnInit {
           const x = Math.min(Math.max(0, safeX), maxX);
           const y = Math.min(Math.max(0, safeY), maxY);
           const rawArea = ((m as any).area ?? area)?.toString().toLowerCase();
-          const areaNorm: 'interior' | 'exterior' = rawArea === 'exterior' ? 'exterior' : 'interior';
+          const areaNorm: 'interior' | 'exterior' =
+            rawArea === 'exterior' ? 'exterior' : 'interior';
           const id = (m as any).id != null ? String((m as any).id) : this.generarId();
           return { ...m, id, area: areaNorm, x, y, ancho, alto, forma } as Mesa;
         });
@@ -348,12 +407,18 @@ export class MapaSalonComponent implements OnInit {
       },
       error: () => {
         // Mantener lo local si falla
-      }
+      },
     });
   }
 
   duplicarMesa(m: Mesa) {
-    const copia: Mesa = { ...m, id: this.generarId(), nombre: `${m.nombre} (copia)`, x: m.x + 16, y: m.y + 16 };
+    const copia: Mesa = {
+      ...m,
+      id: this.generarId(),
+      nombre: `${m.nombre} (copia)`,
+      x: m.x + 16,
+      y: m.y + 16,
+    };
     this.mesas = [...this.mesas, copia];
     this.guardar();
     this.saveTrigger$.next();
@@ -362,7 +427,7 @@ export class MapaSalonComponent implements OnInit {
   private generarId(): string {
     let i = this.mesas.length + 1;
     let id = `M${i}`;
-    while (this.mesas.some(m => m.id === id)) {
+    while (this.mesas.some((m) => m.id === id)) {
       i++;
       id = `M${i}`;
     }
@@ -388,7 +453,7 @@ export class MapaSalonComponent implements OnInit {
 
   borrarAnotacionesArea() {
     const area = this.areaActiva;
-    this.anotaciones = this.anotaciones.filter(a => a.area !== area);
+    this.anotaciones = this.anotaciones.filter((a) => a.area !== area);
     this.guardarAnotaciones();
   }
 

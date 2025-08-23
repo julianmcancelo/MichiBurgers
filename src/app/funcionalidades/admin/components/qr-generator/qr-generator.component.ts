@@ -1,7 +1,12 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
+/**
+ * Generador de QR para mesas/áreas.
+ * Envía datos al backend PHP y muestra el resultado (URL/path) con opción de copiar.
+ */
 interface GenerarResp {
   ok: boolean;
   area?: string;
@@ -16,7 +21,7 @@ interface GenerarResp {
   selector: 'app-qr-generator',
   templateUrl: './qr-generator.component.html',
   styleUrls: ['./qr-generator.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class QrGeneratorComponent {
   loading = false;
@@ -24,14 +29,22 @@ export class QrGeneratorComponent {
   resultado: GenerarResp | null = null;
   form!: FormGroup;
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient,
+  ) {
+    // Form con valores iniciales y validaciones mínimas
     this.form = this.fb.group({
       area: ['interior', Validators.required],
       mesa: ['', Validators.required],
-      baseUrl: ['']
+      baseUrl: [''],
     });
   }
 
+  /**
+   * Llama al endpoint del backend para generar el QR.
+   * Muestra errores de red/autorización con mensajes amigables.
+   */
   async generar(): Promise<void> {
     this.loading = true;
     this.error = null;
@@ -40,11 +53,11 @@ export class QrGeneratorComponent {
     const body = {
       area: this.form.value.area ?? '',
       mesa: this.form.value.mesa ?? '',
-      baseUrl: this.form.value.baseUrl ?? ''
+      baseUrl: this.form.value.baseUrl ?? '',
     };
 
     try {
-      const resp = await this.http.post<GenerarResp>('/api/qr/generar.php', body).toPromise();
+      const resp = await firstValueFrom(this.http.post<GenerarResp>('/api/qr/generar.php', body));
       if (!resp?.ok) {
         this.error = resp?.error || 'No se pudo generar el QR';
       } else {
@@ -53,7 +66,8 @@ export class QrGeneratorComponent {
     } catch (e: any) {
       // Mensajes amigables según status
       if (e?.status === 401) {
-        this.error = 'No autorizado. Iniciá sesión como admin o habilitá el modo público en el backend.';
+        this.error =
+          'No autorizado. Iniciá sesión como admin o habilitá el modo público en el backend.';
       } else if (e?.status === 403) {
         this.error = 'Permiso insuficiente. Se requiere rol admin/mozo.';
       } else if (e?.status === 0) {
@@ -66,6 +80,7 @@ export class QrGeneratorComponent {
     }
   }
 
+  /** Copia la URL/path generado al portapapeles. */
   async copy(): Promise<void> {
     const text = this.resultado?.url ?? this.resultado?.path ?? '';
     if (!text) return;

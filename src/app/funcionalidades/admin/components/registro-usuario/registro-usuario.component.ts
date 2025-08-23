@@ -25,7 +25,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatSnackBarModule,
   ],
   templateUrl: './registro-usuario.component.html',
-  styleUrls: ['./registro-usuario.component.scss']
+  styleUrls: ['./registro-usuario.component.scss'],
 })
 export class RegistroUsuarioComponent {
   cargando = signal(false);
@@ -33,7 +33,7 @@ export class RegistroUsuarioComponent {
     { value: 'admin', label: 'Administrador' },
     { value: 'mozo', label: 'Mozo' },
     { value: 'cocina', label: 'Cocina' },
-    { value: 'caja', label: 'Caja' }
+    { value: 'caja', label: 'Caja' },
   ];
   form!: FormGroup;
 
@@ -60,7 +60,7 @@ export class RegistroUsuarioComponent {
     // Evita NG0100 (ExpressionChangedAfterItHasBeenChecked) con zoneless/SSR
     queueMicrotask(() => {
       this.cargando.set(true);
-      const token = typeof window !== 'undefined' ? (localStorage.getItem('auth_token') || '') : '';
+      const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') || '' : '';
       const body = { ...this.form.value, token } as const;
       // Usamos URL absoluta para apuntar explícitamente al backend
       this.http.post('https://burguersaurio.jcancelo.dev/api/auth/register.php', body).subscribe({
@@ -86,7 +86,7 @@ export class RegistroUsuarioComponent {
             msg = 'No hay conexión con el servidor.';
           }
           this.snack.open(msg, 'Cerrar', { duration: 4500 });
-        }
+        },
       });
     });
   }

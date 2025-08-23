@@ -26,15 +26,16 @@
 }
 
 /* Asegurar que los botones de Material funcionen bien con Tailwind */
-button[mat-button], 
-button[mat-raised-button], 
-button[mat-stroked-button], 
+button[mat-button],
+button[mat-raised-button],
+button[mat-stroked-button],
 button[mat-icon-button] {
   border-radius: inherit !important;
 }
 
 /* Transiciones suaves para elementos interactivos */
-a, button {
+a,
+button {
   transition: all 0.2s ease-in-out;
 }
 

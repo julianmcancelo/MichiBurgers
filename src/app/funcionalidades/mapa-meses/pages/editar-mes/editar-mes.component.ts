@@ -8,20 +8,28 @@ import { MapaMes } from '../../models';
   selector: 'app-editar-mes',
   templateUrl: './editar-mes.component.html',
   styleUrls: ['./editar-mes.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class EditarMesComponent {
   id: string | null = null;
   form!: FormGroup;
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute, private router: Router, private srv: MapaMesesService) {
+  constructor(
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private srv: MapaMesesService,
+  ) {
     this.id = this.route.snapshot.paramMap.get('id');
 
     this.form = this.fb.group({
       anio: [new Date().getFullYear(), [Validators.required]],
-      mes: [new Date().getMonth() + 1, [Validators.required, Validators.min(1), Validators.max(12)]],
+      mes: [
+        new Date().getMonth() + 1,
+        [Validators.required, Validators.min(1), Validators.max(12)],
+      ],
       titulo: ['', [Validators.required, Validators.maxLength(100)]],
-      notas: ['']
+      notas: [''],
     });
 
     if (this.id) {
@@ -31,7 +39,7 @@ export class EditarMesComponent {
           anio: existente.anio,
           mes: existente.mes,
           titulo: existente.titulo,
-          notas: existente.notas || ''
+          notas: existente.notas || '',
         });
       }
     }
@@ -44,13 +52,25 @@ export class EditarMesComponent {
 
     if (this.id) {
       this.srv.actualizar(this.id, {
-        anio: val.anio!, mes: val.mes!, titulo: val.titulo!, notas: val.notas ?? ''
+        anio: val.anio!,
+        mes: val.mes!,
+        titulo: val.titulo!,
+        notas: val.notas ?? '',
       } as Partial<MapaMes>);
     } else {
-      this.srv.crear({ id, anio: val.anio!, mes: val.mes!, titulo: val.titulo!, notas: val.notas ?? '', items: [] });
+      this.srv.crear({
+        id,
+        anio: val.anio!,
+        mes: val.mes!,
+        titulo: val.titulo!,
+        notas: val.notas ?? '',
+        items: [],
+      });
     }
     this.router.navigate(['/mapa-meses']);
   }
 
-  cancelar() { this.router.navigate(['/mapa-meses']); }
+  cancelar() {
+    this.router.navigate(['/mapa-meses']);
+  }
 }

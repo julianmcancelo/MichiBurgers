@@ -5,139 +5,250 @@
       Estado de Mesas — {{ area | titlecase }}
     </h2>
     <div class="flex gap-2 items-center">
-      <button mat-stroked-button color="primary" class="!h-9 !rounded-lg" (click)="actualizarAhora()">
+      <button
+        mat-stroked-button
+        color="primary"
+        class="!h-9 !rounded-lg"
+        (click)="actualizarAhora()"
+      >
         <mat-icon>refresh</mat-icon>
         <span class="ml-1">Actualizar</span>
       </button>
-      <button class="px-3 py-1 rounded-lg border text-sm"
-              [class.bg-orange-100]="area==='interior'"
-              (click)="cambiarArea('interior')">Interior</button>
-      <button class="px-3 py-1 rounded-lg border text-sm"
-              [class.bg-orange-100]="area==='exterior'"
-              (click)="cambiarArea('exterior')">Exterior</button>
+      <button
+        class="px-3 py-1 rounded-lg border text-sm"
+        [class.bg-orange-100]="area === 'interior'"
+        (click)="cambiarArea('interior')"
+      >
+        Interior
+      </button>
+      <button
+        class="px-3 py-1 rounded-lg border text-sm"
+        [class.bg-orange-100]="area === 'exterior'"
+        (click)="cambiarArea('exterior')"
+      >
+        Exterior
+      </button>
     </div>
   </div>
 
   <div class="flex items-center gap-2 mb-3 text-sm">
-    <button class="px-3 py-1 rounded-full border" [class.bg-gray-100]="filtro==='todas'" (click)="cambiarFiltro('todas')">Todas ({{ listado.length }})</button>
-    <button class="px-3 py-1 rounded-full border" [class.bg-green-100]="filtro==='libres'" (click)="cambiarFiltro('libres')">Libres ({{ totalLibres }})</button>
-    <button class="px-3 py-1 rounded-full border" [class.bg-red-100]="filtro==='ocupadas'" (click)="cambiarFiltro('ocupadas')">Ocupadas ({{ totalOcupadas }})</button>
+    <button
+      class="px-3 py-1 rounded-full border"
+      [class.bg-gray-100]="filtro === 'todas'"
+      (click)="cambiarFiltro('todas')"
+    >
+      Todas ({{ listado.length }})
+    </button>
+    <button
+      class="px-3 py-1 rounded-full border"
+      [class.bg-green-100]="filtro === 'libres'"
+      (click)="cambiarFiltro('libres')"
+    >
+      Libres ({{ totalLibres }})
+    </button>
+    <button
+      class="px-3 py-1 rounded-full border"
+      [class.bg-red-100]="filtro === 'ocupadas'"
+      (click)="cambiarFiltro('ocupadas')"
+    >
+      Ocupadas ({{ totalOcupadas }})
+    </button>
   </div>
 
   <div *ngIf="cargando" class="text-gray-600 text-sm mb-2">Actualizando estado...</div>
 
   <!-- Mapa del salón (solo lectura) -->
   <!-- Vista exclusiva de área: solo mapa a pantalla completa en nueva ventana -->
-<div *ngIf="isDisplay" class="fixed inset-0 bg-white z-50 flex flex-col">
-  <div class="px-3 py-2 text-xs text-gray-600 flex items-center justify-between bg-gray-50 border-b">
-    <div class="flex items-center gap-2">
-      <mat-icon class="!text-base text-orange-600">map</mat-icon>
-      <span>Área — {{ area | titlecase }}</span>
+  <div *ngIf="isDisplay" class="fixed inset-0 bg-white z-50 flex flex-col">
+    <div
+      class="px-3 py-2 text-xs text-gray-600 flex items-center justify-between bg-gray-50 border-b"
+    >
+      <div class="flex items-center gap-2">
+        <mat-icon class="!text-base text-orange-600">map</mat-icon>
+        <span>Área — {{ area | titlecase }}</span>
+      </div>
+      <div class="flex items-center gap-1">
+        <button mat-button (click)="resetView()" class="!min-w-0 !px-2" aria-label="Centrar">
+          <mat-icon>center_focus_strong</mat-icon>
+        </button>
+        <button mat-icon-button (click)="cerrarVentana()" aria-label="Cerrar ventana">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
     </div>
-    <div class="flex items-center gap-1">
-      <button mat-button (click)="resetView()" class="!min-w-0 !px-2" aria-label="Centrar">
-        <mat-icon>center_focus_strong</mat-icon>
+    <div class="flex-1 min-h-0">
+      <svg
+        [attr.viewBox]="'0 0 ' + ancho + ' ' + alto"
+        preserveAspectRatio="xMidYMid meet"
+        (wheel)="onWheelZoom($event)"
+        (pointerdown)="onPointerDown($event)"
+        (pointermove)="onPointerMove($event)"
+        (pointerup)="onPointerUp()"
+        (pointercancel)="onPointerUp()"
+        class="w-full h-full bg-white"
+        style="touch-action: none"
+      >
+        <rect [attr.width]="ancho" [attr.height]="alto" fill="transparent"></rect>
+        <g [attr.transform]="'translate(' + tx + ',' + ty + ') scale(' + scale + ')'">
+          <ng-container *ngFor="let mm of layoutMesas">
+            <g
+              *ngIf="mm.forma === 'cuadrada' || mm.forma === 'rectangular'"
+              class="cursor-pointer select-none"
+              (click)="onMesaTap(mm.id)"
+              (mousedown)="onMesaPressStart(mm.id, $event)"
+              (mouseup)="onMesaPressEnd($event)"
+              (mouseleave)="onMesaPressEnd($event)"
+              (touchstart)="onMesaPressStart(mm.id, $event)"
+              (touchend)="onMesaPressEnd($event)"
+              (contextmenu)="onMesaContextMenu($event, mm.id)"
+              [attr.transform]="'translate(' + mm.x + ',' + mm.y + ')'"
+            >
+              <rect
+                [attr.width]="mm.ancho || 120"
+                [attr.height]="mm.alto || 90"
+                [attr.rx]="8"
+                [attr.ry]="8"
+                [attr.fill]="colorMesa(mm.id)"
+                stroke="#e5e7eb"
+              ></rect>
+              <text x="8" y="18" fill="#374151" font-size="12" font-weight="600">{{ mm.id }}</text>
+            </g>
+            <g
+              *ngIf="mm.forma === 'redonda'"
+              class="cursor-pointer select-none"
+              (click)="onMesaTap(mm.id)"
+              (mousedown)="onMesaPressStart(mm.id, $event)"
+              (mouseup)="onMesaPressEnd($event)"
+              (mouseleave)="onMesaPressEnd($event)"
+              (touchstart)="onMesaPressStart(mm.id, $event)"
+              (touchend)="onMesaPressEnd($event)"
+              (contextmenu)="onMesaContextMenu($event, mm.id)"
+            >
+              <circle
+                [attr.cx]="mm.x + (mm.ancho || 100) / 2"
+                [attr.cy]="mm.y + (mm.ancho || 100) / 2"
+                [attr.r]="(mm.ancho || 100) / 2"
+                [attr.fill]="colorMesa(mm.id)"
+                stroke="#e5e7eb"
+              ></circle>
+              <text
+                [attr.x]="mm.x + 8"
+                [attr.y]="mm.y + 18"
+                fill="#374151"
+                font-size="12"
+                font-weight="600"
+              >
+                {{ mm.id }}
+              </text>
+            </g>
+            <g
+              *ngIf="mm.forma === 'dinosaurio'"
+              class="cursor-pointer select-none"
+              (click)="onMesaTap(mm.id)"
+              (mousedown)="onMesaPressStart(mm.id, $event)"
+              (mouseup)="onMesaPressEnd($event)"
+              (mouseleave)="onMesaPressEnd($event)"
+              (touchstart)="onMesaPressStart(mm.id, $event)"
+              (touchend)="onMesaPressEnd($event)"
+              (contextmenu)="onMesaContextMenu($event, mm.id)"
+              [attr.transform]="'translate(' + mm.x + ',' + mm.y + ')'"
+            >
+              <rect
+                [attr.width]="mm.ancho || 140"
+                [attr.height]="mm.alto || 100"
+                [attr.rx]="16"
+                [attr.ry]="16"
+                [attr.fill]="colorMesa(mm.id)"
+                stroke="#e5e7eb"
+              ></rect>
+              <text x="8" y="18" fill="#374151" font-size="12" font-weight="600">{{ mm.id }}</text>
+            </g>
+          </ng-container>
+        </g>
+      </svg>
+    </div>
+    <div class="px-2 py-1 text-[11px] text-gray-600 border-t bg-gray-50">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="inline-flex items-center gap-1"
+          ><span class="inline-block w-3 h-3 rounded-sm bg-green-100 ring-1 ring-green-200"></span>
+          Libre</span
+        >
+        <span class="inline-flex items-center gap-1"
+          ><span class="inline-block w-3 h-3 rounded-sm bg-red-100 ring-1 ring-red-200"></span>
+          Ocupada</span
+        >
+        <span class="inline-flex items-center gap-1"
+          ><span
+            class="inline-block w-3 h-3 rounded-sm bg-emerald-100 ring-1 ring-emerald-200"
+          ></span>
+          Pagado</span
+        >
+        <span class="inline-flex items-center gap-1"
+          ><span class="inline-block w-3 h-3 rounded-sm bg-gray-200 ring-1 ring-gray-300"></span>
+          Cerrado</span
+        >
+        <span class="ml-auto text-[10px] text-gray-500"
+          >Tap: abrir/ver · Doble tap: facturar · Long-press: liberar · Wheel/Pinch: zoom,
+          arrastrar: pan</span
+        >
+      </div>
+    </div>
+    <!-- Desktop context menu (display mode) -->
+    <div *ngIf="ctxVisible" class="fixed inset-0 z-[100]" (click)="closeContextMenu()"></div>
+    <div
+      *ngIf="ctxVisible"
+      class="fixed z-[101] bg-white border shadow-lg rounded min-w-[180px] text-sm"
+      [ngStyle]="{ left: ctxX + 'px', top: ctxY + 'px' }"
+      (click)="$event.stopPropagation()"
+    >
+      <button class="w-full text-left px-3 py-2 hover:bg-gray-50" (click)="ctxAbrirVer()">
+        {{ ctxLabelAbrirVer }}
       </button>
-      <button mat-icon-button (click)="cerrarVentana()" aria-label="Cerrar ventana">
-        <mat-icon>close</mat-icon>
+      <button
+        class="w-full text-left px-3 py-2 hover:bg-gray-50 disabled:opacity-50"
+        [disabled]="!ctxPuedeLiberar"
+        (click)="ctxLiberar()"
+      >
+        Liberar mesa
+      </button>
+      <button
+        class="w-full text-left px-3 py-2 hover:bg-gray-50 disabled:opacity-50"
+        [disabled]="!ctxPuedeFacturar"
+        (click)="ctxFacturar()"
+      >
+        Facturar
       </button>
     </div>
   </div>
-  <div class="flex-1 min-h-0">
-    <svg
-      [attr.viewBox]="'0 0 ' + ancho + ' ' + alto"
-      preserveAspectRatio="xMidYMid meet"
-      (wheel)="onWheelZoom($event)"
-      (pointerdown)="onPointerDown($event)"
-      (pointermove)="onPointerMove($event)"
-      (pointerup)="onPointerUp()"
-      (pointercancel)="onPointerUp()"
-      class="w-full h-full bg-white"
-      style="touch-action: none;">
-      <rect [attr.width]="ancho" [attr.height]="alto" fill="transparent"></rect>
-      <g [attr.transform]="'translate(' + tx + ',' + ty + ') scale(' + scale + ')'">
-        <ng-container *ngFor="let mm of layoutMesas">
-          <g *ngIf="mm.forma==='cuadrada' || mm.forma==='rectangular'"
-             class="cursor-pointer select-none"
-             (click)="onMesaTap(mm.id)"
-             (mousedown)="onMesaPressStart(mm.id, $event)"
-             (mouseup)="onMesaPressEnd($event)"
-             (mouseleave)="onMesaPressEnd($event)"
-             (touchstart)="onMesaPressStart(mm.id, $event)"
-             (touchend)="onMesaPressEnd($event)"
-             (contextmenu)="onMesaContextMenu($event, mm.id)"
-             [attr.transform]="'translate(' + mm.x + ',' + mm.y + ')'">
-            <rect [attr.width]="mm.ancho || 120" [attr.height]="mm.alto || 90" [attr.rx]="8" [attr.ry]="8" [attr.fill]="colorMesa(mm.id)" stroke="#e5e7eb"></rect>
-            <text x="8" y="18" fill="#374151" font-size="12" font-weight="600">{{ mm.id }}</text>
-          </g>
-          <g *ngIf="mm.forma==='redonda'" class="cursor-pointer select-none"
-             (click)="onMesaTap(mm.id)"
-             (mousedown)="onMesaPressStart(mm.id, $event)"
-             (mouseup)="onMesaPressEnd($event)"
-             (mouseleave)="onMesaPressEnd($event)"
-             (touchstart)="onMesaPressStart(mm.id, $event)"
-             (touchend)="onMesaPressEnd($event)"
-             (contextmenu)="onMesaContextMenu($event, mm.id)">
-            <circle [attr.cx]="(mm.x + (mm.ancho || 100)/2)" [attr.cy]="(mm.y + (mm.ancho || 100)/2)" [attr.r]="(mm.ancho || 100)/2" [attr.fill]="colorMesa(mm.id)" stroke="#e5e7eb"></circle>
-            <text [attr.x]="mm.x + 8" [attr.y]="mm.y + 18" fill="#374151" font-size="12" font-weight="600">{{ mm.id }}</text>
-          </g>
-          <g *ngIf="mm.forma==='dinosaurio'"
-             class="cursor-pointer select-none"
-             (click)="onMesaTap(mm.id)"
-             (mousedown)="onMesaPressStart(mm.id, $event)"
-             (mouseup)="onMesaPressEnd($event)"
-             (mouseleave)="onMesaPressEnd($event)"
-             (touchstart)="onMesaPressStart(mm.id, $event)"
-             (touchend)="onMesaPressEnd($event)"
-             (contextmenu)="onMesaContextMenu($event, mm.id)"
-             [attr.transform]="'translate(' + mm.x + ',' + mm.y + ')'">
-            <rect [attr.width]="mm.ancho || 140" [attr.height]="mm.alto || 100" [attr.rx]="16" [attr.ry]="16" [attr.fill]="colorMesa(mm.id)" stroke="#e5e7eb"></rect>
-            <text x="8" y="18" fill="#374151" font-size="12" font-weight="600">{{ mm.id }}</text>
-          </g>
-        </ng-container>
-      </g>
-    </svg>
-  </div>
-  <div class="px-2 py-1 text-[11px] text-gray-600 border-t bg-gray-50">
-    <div class="flex flex-wrap items-center gap-2">
-      <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-sm bg-green-100 ring-1 ring-green-200"></span> Libre</span>
-      <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-sm bg-red-100 ring-1 ring-red-200"></span> Ocupada</span>
-      <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-sm bg-emerald-100 ring-1 ring-emerald-200"></span> Pagado</span>
-      <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-sm bg-gray-200 ring-1 ring-gray-300"></span> Cerrado</span>
-      <span class="ml-auto text-[10px] text-gray-500">Tap: abrir/ver · Doble tap: facturar · Long-press: liberar · Wheel/Pinch: zoom, arrastrar: pan</span>
-    </div>
-  </div>
-  <!-- Desktop context menu (display mode) -->
-  <div *ngIf="ctxVisible" class="fixed inset-0 z-[100]" (click)="closeContextMenu()"></div>
-  <div *ngIf="ctxVisible" class="fixed z-[101] bg-white border shadow-lg rounded min-w-[180px] text-sm"
-       [ngStyle]="{ left: ctxX + 'px', top: ctxY + 'px' }"
-       (click)="$event.stopPropagation()">
-    <button class="w-full text-left px-3 py-2 hover:bg-gray-50" (click)="ctxAbrirVer()">{{ ctxLabelAbrirVer }}</button>
-    <button class="w-full text-left px-3 py-2 hover:bg-gray-50 disabled:opacity-50" [disabled]="!ctxPuedeLiberar" (click)="ctxLiberar()">Liberar mesa</button>
-    <button class="w-full text-left px-3 py-2 hover:bg-gray-50 disabled:opacity-50" [disabled]="!ctxPuedeFacturar" (click)="ctxFacturar()">Facturar</button>
-  </div>
-</div>
 
-<!-- Vista normal con lista + mapa embebido -->
-<div *ngIf="!isDisplay" class="mb-4">
+  <!-- Vista normal con lista + mapa embebido -->
+  <div *ngIf="!isDisplay" class="mb-4">
     <div class="rounded-xl border bg-white shadow-sm overflow-hidden">
-      <div class="px-3 py-2 text-xs text-gray-600 flex items-center justify-between bg-gray-50 border-b">
+      <div
+        class="px-3 py-2 text-xs text-gray-600 flex items-center justify-between bg-gray-50 border-b"
+      >
         <div class="flex items-center gap-2">
           <mat-icon class="!text-base text-orange-600">map</mat-icon>
           <span>Mapa del salón — {{ area | titlecase }}</span>
         </div>
-        <button class="hidden md:inline-flex items-center gap-1 px-2 py-1 text-[11px] rounded border hover:bg-gray-100 mr-2"
-                (click)="resetView()">
+        <button
+          class="hidden md:inline-flex items-center gap-1 px-2 py-1 text-[11px] rounded border hover:bg-gray-100 mr-2"
+          (click)="resetView()"
+        >
           <mat-icon class="!text-sm">center_focus_strong</mat-icon>
           Centrar
         </button>
-        <button class="hidden md:inline-flex items-center gap-1 px-2 py-1 text-[11px] rounded border hover:bg-gray-100 mr-2"
-                (click)="abrirVentanaExclusiva()">
+        <button
+          class="hidden md:inline-flex items-center gap-1 px-2 py-1 text-[11px] rounded border hover:bg-gray-100 mr-2"
+          (click)="abrirVentanaExclusiva()"
+        >
           <mat-icon class="!text-sm">open_in_new</mat-icon>
           Ventana exclusiva
         </button>
-        <button class="hidden md:inline-flex items-center gap-1 px-2 py-1 text-[11px] rounded border hover:bg-gray-100"
-                (click)="abrirMapaFull()">
+        <button
+          class="hidden md:inline-flex items-center gap-1 px-2 py-1 text-[11px] rounded border hover:bg-gray-100"
+          (click)="abrirMapaFull()"
+        >
           <mat-icon class="!text-sm">fullscreen</mat-icon>
           Pantalla completa
         </button>
@@ -152,70 +263,147 @@
           (pointerup)="onPointerUp()"
           (pointercancel)="onPointerUp()"
           class="w-full max-h-[50vh] md:max-h-[360px] rounded-lg ring-1 ring-gray-200 bg-gradient-to-br from-gray-50 to-white"
-          style="touch-action: none;">
+          style="touch-action: none"
+        >
           <rect [attr.width]="ancho" [attr.height]="alto" fill="transparent"></rect>
           <g [attr.transform]="'translate(' + tx + ',' + ty + ') scale(' + scale + ')'">
-          <ng-container *ngFor="let mm of layoutMesas">
-            <!-- Mesa cuadrada/rectangular -->
-            <g *ngIf="mm.forma==='cuadrada' || mm.forma==='rectangular'"
-               class="cursor-pointer select-none"
-               (click)="onMesaTap(mm.id)"
-               (mousedown)="onMesaPressStart(mm.id, $event)"
-               (mouseup)="onMesaPressEnd($event)"
-               (mouseleave)="onMesaPressEnd($event)"
-               (touchstart)="onMesaPressStart(mm.id, $event)"
-               (touchend)="onMesaPressEnd($event)"
-               (contextmenu)="onMesaContextMenu($event, mm.id)"
-               [attr.transform]="'translate(' + mm.x + ',' + mm.y + ')'">
-              <rect [attr.width]="mm.ancho || 120" [attr.height]="mm.alto || 90" [attr.rx]="8" [attr.ry]="8" [attr.fill]="colorMesa(mm.id)" stroke="#e5e7eb"></rect>
-              <text x="8" y="18" fill="#374151" font-size="12" font-weight="600">{{ mm.id }}</text>
-            </g>
-            <!-- Mesa redonda -->
-            <g *ngIf="mm.forma==='redonda'" class="cursor-pointer select-none"
-               (click)="onMesaTap(mm.id)"
-               (mousedown)="onMesaPressStart(mm.id, $event)"
-               (mouseup)="onMesaPressEnd($event)"
-               (mouseleave)="onMesaPressEnd($event)"
-               (touchstart)="onMesaPressStart(mm.id, $event)"
-               (touchend)="onMesaPressEnd($event)"
-               (contextmenu)="onMesaContextMenu($event, mm.id)">
-              <circle [attr.cx]="(mm.x + (mm.ancho || 100)/2)" [attr.cy]="(mm.y + (mm.ancho || 100)/2)" [attr.r]="(mm.ancho || 100)/2" [attr.fill]="colorMesa(mm.id)" stroke="#e5e7eb"></circle>
-              <text [attr.x]="mm.x + 8" [attr.y]="mm.y + 18" fill="#374151" font-size="12" font-weight="600">{{ mm.id }}</text>
-            </g>
-            <!-- Mesa dinosaurio (divertida, como cuadrada)
+            <ng-container *ngFor="let mm of layoutMesas">
+              <!-- Mesa cuadrada/rectangular -->
+              <g
+                *ngIf="mm.forma === 'cuadrada' || mm.forma === 'rectangular'"
+                class="cursor-pointer select-none"
+                (click)="onMesaTap(mm.id)"
+                (mousedown)="onMesaPressStart(mm.id, $event)"
+                (mouseup)="onMesaPressEnd($event)"
+                (mouseleave)="onMesaPressEnd($event)"
+                (touchstart)="onMesaPressStart(mm.id, $event)"
+                (touchend)="onMesaPressEnd($event)"
+                (contextmenu)="onMesaContextMenu($event, mm.id)"
+                [attr.transform]="'translate(' + mm.x + ',' + mm.y + ')'"
+              >
+                <rect
+                  [attr.width]="mm.ancho || 120"
+                  [attr.height]="mm.alto || 90"
+                  [attr.rx]="8"
+                  [attr.ry]="8"
+                  [attr.fill]="colorMesa(mm.id)"
+                  stroke="#e5e7eb"
+                ></rect>
+                <text x="8" y="18" fill="#374151" font-size="12" font-weight="600">
+                  {{ mm.id }}
+                </text>
+              </g>
+              <!-- Mesa redonda -->
+              <g
+                *ngIf="mm.forma === 'redonda'"
+                class="cursor-pointer select-none"
+                (click)="onMesaTap(mm.id)"
+                (mousedown)="onMesaPressStart(mm.id, $event)"
+                (mouseup)="onMesaPressEnd($event)"
+                (mouseleave)="onMesaPressEnd($event)"
+                (touchstart)="onMesaPressStart(mm.id, $event)"
+                (touchend)="onMesaPressEnd($event)"
+                (contextmenu)="onMesaContextMenu($event, mm.id)"
+              >
+                <circle
+                  [attr.cx]="mm.x + (mm.ancho || 100) / 2"
+                  [attr.cy]="mm.y + (mm.ancho || 100) / 2"
+                  [attr.r]="(mm.ancho || 100) / 2"
+                  [attr.fill]="colorMesa(mm.id)"
+                  stroke="#e5e7eb"
+                ></circle>
+                <text
+                  [attr.x]="mm.x + 8"
+                  [attr.y]="mm.y + 18"
+                  fill="#374151"
+                  font-size="12"
+                  font-weight="600"
+                >
+                  {{ mm.id }}
+                </text>
+              </g>
+              <!-- Mesa dinosaurio (divertida, como cuadrada)
             podría mejorarse con un path custom -->
-            <g *ngIf="mm.forma==='dinosaurio'"
-               class="cursor-pointer select-none"
-               (click)="onMesaTap(mm.id)"
-               (mousedown)="onMesaPressStart(mm.id, $event)"
-               (mouseup)="onMesaPressEnd($event)"
-               (mouseleave)="onMesaPressEnd($event)"
-               (touchstart)="onMesaPressStart(mm.id, $event)"
-               (touchend)="onMesaPressEnd($event)"
-               (contextmenu)="onMesaContextMenu($event, mm.id)"
-               [attr.transform]="'translate(' + mm.x + ',' + mm.y + ')'">
-              <rect [attr.width]="mm.ancho || 140" [attr.height]="mm.alto || 100" [attr.rx]="16" [attr.ry]="16" [attr.fill]="colorMesa(mm.id)" stroke="#e5e7eb"></rect>
-              <text x="8" y="18" fill="#374151" font-size="12" font-weight="600">{{ mm.id }}</text>
-            </g>
-          </ng-container>
+              <g
+                *ngIf="mm.forma === 'dinosaurio'"
+                class="cursor-pointer select-none"
+                (click)="onMesaTap(mm.id)"
+                (mousedown)="onMesaPressStart(mm.id, $event)"
+                (mouseup)="onMesaPressEnd($event)"
+                (mouseleave)="onMesaPressEnd($event)"
+                (touchstart)="onMesaPressStart(mm.id, $event)"
+                (touchend)="onMesaPressEnd($event)"
+                (contextmenu)="onMesaContextMenu($event, mm.id)"
+                [attr.transform]="'translate(' + mm.x + ',' + mm.y + ')'"
+              >
+                <rect
+                  [attr.width]="mm.ancho || 140"
+                  [attr.height]="mm.alto || 100"
+                  [attr.rx]="16"
+                  [attr.ry]="16"
+                  [attr.fill]="colorMesa(mm.id)"
+                  stroke="#e5e7eb"
+                ></rect>
+                <text x="8" y="18" fill="#374151" font-size="12" font-weight="600">
+                  {{ mm.id }}
+                </text>
+              </g>
+            </ng-container>
           </g>
         </svg>
         <!-- Desktop context menu (normal view) -->
         <div *ngIf="ctxVisible" class="fixed inset-0 z-[100]" (click)="closeContextMenu()"></div>
-        <div *ngIf="ctxVisible" class="fixed z-[101] bg-white border shadow-lg rounded min-w-[180px] text-sm"
-             [ngStyle]="{ left: ctxX + 'px', top: ctxY + 'px' }"
-             (click)="$event.stopPropagation()">
-          <button class="w-full text-left px-3 py-2 hover:bg-gray-50" (click)="ctxAbrirVer()">{{ ctxLabelAbrirVer }}</button>
-          <button class="w-full text-left px-3 py-2 hover:bg-gray-50 disabled:opacity-50" [disabled]="!ctxPuedeLiberar" (click)="ctxLiberar()">Liberar mesa</button>
-          <button class="w-full text-left px-3 py-2 hover:bg-gray-50 disabled:opacity-50" [disabled]="!ctxPuedeFacturar" (click)="ctxFacturar()">Facturar</button>
+        <div
+          *ngIf="ctxVisible"
+          class="fixed z-[101] bg-white border shadow-lg rounded min-w-[180px] text-sm"
+          [ngStyle]="{ left: ctxX + 'px', top: ctxY + 'px' }"
+          (click)="$event.stopPropagation()"
+        >
+          <button class="w-full text-left px-3 py-2 hover:bg-gray-50" (click)="ctxAbrirVer()">
+            {{ ctxLabelAbrirVer }}
+          </button>
+          <button
+            class="w-full text-left px-3 py-2 hover:bg-gray-50 disabled:opacity-50"
+            [disabled]="!ctxPuedeLiberar"
+            (click)="ctxLiberar()"
+          >
+            Liberar mesa
+          </button>
+          <button
+            class="w-full text-left px-3 py-2 hover:bg-gray-50 disabled:opacity-50"
+            [disabled]="!ctxPuedeFacturar"
+            (click)="ctxFacturar()"
+          >
+            Facturar
+          </button>
         </div>
         <div class="mt-2 px-2 pb-2">
           <div class="flex flex-wrap items-center gap-2 text-[11px] text-gray-600">
-            <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-sm bg-green-100 ring-1 ring-green-200"></span> Libre</span>
-            <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-sm bg-red-100 ring-1 ring-red-200"></span> Ocupada</span>
-            <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-sm bg-emerald-100 ring-1 ring-emerald-200"></span> Pagado</span>
-            <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-sm bg-gray-200 ring-1 ring-gray-300"></span> Cerrado</span>
-            <span class="ml-auto hidden md:inline text-[10px] text-gray-500">Tap: abrir/ver · Doble tap: facturar · Long-press: liberar</span>
+            <span class="inline-flex items-center gap-1"
+              ><span
+                class="inline-block w-3 h-3 rounded-sm bg-green-100 ring-1 ring-green-200"
+              ></span>
+              Libre</span
+            >
+            <span class="inline-flex items-center gap-1"
+              ><span class="inline-block w-3 h-3 rounded-sm bg-red-100 ring-1 ring-red-200"></span>
+              Ocupada</span
+            >
+            <span class="inline-flex items-center gap-1"
+              ><span
+                class="inline-block w-3 h-3 rounded-sm bg-emerald-100 ring-1 ring-emerald-200"
+              ></span>
+              Pagado</span
+            >
+            <span class="inline-flex items-center gap-1"
+              ><span
+                class="inline-block w-3 h-3 rounded-sm bg-gray-200 ring-1 ring-gray-300"
+              ></span>
+              Cerrado</span
+            >
+            <span class="ml-auto hidden md:inline text-[10px] text-gray-500"
+              >Tap: abrir/ver · Doble tap: facturar · Long-press: liberar</span
+            >
           </div>
         </div>
       </div>
@@ -234,7 +422,12 @@
           <button mat-button (click)="resetView()" class="!min-w-0 !px-2" aria-label="Centrar">
             <mat-icon>center_focus_strong</mat-icon>
           </button>
-          <button mat-button (click)="abrirVentanaExclusiva()" class="!min-w-0 !px-2" aria-label="Ventana exclusiva">
+          <button
+            mat-button
+            (click)="abrirVentanaExclusiva()"
+            class="!min-w-0 !px-2"
+            aria-label="Ventana exclusiva"
+          >
             <mat-icon>open_in_new</mat-icon>
           </button>
           <button mat-icon-button (click)="dialogRef?.close()" aria-label="Cerrar">
@@ -243,7 +436,9 @@
         </div>
       </div>
       <div class="p-2">
-        <div class="w-full h-[75vh] md:h-[85vh] overflow-auto rounded-lg ring-1 ring-gray-200 bg-white">
+        <div
+          class="w-full h-[75vh] md:h-[85vh] overflow-auto rounded-lg ring-1 ring-gray-200 bg-white"
+        >
           <svg
             [attr.viewBox]="'0 0 ' + ancho + ' ' + alto"
             preserveAspectRatio="xMidYMid meet"
@@ -253,45 +448,85 @@
             (pointerup)="onPointerUp()"
             (pointercancel)="onPointerUp()"
             class="w-full h-full"
-            style="touch-action: none;">
+            style="touch-action: none"
+          >
             <rect [attr.width]="ancho" [attr.height]="alto" fill="transparent"></rect>
             <g [attr.transform]="'translate(' + tx + ',' + ty + ') scale(' + scale + ')'">
-            <ng-container *ngFor="let mm of layoutMesas">
-              <g *ngIf="mm.forma==='cuadrada' || mm.forma==='rectangular'"
-                 class="cursor-pointer select-none"
-                 (click)="onMesaTap(mm.id)"
-                 (mousedown)="onMesaPressStart(mm.id, $event)"
-                 (mouseup)="onMesaPressEnd($event)"
-                 (mouseleave)="onMesaPressEnd($event)"
-                 (touchstart)="onMesaPressStart(mm.id, $event)"
-                 (touchend)="onMesaPressEnd($event)"
-                 [attr.transform]="'translate(' + mm.x + ',' + mm.y + ')'">
-                <rect [attr.width]="mm.ancho || 120" [attr.height]="mm.alto || 90" [attr.rx]="8" [attr.ry]="8" [attr.fill]="colorMesa(mm.id)" stroke="#e5e7eb"></rect>
-                <text x="8" y="18" fill="#374151" font-size="12" font-weight="600">{{ mm.id }}</text>
-              </g>
-              <g *ngIf="mm.forma==='redonda'" class="cursor-pointer select-none"
-                 (click)="onMesaTap(mm.id)"
-                 (mousedown)="onMesaPressStart(mm.id, $event)"
-                 (mouseup)="onMesaPressEnd($event)"
-                 (mouseleave)="onMesaPressEnd($event)"
-                 (touchstart)="onMesaPressStart(mm.id, $event)"
-                 (touchend)="onMesaPressEnd($event)">
-                <circle [attr.cx]="(mm.x + (mm.ancho || 100)/2)" [attr.cy]="(mm.y + (mm.ancho || 100)/2)" [attr.r]="(mm.ancho || 100)/2" [attr.fill]="colorMesa(mm.id)" stroke="#e5e7eb"></circle>
-                <text [attr.x]="mm.x + 8" [attr.y]="mm.y + 18" fill="#374151" font-size="12" font-weight="600">{{ mm.id }}</text>
-              </g>
-              <g *ngIf="mm.forma==='dinosaurio'"
-                 class="cursor-pointer select-none"
-                 (click)="onMesaTap(mm.id)"
-                 (mousedown)="onMesaPressStart(mm.id, $event)"
-                 (mouseup)="onMesaPressEnd($event)"
-                 (mouseleave)="onMesaPressEnd($event)"
-                 (touchstart)="onMesaPressStart(mm.id, $event)"
-                 (touchend)="onMesaPressEnd($event)"
-                 [attr.transform]="'translate(' + mm.x + ',' + mm.y + ')'">
-                <rect [attr.width]="mm.ancho || 140" [attr.height]="mm.alto || 100" [attr.rx]="16" [attr.ry]="16" [attr.fill]="colorMesa(mm.id)" stroke="#e5e7eb"></rect>
-                <text x="8" y="18" fill="#374151" font-size="12" font-weight="600">{{ mm.id }}</text>
-              </g>
-            </ng-container>
+              <ng-container *ngFor="let mm of layoutMesas">
+                <g
+                  *ngIf="mm.forma === 'cuadrada' || mm.forma === 'rectangular'"
+                  class="cursor-pointer select-none"
+                  (click)="onMesaTap(mm.id)"
+                  (mousedown)="onMesaPressStart(mm.id, $event)"
+                  (mouseup)="onMesaPressEnd($event)"
+                  (mouseleave)="onMesaPressEnd($event)"
+                  (touchstart)="onMesaPressStart(mm.id, $event)"
+                  (touchend)="onMesaPressEnd($event)"
+                  [attr.transform]="'translate(' + mm.x + ',' + mm.y + ')'"
+                >
+                  <rect
+                    [attr.width]="mm.ancho || 120"
+                    [attr.height]="mm.alto || 90"
+                    [attr.rx]="8"
+                    [attr.ry]="8"
+                    [attr.fill]="colorMesa(mm.id)"
+                    stroke="#e5e7eb"
+                  ></rect>
+                  <text x="8" y="18" fill="#374151" font-size="12" font-weight="600">
+                    {{ mm.id }}
+                  </text>
+                </g>
+                <g
+                  *ngIf="mm.forma === 'redonda'"
+                  class="cursor-pointer select-none"
+                  (click)="onMesaTap(mm.id)"
+                  (mousedown)="onMesaPressStart(mm.id, $event)"
+                  (mouseup)="onMesaPressEnd($event)"
+                  (mouseleave)="onMesaPressEnd($event)"
+                  (touchstart)="onMesaPressStart(mm.id, $event)"
+                  (touchend)="onMesaPressEnd($event)"
+                >
+                  <circle
+                    [attr.cx]="mm.x + (mm.ancho || 100) / 2"
+                    [attr.cy]="mm.y + (mm.ancho || 100) / 2"
+                    [attr.r]="(mm.ancho || 100) / 2"
+                    [attr.fill]="colorMesa(mm.id)"
+                    stroke="#e5e7eb"
+                  ></circle>
+                  <text
+                    [attr.x]="mm.x + 8"
+                    [attr.y]="mm.y + 18"
+                    fill="#374151"
+                    font-size="12"
+                    font-weight="600"
+                  >
+                    {{ mm.id }}
+                  </text>
+                </g>
+                <g
+                  *ngIf="mm.forma === 'dinosaurio'"
+                  class="cursor-pointer select-none"
+                  (click)="onMesaTap(mm.id)"
+                  (mousedown)="onMesaPressStart(mm.id, $event)"
+                  (mouseup)="onMesaPressEnd($event)"
+                  (mouseleave)="onMesaPressEnd($event)"
+                  (touchstart)="onMesaPressStart(mm.id, $event)"
+                  (touchend)="onMesaPressEnd($event)"
+                  [attr.transform]="'translate(' + mm.x + ',' + mm.y + ')'"
+                >
+                  <rect
+                    [attr.width]="mm.ancho || 140"
+                    [attr.height]="mm.alto || 100"
+                    [attr.rx]="16"
+                    [attr.ry]="16"
+                    [attr.fill]="colorMesa(mm.id)"
+                    stroke="#e5e7eb"
+                  ></rect>
+                  <text x="8" y="18" fill="#374151" font-size="12" font-weight="600">
+                    {{ mm.id }}
+                  </text>
+                </g>
+              </ng-container>
             </g>
           </svg>
         </div>
@@ -300,35 +535,61 @@
   </ng-template>
 
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-    <div *ngFor="let m of filtradas" class="p-3 rounded-xl border shadow-sm"
-         [class.bg-green-50]="m.estado==='libre'"
-         [class.bg-red-50]="m.estado==='ocupada'">
+    <div
+      *ngFor="let m of filtradas"
+      class="p-3 rounded-xl border shadow-sm"
+      [class.bg-green-50]="m.estado === 'libre'"
+      [class.bg-red-50]="m.estado === 'ocupada'"
+    >
       <div class="flex items-center justify-between mb-2">
         <div class="font-semibold text-gray-900">Mesa {{ m.mesaId }}</div>
-        <span class="text-xs px-2 py-0.5 rounded-full" [class.bg-green-200]="m.estado==='libre'" [class.bg-red-200]="m.estado==='ocupada'">
+        <span
+          class="text-xs px-2 py-0.5 rounded-full"
+          [class.bg-green-200]="m.estado === 'libre'"
+          [class.bg-red-200]="m.estado === 'ocupada'"
+        >
           {{ m.estado | titlecase }}
         </span>
       </div>
       <!-- Badges de estado del pedido -->
-      <div *ngIf="m.estado==='ocupada' && (m.pedidoEstado || m.pagado)" class="flex items-center gap-2 mb-2">
-        <span *ngIf="m.pagado" class="badge bg-emerald-100 text-emerald-800 ring-1 ring-emerald-200 inline-flex items-center gap-1">
+      <div
+        *ngIf="m.estado === 'ocupada' && (m.pedidoEstado || m.pagado)"
+        class="flex items-center gap-2 mb-2"
+      >
+        <span
+          *ngIf="m.pagado"
+          class="badge bg-emerald-100 text-emerald-800 ring-1 ring-emerald-200 inline-flex items-center gap-1"
+        >
           <mat-icon class="!text-base">verified</mat-icon>
           Pagado
         </span>
-        <span *ngIf="m.pedidoEstado==='cerrado'" class="badge bg-gray-200 text-gray-800 ring-1 ring-gray-300 inline-flex items-center gap-1">
+        <span
+          *ngIf="m.pedidoEstado === 'cerrado'"
+          class="badge bg-gray-200 text-gray-800 ring-1 ring-gray-300 inline-flex items-center gap-1"
+        >
           <mat-icon class="!text-base">task_alt</mat-icon>
           Cerrado
         </span>
       </div>
       <div class="flex gap-2 flex-wrap">
-        <ng-container *ngIf="m.estado==='libre'; else accionesOcupada">
-          <button mat-flat-button color="primary" class="!h-9 !rounded-lg flex-1" (click)="tomarPedido(m)">
+        <ng-container *ngIf="m.estado === 'libre'; else accionesOcupada">
+          <button
+            mat-flat-button
+            color="primary"
+            class="!h-9 !rounded-lg flex-1"
+            (click)="tomarPedido(m)"
+          >
             <mat-icon>add_shopping_cart</mat-icon>
             <span class="ml-1">Tomar pedido</span>
           </button>
         </ng-container>
         <ng-template #accionesOcupada>
-          <button mat-stroked-button color="primary" class="!h-9 !rounded-lg flex-1" (click)="verPedido(m)">
+          <button
+            mat-stroked-button
+            color="primary"
+            class="!h-9 !rounded-lg flex-1"
+            (click)="verPedido(m)"
+          >
             <mat-icon>visibility</mat-icon>
             <span class="ml-1">Ver</span>
           </button>
@@ -351,5 +612,4 @@
   <div class="p-0 max-w-[1024px] w-[100vw] sm:w-[86vw] h-[100svh] sm:h-auto overflow-hidden">
     <app-pedido [pedidoIdInput]="pedidoIdDialog || undefined"></app-pedido>
   </div>
-  
 </ng-template>

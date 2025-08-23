@@ -1,10 +1,20 @@
-<div class="dialog-card border border-orange-200/60 rounded-xl shadow-sm hover:shadow-md transition p-0">
-  <div class="flex items-center justify-between px-4 py-2.5 border-b border-orange-200/70 bg-white/80 sticky top-0 z-10">
+<div
+  class="dialog-card border border-orange-200/60 rounded-xl shadow-sm hover:shadow-md transition p-0"
+>
+  <div
+    class="flex items-center justify-between px-4 py-2.5 border-b border-orange-200/70 bg-white/80 sticky top-0 z-10"
+  >
     <div class="flex items-center gap-2">
       <mat-icon class="text-orange-500">fastfood</mat-icon>
       <h2 class="text-base font-semibold">Nuevo producto</h2>
     </div>
-    <button type="button" class="icon-btn" (click)="cerrar()" [disabled]="loading" aria-label="Cerrar">
+    <button
+      type="button"
+      class="icon-btn"
+      (click)="cerrar()"
+      [disabled]="loading"
+      aria-label="Cerrar"
+    >
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -51,10 +61,22 @@
     </div>
 
     <div class="flex items-center justify-end gap-2 pt-2 border-t border-orange-200/60">
-      <button type="button" mat-stroked-button class="rounded-full" (click)="cerrar()" [disabled]="loading">
+      <button
+        type="button"
+        mat-stroked-button
+        class="rounded-full"
+        (click)="cerrar()"
+        [disabled]="loading"
+      >
         Cancelar
       </button>
-      <button type="submit" mat-flat-button color="primary" class="rounded-full gradient-btn" [disabled]="loading || form.invalid">
+      <button
+        type="submit"
+        mat-flat-button
+        color="primary"
+        class="rounded-full gradient-btn"
+        [disabled]="loading || form.invalid"
+      >
         <mat-icon *ngIf="!loading">check_circle</mat-icon>
         <span *ngIf="!loading">Guardar</span>
         <span *ngIf="loading">Guardando...</span>

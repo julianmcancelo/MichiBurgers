@@ -15,7 +15,7 @@ import { MatDialogRef } from '@angular/material/dialog';
   selector: 'app-change-password',
   standalone: false,
   templateUrl: './change-password.component.html',
-  styleUrls: ['./change-password.component.scss']
+  styleUrls: ['./change-password.component.scss'],
 })
 export class ChangePasswordComponent {
   form: FormGroup;
@@ -30,11 +30,16 @@ export class ChangePasswordComponent {
   capsNext = false;
   capsConfirm = false;
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router, @Optional() private dialogRef?: MatDialogRef<ChangePasswordComponent>) {
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
+    private router: Router,
+    @Optional() private dialogRef?: MatDialogRef<ChangePasswordComponent>,
+  ) {
     this.form = this.fb.group({
       current: ['', [Validators.required, Validators.minLength(4)]],
       next: ['', [Validators.required, Validators.minLength(6)]],
-      confirm: ['', [Validators.required]]
+      confirm: ['', [Validators.required]],
     });
   }
 
@@ -59,7 +64,7 @@ export class ChangePasswordComponent {
       error: (e) => {
         this.loading = false;
         this.error = e?.error?.error || 'No se pudo cambiar la contraseña';
-      }
+      },
     });
   }
 

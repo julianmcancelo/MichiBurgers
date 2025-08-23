@@ -8,8 +8,14 @@ import { RouterModule } from '@angular/router';
     CommonModule,
     RouterModule.forChild([
       { path: '', redirectTo: 'preparacion', pathMatch: 'full' },
-      { path: 'preparacion', loadComponent: () => import('./components/preparacion/preparacion.component').then(c => c.PreparacionComponent) }
-    ])
-  ]
+      {
+        path: 'preparacion',
+        loadComponent: () =>
+          import('./components/preparacion/preparacion.component').then(
+            (c) => c.PreparacionComponent,
+          ),
+      },
+    ]),
+  ],
 })
-export class CocinaModule { }
+export class CocinaModule {}

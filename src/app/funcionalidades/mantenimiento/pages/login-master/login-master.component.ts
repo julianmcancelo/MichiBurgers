@@ -21,19 +21,23 @@ import { Router } from '@angular/router';
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
   ],
   templateUrl: './login-master.component.html',
-  styleUrls: ['./login-master.component.scss']
+  styleUrls: ['./login-master.component.scss'],
 })
 export class LoginMasterComponent {
   loading = false;
   error: string | null = null;
   form!: FormGroup;
 
-  constructor(private fb: FormBuilder, private master: MasterAuthService, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private master: MasterAuthService,
+    private router: Router,
+  ) {
     this.form = this.fb.group({
-      password: ['', [Validators.required, Validators.minLength(8)]]
+      password: ['', [Validators.required, Validators.minLength(8)]],
     });
   }
 

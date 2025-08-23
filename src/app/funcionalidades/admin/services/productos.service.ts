@@ -26,7 +26,9 @@ export class ProductosService {
     return this.http.get<ListarResponse>(`${this.base}/listar.php`);
   }
 
-  crear(data: Partial<ProductoDTO> & { categoria_id: number; nombre: string; precio: number }): Observable<{ ok: boolean; id: number }> {
+  crear(
+    data: Partial<ProductoDTO> & { categoria_id: number; nombre: string; precio: number },
+  ): Observable<{ ok: boolean; id: number }> {
     return this.http.post<{ ok: boolean; id: number }>(`${this.base}/crear.php`, data);
   }
 

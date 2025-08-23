@@ -25,9 +25,10 @@
 
 .canvas {
   position: relative;
-  border: 1px dashed rgba(0,0,0,0.16);
-  background: linear-gradient(0deg, rgba(0,0,0,0.018) 50%, rgba(0,0,0,0.012) 50%),
-              linear-gradient(90deg, rgba(0,0,0,0.018) 50%, rgba(0,0,0,0.012) 50%);
+  border: 1px dashed rgba(0, 0, 0, 0.16);
+  background:
+    linear-gradient(0deg, rgba(0, 0, 0, 0.018) 50%, rgba(0, 0, 0, 0.012) 50%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.018) 50%, rgba(0, 0, 0, 0.012) 50%);
   background-size: 40px 40px;
   border-radius: 10px;
   overflow: hidden;
@@ -44,17 +45,22 @@
   position: absolute;
   background: white;
   border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   padding: 10px 12px 12px;
   min-width: 160px;
   cursor: move;
   user-select: none;
-  transition: box-shadow .15s ease, transform .1s ease, border-color .15s ease;
+  transition:
+    box-shadow 0.15s ease,
+    transform 0.1s ease,
+    border-color 0.15s ease;
   z-index: 3;
 }
 
-.mesa:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.14); }
+.mesa:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+}
 
 .mesa.redonda {
   border-radius: 50%;
@@ -70,21 +76,22 @@
 
 .mesa.dinosaurio {
   border: 2px dashed #8bc34a;
-  background: linear-gradient(135deg, rgba(139,195,74,0.12), rgba(76,175,80,0.12));
+  background: linear-gradient(135deg, rgba(139, 195, 74, 0.12), rgba(76, 175, 80, 0.12));
 }
 
 .mesa.seleccionada {
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--mat-sys-primary) 86%, #0000) inset,
-              0 4px 10px rgba(0,0,0,0.16);
+  box-shadow:
+    0 0 0 2px color-mix(in oklab, var(--mat-sys-primary) 86%, #0000) inset,
+    0 4px 10px rgba(0, 0, 0, 0.16);
 }
 
 /* Estados de ocupación claros pero sobrios */
 .mesa.estado-ocupada {
   border-color: rgba(198, 40, 40, 0.35);
-  background: linear-gradient(0deg, rgba(198,40,40,0.05), rgba(198,40,40,0.03));
+  background: linear-gradient(0deg, rgba(198, 40, 40, 0.05), rgba(198, 40, 40, 0.03));
 }
 .mesa.estado-libre {
-  border-color: rgba(0,0,0,0.08);
+  border-color: rgba(0, 0, 0, 0.08);
   background: white;
 }
 
@@ -131,9 +138,9 @@
 .panel {
   padding: 12px;
   background: white;
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   position: sticky;
   top: 72px;
   align-self: start;
@@ -176,7 +183,7 @@
   padding: 0 8px;
   border-radius: 999px;
   font-size: 11px;
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   background: #f6f7f9;
   color: #37474f;
 }
@@ -204,6 +211,6 @@
 
 /* Forma dinosaurio sin emoji: mantener distinción sutil */
 .mesa.dinosaurio {
-  border: 1px dashed rgba(76,175,80,0.35);
-  background: linear-gradient(135deg, rgba(139,195,74,0.09), rgba(76,175,80,0.06));
+  border: 1px dashed rgba(76, 175, 80, 0.35);
+  background: linear-gradient(135deg, rgba(139, 195, 74, 0.09), rgba(76, 175, 80, 0.06));
 }

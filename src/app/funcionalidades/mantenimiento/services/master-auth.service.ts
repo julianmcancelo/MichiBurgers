@@ -29,24 +29,32 @@ export class MasterAuthService {
 
   get token(): string | null {
     if (typeof window === 'undefined') return null;
-    try { return localStorage.getItem(MASTER_TOKEN_KEY); } catch { return null; }
+    try {
+      return localStorage.getItem(MASTER_TOKEN_KEY);
+    } catch {
+      return null;
+    }
   }
 
   login(password: string): Observable<boolean> {
-    return this.http.post<{ token: string }>(`${API_BASE}/auth/master-login.php`, { password }).pipe(
-      tap((resp) => {
-        if (typeof window !== 'undefined') {
-          localStorage.setItem(MASTER_TOKEN_KEY, resp.token);
-        }
-        this._authed$.next(true);
-      }),
-      map(() => true)
-    );
+    return this.http
+      .post<{ token: string }>(`${API_BASE}/auth/master-login.php`, { password })
+      .pipe(
+        tap((resp) => {
+          if (typeof window !== 'undefined') {
+            localStorage.setItem(MASTER_TOKEN_KEY, resp.token);
+          }
+          this._authed$.next(true);
+        }),
+        map(() => true),
+      );
   }
 
   logout(): void {
     if (typeof window === 'undefined') return;
-    try { localStorage.removeItem(MASTER_TOKEN_KEY); } catch {}
+    try {
+      localStorage.removeItem(MASTER_TOKEN_KEY);
+    } catch {}
     this._authed$.next(false);
     this.router.navigate(['/mantenimiento/ingresar']);
   }

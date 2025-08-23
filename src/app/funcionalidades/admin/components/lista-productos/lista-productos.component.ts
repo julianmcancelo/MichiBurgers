@@ -10,7 +10,7 @@ export interface Producto extends ProductoDTO {}
   selector: 'app-lista-productos',
   templateUrl: './lista-productos.component.html',
   styleUrls: ['./lista-productos.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class ListaProductosComponent {
   columnasTabla: string[] = ['foto', 'nombre', 'precio', 'acciones'];
@@ -18,7 +18,11 @@ export class ListaProductosComponent {
   loading = true;
   error: string | null = null;
 
-  constructor(private router: Router, private productosSvc: ProductosService, private dialog: MatDialog) {
+  constructor(
+    private router: Router,
+    private productosSvc: ProductosService,
+    private dialog: MatDialog,
+  ) {
     this.cargar();
   }
 
@@ -27,13 +31,13 @@ export class ListaProductosComponent {
     this.error = null;
     this.productosSvc.listar().subscribe({
       next: (resp) => {
-        this.productos = resp.productos.map(p => ({ ...p }));
+        this.productos = resp.productos.map((p) => ({ ...p }));
         this.loading = false;
       },
       error: () => {
         this.error = 'No se pudieron cargar los productos';
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -44,11 +48,11 @@ export class ListaProductosComponent {
   eliminarProducto(id: number): void {
     this.productosSvc.eliminar(id).subscribe({
       next: () => {
-        this.productos = this.productos.filter(producto => producto.id !== id);
+        this.productos = this.productos.filter((producto) => producto.id !== id);
       },
       error: () => {
         this.error = 'No se pudo eliminar el producto';
-      }
+      },
     });
   }
 
@@ -56,9 +60,9 @@ export class ListaProductosComponent {
     const ref = this.dialog.open(NuevoProductoDialogComponent, {
       width: '520px',
       panelClass: 'tight-dialog',
-      disableClose: true
+      disableClose: true,
     });
-    ref.afterClosed().subscribe(res => {
+    ref.afterClosed().subscribe((res) => {
       if (res?.ok) this.cargar();
     });
   }

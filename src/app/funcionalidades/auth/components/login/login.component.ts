@@ -10,7 +10,7 @@ import { ForgotPasswordComponent } from '../forgot-password/forgot-password.comp
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class LoginComponent {
   formularioLogin: FormGroup;
@@ -19,10 +19,16 @@ export class LoginComponent {
   errorLogin = false;
   capsOn = false;
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router, private snack: MatSnackBar, private dialog: MatDialog) {
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
+    private router: Router,
+    private snack: MatSnackBar,
+    private dialog: MatDialog,
+  ) {
     this.formularioLogin = this.fb.group({
       legajo: ['', [Validators.required]],
-      password: ['', [Validators.required]]
+      password: ['', [Validators.required]],
     });
   }
 
@@ -42,17 +48,25 @@ export class LoginComponent {
         // Redirección por rol
         let destino = '/';
         switch (u.rol) {
-          case 'admin': destino = '/admin'; break;
-          case 'mozo': destino = '/comandera'; break;
-          case 'cocina': destino = '/cocina'; break;
-          case 'caja': destino = '/mapa-meses'; break;
+          case 'admin':
+            destino = '/admin';
+            break;
+          case 'mozo':
+            destino = '/comandera';
+            break;
+          case 'cocina':
+            destino = '/cocina';
+            break;
+          case 'caja':
+            destino = '/mapa-meses';
+            break;
         }
         this.router.navigateByUrl(destino);
       },
       error: () => {
         this.errorLogin = true;
         this.cargando = false;
-      }
+      },
     });
   }
 
@@ -93,7 +107,7 @@ export class LoginComponent {
       maxWidth: '95vw',
       panelClass: 'dialog-elevada',
       autoFocus: true,
-      restoreFocus: true
+      restoreFocus: true,
     });
   }
 }

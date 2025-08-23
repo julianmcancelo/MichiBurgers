@@ -26,22 +26,27 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${BASE_URL}/auth/login.php`, { legajo, password }).pipe(
       tap((resp) => {
         this.guardarSesion(resp);
-      })
+      }),
     );
   }
 
   me(): Observable<Usuario> {
-    return this.http.get<Usuario>(`${BASE_URL}/auth/me.php`).pipe(
-      tap((u) => this.setUsuario(u))
-    );
+    return this.http.get<Usuario>(`${BASE_URL}/auth/me.php`).pipe(tap((u) => this.setUsuario(u)));
   }
 
   changePassword(current: string, next: string): Observable<{ ok: boolean }> {
-    return this.http.post<{ ok: boolean }>(`${BASE_URL}/auth/change-password.php`, { current, new: next });
+    return this.http.post<{ ok: boolean }>(`${BASE_URL}/auth/change-password.php`, {
+      current,
+      new: next,
+    });
   }
 
   forgotPassword(legajo: string, dni: string, next: string): Observable<{ ok: boolean }> {
-    return this.http.post<{ ok: boolean }>(`${BASE_URL}/auth/forgot-password.php`, { legajo, dni, new: next });
+    return this.http.post<{ ok: boolean }>(`${BASE_URL}/auth/forgot-password.php`, {
+      legajo,
+      dni,
+      new: next,
+    });
   }
 
   logout() {
@@ -71,6 +76,10 @@ export class AuthService {
     if (typeof window === 'undefined') return null;
     const raw = localStorage.getItem(USER_KEY);
     if (!raw) return null;
-    try { return JSON.parse(raw) as Usuario; } catch { return null; }
+    try {
+      return JSON.parse(raw) as Usuario;
+    } catch {
+      return null;
+    }
   }
 }

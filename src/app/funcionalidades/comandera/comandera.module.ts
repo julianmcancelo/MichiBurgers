@@ -8,9 +8,17 @@ import { RouterModule } from '@angular/router';
     CommonModule,
     RouterModule.forChild([
       { path: '', redirectTo: 'pedidos', pathMatch: 'full' },
-      { path: 'pedidos', loadComponent: () => import('./components/pedidos/pedidos.component').then(c => c.PedidosComponent) },
-      { path: 'pedido/:id', loadComponent: () => import('./components/pedido/pedido.component').then(c => c.PedidoComponent) }
-    ])
-  ]
+      {
+        path: 'pedidos',
+        loadComponent: () =>
+          import('./components/pedidos/pedidos.component').then((c) => c.PedidosComponent),
+      },
+      {
+        path: 'pedido/:id',
+        loadComponent: () =>
+          import('./components/pedido/pedido.component').then((c) => c.PedidoComponent),
+      },
+    ]),
+  ],
 })
-export class ComanderaModule { }
+export class ComanderaModule {}

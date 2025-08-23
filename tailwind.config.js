@@ -1,8 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./src/**/*.{html,ts}",
-  ],
+  content: ['./src/**/*.{html,ts}'],
   theme: {
     container: {
       center: true,
@@ -39,13 +37,13 @@ module.exports = {
           700: '#374151',
           800: '#1f2937',
           900: '#111827',
-        }
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
       borderRadius: {
-        'xl': '1rem',
+        xl: '1rem',
         '2xl': '1.25rem',
       },
       boxShadow: {
@@ -70,14 +68,9 @@ module.exports = {
           '40%, 43%': { transform: 'translate3d(0, -8px, 0)' },
           '70%': { transform: 'translate3d(0, -4px, 0)' },
           '90%': { transform: 'translate3d(0, -2px, 0)' },
-        }
-      }
+        },
+      },
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-  ],
-}
-
-
+  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
+};

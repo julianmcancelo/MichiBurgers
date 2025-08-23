@@ -19,10 +19,12 @@ import { MatCardModule } from '@angular/material/card';
       </mat-card>
     </div>
   `,
-  styles: [`
-    .contenedor-cocina {
-      padding: 20px;
-    }
-  `]
+  styles: [
+    `
+      .contenedor-cocina {
+        padding: 20px;
+      }
+    `,
+  ],
 })
-export class PreparacionComponent { }
+export class PreparacionComponent {}

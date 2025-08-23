@@ -30,7 +30,7 @@ interface NuevoProductoData {
     MatDialogModule,
   ],
   templateUrl: './nuevo-producto-dialog.component.html',
-  styleUrls: ['./nuevo-producto-dialog.component.scss']
+  styleUrls: ['./nuevo-producto-dialog.component.scss'],
 })
 export class NuevoProductoDialogComponent {
   form: FormGroup;
@@ -50,7 +50,7 @@ export class NuevoProductoDialogComponent {
       precio: [null as number | null, [Validators.required, Validators.min(0.01)]],
       descripcion: [''],
       imagen_url: [''],
-      activo: [true]
+      activo: [true],
     });
     this.cargarCategorias();
 
@@ -75,7 +75,7 @@ export class NuevoProductoDialogComponent {
       },
       error: () => {
         this.categorias = [];
-      }
+      },
     });
   }
 
@@ -88,7 +88,11 @@ export class NuevoProductoDialogComponent {
       this.form.markAllAsTouched();
       return;
     }
-    const value = this.form.value as Partial<ProductoDTO> & { categoria_id: number; nombre: string; precio: number };
+    const value = this.form.value as Partial<ProductoDTO> & {
+      categoria_id: number;
+      nombre: string;
+      precio: number;
+    };
     this.loading = true;
     if (this.isEdit && this.data?.producto?.id) {
       this.productos.actualizar(this.data.producto.id, value).subscribe({
@@ -96,7 +100,9 @@ export class NuevoProductoDialogComponent {
           this.loading = false;
           this.dialogRef?.close({ ok: true, updated: true });
         },
-        error: () => { this.loading = false; }
+        error: () => {
+          this.loading = false;
+        },
       });
     } else {
       this.productos.crear(value).subscribe({
@@ -104,7 +110,9 @@ export class NuevoProductoDialogComponent {
           this.loading = false;
           this.dialogRef?.close({ ok: true, id: res.id });
         },
-        error: () => { this.loading = false; }
+        error: () => {
+          this.loading = false;
+        },
       });
     }
   }

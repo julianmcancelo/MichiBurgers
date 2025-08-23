@@ -1,26 +1,39 @@
 <!-- Página de inicio integrada al layout (sin fondo propio) -->
 <div class="py-4 sm:py-6 lg:py-8">
-
   <!-- Hero Section -->
   <section class="relative">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-      <div class="welcome-card relative overflow-hidden rounded-3xl p-6 sm:p-8 lg:p-10 border shadow-xl">
+      <div
+        class="welcome-card relative overflow-hidden rounded-3xl p-6 sm:p-8 lg:p-10 border shadow-xl"
+      >
         <div class="flex items-center gap-4 sm:gap-6">
-          <div class="w-12 h-12 sm:w-14 sm:h-14 bg-white/70 rounded-2xl flex items-center justify-center ring-1 ring-black/5">
+          <div
+            class="w-12 h-12 sm:w-14 sm:h-14 bg-white/70 rounded-2xl flex items-center justify-center ring-1 ring-black/5"
+          >
             <img [src]="logoUrl" alt="MichiBurgers" class="w-8 h-8 object-contain" />
           </div>
           <div class="min-w-0">
-            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-gray-900">MichiBurgers</h1>
-            <p class="text-gray-600 text-sm sm:text-base lg:text-lg">Gestión ágil y moderna para tu restaurante</p>
+            <h1
+              class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-gray-900"
+            >
+              MichiBurgers
+            </h1>
+            <p class="text-gray-600 text-sm sm:text-base lg:text-lg">
+              Gestión ágil y moderna para tu restaurante
+            </p>
           </div>
           <div class="ml-auto hidden sm:flex items-center gap-2" *ngIf="usuario$ | async as u">
-            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 text-gray-800 text-xs font-semibold ring-1 ring-black/5">
+            <span
+              class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 text-gray-800 text-xs font-semibold ring-1 ring-black/5"
+            >
               <mat-icon class="!text-base">person</mat-icon>
               {{ (u.nombreCompleto || '').split(' ')[0] | titlecase }}
             </span>
-            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-100 text-indigo-800 text-xs font-semibold ring-1 ring-black/5">
+            <span
+              class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-100 text-indigo-800 text-xs font-semibold ring-1 ring-black/5"
+            >
               <mat-icon class="!text-base">badge</mat-icon>
-              {{ (u.rol || 'usuario') | titlecase }}
+              {{ u.rol || 'usuario' | titlecase }}
             </span>
           </div>
         </div>
@@ -48,7 +61,9 @@
 
         <!-- Stats compactas -->
         <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3" *ngIf="porArea$ | async as pa">
-          <div class="rounded-xl border border-gray-200 bg-white p-4 flex items-center justify-between">
+          <div
+            class="rounded-xl border border-gray-200 bg-white p-4 flex items-center justify-between"
+          >
             <div>
               <p class="text-xs text-gray-500">Ocupación total</p>
               <p class="text-2xl font-bold text-gray-900">{{ pa.ocupacion }}%</p>
@@ -57,19 +72,29 @@
               <mat-icon class="text-gray-700">pie_chart</mat-icon>
             </div>
           </div>
-          <div class="rounded-xl border border-gray-200 bg-white p-4 flex items-center justify-between">
+          <div
+            class="rounded-xl border border-gray-200 bg-white p-4 flex items-center justify-between"
+          >
             <div>
               <p class="text-xs text-gray-500">Interior</p>
-              <p class="text-sm text-gray-700"><span class="font-semibold">{{ pa.interior.ocupadas }}</span> / {{ pa.interior.total }} ocupadas</p>
+              <p class="text-sm text-gray-700">
+                <span class="font-semibold">{{ pa.interior.ocupadas }}</span> /
+                {{ pa.interior.total }} ocupadas
+              </p>
             </div>
             <div class="h-10 w-10 rounded-lg bg-indigo-50 flex items-center justify-center">
               <mat-icon class="text-indigo-600">chair</mat-icon>
             </div>
           </div>
-          <div class="rounded-xl border border-gray-200 bg-white p-4 flex items-center justify-between">
+          <div
+            class="rounded-xl border border-gray-200 bg-white p-4 flex items-center justify-between"
+          >
             <div>
               <p class="text-xs text-gray-500">Exterior</p>
-              <p class="text-sm text-gray-700"><span class="font-semibold">{{ pa.exterior.ocupadas }}</span> / {{ pa.exterior.total }} ocupadas</p>
+              <p class="text-sm text-gray-700">
+                <span class="font-semibold">{{ pa.exterior.ocupadas }}</span> /
+                {{ pa.exterior.total }} ocupadas
+              </p>
             </div>
             <div class="h-10 w-10 rounded-lg bg-emerald-50 flex items-center justify-center">
               <mat-icon class="text-emerald-600">park</mat-icon>
@@ -79,7 +104,10 @@
 
         <!-- Accesos rápidos ampliados -->
         <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <a routerLink="/comandera" class="rounded-xl border bg-white p-4 hover:shadow-md transition-shadow flex items-center justify-between">
+          <a
+            routerLink="/comandera"
+            class="rounded-xl border bg-white p-4 hover:shadow-md transition-shadow flex items-center justify-between"
+          >
             <div class="flex items-center gap-3">
               <mat-icon class="text-blue-600">receipt_long</mat-icon>
               <div>
@@ -89,7 +117,10 @@
             </div>
             <mat-icon class="text-gray-300">arrow_forward</mat-icon>
           </a>
-          <a routerLink="/cocina" class="rounded-xl border bg-white p-4 hover:shadow-md transition-shadow flex items-center justify-between">
+          <a
+            routerLink="/cocina"
+            class="rounded-xl border bg-white p-4 hover:shadow-md transition-shadow flex items-center justify-between"
+          >
             <div class="flex items-center gap-3">
               <mat-icon class="text-green-600">restaurant</mat-icon>
               <div>
@@ -99,7 +130,11 @@
             </div>
             <mat-icon class="text-gray-300">arrow_forward</mat-icon>
           </a>
-          <a *ngIf="(usuario$ | async)?.rol === 'admin'" routerLink="/mapa-meses/salon" class="rounded-xl border bg-white p-4 hover:shadow-md transition-shadow flex items-center justify-between">
+          <a
+            *ngIf="(usuario$ | async)?.rol === 'admin'"
+            routerLink="/mapa-meses/salon"
+            class="rounded-xl border bg-white p-4 hover:shadow-md transition-shadow flex items-center justify-between"
+          >
             <div class="flex items-center gap-3">
               <mat-icon class="text-purple-600">map</mat-icon>
               <div>
@@ -109,7 +144,11 @@
             </div>
             <mat-icon class="text-gray-300">arrow_forward</mat-icon>
           </a>
-          <a *ngIf="(usuario$ | async)?.rol === 'admin'" routerLink="/admin" class="rounded-xl border bg-white p-4 hover:shadow-md transition-shadow flex items-center justify-between">
+          <a
+            *ngIf="(usuario$ | async)?.rol === 'admin'"
+            routerLink="/admin"
+            class="rounded-xl border bg-white p-4 hover:shadow-md transition-shadow flex items-center justify-between"
+          >
             <div class="flex items-center gap-3">
               <mat-icon class="text-orange-600">admin_panel_settings</mat-icon>
               <div>
@@ -134,14 +173,24 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-
       <!-- Órdenes -->
-      <div class="group cursor-pointer select-none transform transition-all duration-300 md:hover:scale-105 focus-within:scale-[1.02]" routerLink="/comandera">
-        <div class="bg-white rounded-3xl shadow-xl md:group-hover:shadow-2xl border border-gray-100 overflow-hidden h-full flex flex-col ring-1 ring-gray-100 focus-within:ring-2 focus-within:ring-blue-500/50">
-          <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-6 sm:p-8 text-white relative overflow-hidden min-h-40 sm:min-h-44 flex items-start">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+      <div
+        class="group cursor-pointer select-none transform transition-all duration-300 md:hover:scale-105 focus-within:scale-[1.02]"
+        routerLink="/comandera"
+      >
+        <div
+          class="bg-white rounded-3xl shadow-xl md:group-hover:shadow-2xl border border-gray-100 overflow-hidden h-full flex flex-col ring-1 ring-gray-100 focus-within:ring-2 focus-within:ring-blue-500/50"
+        >
+          <div
+            class="bg-gradient-to-br from-blue-500 to-blue-600 p-6 sm:p-8 text-white relative overflow-hidden min-h-40 sm:min-h-44 flex items-start"
+          >
+            <div
+              class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"
+            ></div>
             <div class="relative">
-              <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg">
+              <div
+                class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg"
+              >
                 <mat-icon class="text-white text-3xl">receipt_long</mat-icon>
               </div>
               <h3 class="text-2xl font-bold mb-1 sm:mb-2">Órdenes</h3>
@@ -149,22 +198,40 @@
             </div>
           </div>
           <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
-            <p class="text-gray-600 mb-5 sm:mb-6 text-base sm:text-lg">Flujo rápido y eficiente para mozos y personal de caja.</p>
-            <div class="flex items-center text-blue-600 font-semibold md:group-hover:text-blue-700 transition-colors">
+            <p class="text-gray-600 mb-5 sm:mb-6 text-base sm:text-lg">
+              Flujo rápido y eficiente para mozos y personal de caja.
+            </p>
+            <div
+              class="flex items-center text-blue-600 font-semibold md:group-hover:text-blue-700 transition-colors"
+            >
               <span class="text-base sm:text-lg">Acceder</span>
-              <mat-icon class="ml-2 transform md:group-hover:translate-x-2 transition-transform duration-300">arrow_forward</mat-icon>
+              <mat-icon
+                class="ml-2 transform md:group-hover:translate-x-2 transition-transform duration-300"
+                >arrow_forward</mat-icon
+              >
             </div>
           </div>
         </div>
       </div>
 
       <!-- Cocina -->
-      <div class="group cursor-pointer select-none transform transition-all duration-300 md:hover:scale-105 focus-within:scale-[1.02]" routerLink="/cocina">
-        <div class="bg-white rounded-3xl shadow-xl md:group-hover:shadow-2xl border border-gray-100 overflow-hidden h-full flex flex-col ring-1 ring-gray-100 focus-within:ring-2 focus-within:ring-green-500/50">
-          <div class="bg-gradient-to-br from-green-500 to-green-600 p-6 sm:p-8 text-white relative overflow-hidden min-h-40 sm:min-h-44 flex items-start">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+      <div
+        class="group cursor-pointer select-none transform transition-all duration-300 md:hover:scale-105 focus-within:scale-[1.02]"
+        routerLink="/cocina"
+      >
+        <div
+          class="bg-white rounded-3xl shadow-xl md:group-hover:shadow-2xl border border-gray-100 overflow-hidden h-full flex flex-col ring-1 ring-gray-100 focus-within:ring-2 focus-within:ring-green-500/50"
+        >
+          <div
+            class="bg-gradient-to-br from-green-500 to-green-600 p-6 sm:p-8 text-white relative overflow-hidden min-h-40 sm:min-h-44 flex items-start"
+          >
+            <div
+              class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"
+            ></div>
             <div class="relative">
-              <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg">
+              <div
+                class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg"
+              >
                 <mat-icon class="text-white text-3xl">restaurant</mat-icon>
               </div>
               <h3 class="text-2xl font-bold mb-1 sm:mb-2">Cocina</h3>
@@ -172,22 +239,41 @@
             </div>
           </div>
           <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
-            <p class="text-gray-600 mb-5 sm:mb-6 text-base sm:text-lg">Vista optimizada para el equipo de cocina y seguimiento de pedidos.</p>
-            <div class="flex items-center text-green-600 font-semibold md:group-hover:text-green-700 transition-colors">
+            <p class="text-gray-600 mb-5 sm:mb-6 text-base sm:text-lg">
+              Vista optimizada para el equipo de cocina y seguimiento de pedidos.
+            </p>
+            <div
+              class="flex items-center text-green-600 font-semibold md:group-hover:text-green-700 transition-colors"
+            >
               <span class="text-base sm:text-lg">Acceder</span>
-              <mat-icon class="ml-2 transform md:group-hover:translate-x-2 transition-transform duration-300">arrow_forward</mat-icon>
+              <mat-icon
+                class="ml-2 transform md:group-hover:translate-x-2 transition-transform duration-300"
+                >arrow_forward</mat-icon
+              >
             </div>
           </div>
         </div>
       </div>
 
       <!-- Salón (solo admin) -->
-      <div class="group cursor-pointer select-none transform transition-all duration-300 md:hover:scale-105 focus-within:scale-[1.02]" routerLink="/mapa-meses/salon" *ngIf="(usuario$ | async)?.rol === 'admin'">
-        <div class="bg-white rounded-3xl shadow-xl md:group-hover:shadow-2xl border border-gray-100 overflow-hidden h-full flex flex-col ring-1 ring-gray-100 focus-within:ring-2 focus-within:ring-purple-500/50">
-          <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-6 sm:p-8 text-white relative overflow-hidden min-h-40 sm:min-h-44 flex items-start">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+      <div
+        class="group cursor-pointer select-none transform transition-all duration-300 md:hover:scale-105 focus-within:scale-[1.02]"
+        routerLink="/mapa-meses/salon"
+        *ngIf="(usuario$ | async)?.rol === 'admin'"
+      >
+        <div
+          class="bg-white rounded-3xl shadow-xl md:group-hover:shadow-2xl border border-gray-100 overflow-hidden h-full flex flex-col ring-1 ring-gray-100 focus-within:ring-2 focus-within:ring-purple-500/50"
+        >
+          <div
+            class="bg-gradient-to-br from-purple-500 to-purple-600 p-6 sm:p-8 text-white relative overflow-hidden min-h-40 sm:min-h-44 flex items-start"
+          >
+            <div
+              class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"
+            ></div>
             <div class="relative">
-              <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg">
+              <div
+                class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg"
+              >
                 <mat-icon class="text-white text-3xl">map</mat-icon>
               </div>
               <h3 class="text-2xl font-bold mb-1 sm:mb-2">Salón</h3>
@@ -195,22 +281,41 @@
             </div>
           </div>
           <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
-            <p class="text-gray-600 mb-5 sm:mb-6 text-base sm:text-lg">Gestión de distribución y estado de mesas del salón.</p>
-            <div class="flex items-center text-purple-600 font-semibold md:group-hover:text-purple-700 transition-colors">
+            <p class="text-gray-600 mb-5 sm:mb-6 text-base sm:text-lg">
+              Gestión de distribución y estado de mesas del salón.
+            </p>
+            <div
+              class="flex items-center text-purple-600 font-semibold md:group-hover:text-purple-700 transition-colors"
+            >
               <span class="text-base sm:text-lg">Acceder</span>
-              <mat-icon class="ml-2 transform md:group-hover:translate-x-2 transition-transform duration-300">arrow_forward</mat-icon>
+              <mat-icon
+                class="ml-2 transform md:group-hover:translate-x-2 transition-transform duration-300"
+                >arrow_forward</mat-icon
+              >
             </div>
           </div>
         </div>
       </div>
 
       <!-- Administración (solo admin) -->
-      <div class="group cursor-pointer select-none transform transition-all duration-300 md:hover:scale-105 focus-within:scale-[1.02]" routerLink="/admin" *ngIf="(usuario$ | async)?.rol === 'admin'">
-        <div class="bg-white rounded-3xl shadow-xl md:group-hover:shadow-2xl border border-gray-100 overflow-hidden h-full flex flex-col ring-1 ring-gray-100 focus-within:ring-2 focus-within:ring-orange-500/50">
-          <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-6 sm:p-8 text-white relative overflow-hidden min-h-40 sm:min-h-44 flex items-start">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+      <div
+        class="group cursor-pointer select-none transform transition-all duration-300 md:hover:scale-105 focus-within:scale-[1.02]"
+        routerLink="/admin"
+        *ngIf="(usuario$ | async)?.rol === 'admin'"
+      >
+        <div
+          class="bg-white rounded-3xl shadow-xl md:group-hover:shadow-2xl border border-gray-100 overflow-hidden h-full flex flex-col ring-1 ring-gray-100 focus-within:ring-2 focus-within:ring-orange-500/50"
+        >
+          <div
+            class="bg-gradient-to-br from-orange-500 to-orange-600 p-6 sm:p-8 text-white relative overflow-hidden min-h-40 sm:min-h-44 flex items-start"
+          >
+            <div
+              class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"
+            ></div>
             <div class="relative">
-              <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg">
+              <div
+                class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg"
+              >
                 <mat-icon class="text-white text-3xl">admin_panel_settings</mat-icon>
               </div>
               <h3 class="text-2xl font-bold mb-1 sm:mb-2">Administración</h3>
@@ -218,24 +323,41 @@
             </div>
           </div>
           <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
-            <p class="text-gray-600 mb-5 sm:mb-6 text-base sm:text-lg">Gestiona el catálogo, usuarios y configuración del sistema.</p>
-            <div class="flex items-center text-orange-600 font-semibold md:group-hover:text-orange-700 transition-colors">
+            <p class="text-gray-600 mb-5 sm:mb-6 text-base sm:text-lg">
+              Gestiona el catálogo, usuarios y configuración del sistema.
+            </p>
+            <div
+              class="flex items-center text-orange-600 font-semibold md:group-hover:text-orange-700 transition-colors"
+            >
               <span class="text-base sm:text-lg">Acceder</span>
-              <mat-icon class="ml-2 transform md:group-hover:translate-x-2 transition-transform duration-300">arrow_forward</mat-icon>
+              <mat-icon
+                class="ml-2 transform md:group-hover:translate-x-2 transition-transform duration-300"
+                >arrow_forward</mat-icon
+              >
             </div>
           </div>
         </div>
       </div>
 
-      
-
       <!-- Iniciar Sesión (solo visitantes) -->
-      <div class="group cursor-pointer select-none transform transition-all duration-300 md:hover:scale-105 focus-within:scale-[1.02]" routerLink="/auth/login" *ngIf="!(usuario$ | async)">
-        <div class="bg-white rounded-3xl shadow-xl md:group-hover:shadow-2xl border border-gray-100 overflow-hidden h-full flex flex-col ring-1 ring-gray-100 focus-within:ring-2 focus-within:ring-gray-500/50">
-          <div class="bg-gradient-to-br from-gray-500 to-gray-600 p-6 sm:p-8 text-white relative overflow-hidden min-h-40 sm:min-h-44 flex items-start">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+      <div
+        class="group cursor-pointer select-none transform transition-all duration-300 md:hover:scale-105 focus-within:scale-[1.02]"
+        routerLink="/auth/login"
+        *ngIf="!(usuario$ | async)"
+      >
+        <div
+          class="bg-white rounded-3xl shadow-xl md:group-hover:shadow-2xl border border-gray-100 overflow-hidden h-full flex flex-col ring-1 ring-gray-100 focus-within:ring-2 focus-within:ring-gray-500/50"
+        >
+          <div
+            class="bg-gradient-to-br from-gray-500 to-gray-600 p-6 sm:p-8 text-white relative overflow-hidden min-h-40 sm:min-h-44 flex items-start"
+          >
+            <div
+              class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"
+            ></div>
             <div class="relative">
-              <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg">
+              <div
+                class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg"
+              >
                 <mat-icon class="text-white text-3xl">login</mat-icon>
               </div>
               <h3 class="text-2xl font-bold mb-1 sm:mb-2">Iniciar Sesión</h3>
@@ -243,10 +365,17 @@
             </div>
           </div>
           <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
-            <p class="text-gray-600 mb-5 sm:mb-6 text-base sm:text-lg">Ingresa con tus credenciales para acceder al sistema.</p>
-            <div class="flex items-center text-gray-600 font-semibold md:group-hover:text-gray-700 transition-colors">
+            <p class="text-gray-600 mb-5 sm:mb-6 text-base sm:text-lg">
+              Ingresa con tus credenciales para acceder al sistema.
+            </p>
+            <div
+              class="flex items-center text-gray-600 font-semibold md:group-hover:text-gray-700 transition-colors"
+            >
               <span class="text-base sm:text-lg">Ingresar</span>
-              <mat-icon class="ml-2 transform md:group-hover:translate-x-2 transition-transform duration-300">arrow_forward</mat-icon>
+              <mat-icon
+                class="ml-2 transform md:group-hover:translate-x-2 transition-transform duration-300"
+                >arrow_forward</mat-icon
+              >
             </div>
           </div>
         </div>

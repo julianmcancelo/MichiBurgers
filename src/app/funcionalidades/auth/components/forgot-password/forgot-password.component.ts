@@ -7,7 +7,7 @@ import { AuthService } from '../../auth.service';
   selector: 'app-forgot-password',
   standalone: false,
   templateUrl: './forgot-password.component.html',
-  styleUrls: ['./forgot-password.component.scss']
+  styleUrls: ['./forgot-password.component.scss'],
 })
 export class ForgotPasswordComponent {
   form: FormGroup;
@@ -20,12 +20,16 @@ export class ForgotPasswordComponent {
   capsNext = false;
   capsConfirm = false;
 
-  constructor(private fb: FormBuilder, private auth: AuthService, @Optional() private dialogRef?: MatDialogRef<ForgotPasswordComponent>) {
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
+    @Optional() private dialogRef?: MatDialogRef<ForgotPasswordComponent>,
+  ) {
     this.form = this.fb.group({
       legajo: ['', [Validators.required]],
       dni: ['', [Validators.required, Validators.minLength(6)]],
       next: ['', [Validators.required, Validators.minLength(6)]],
-      confirm: ['', [Validators.required]]
+      confirm: ['', [Validators.required]],
     });
   }
 
@@ -40,17 +44,19 @@ export class ForgotPasswordComponent {
     }
     this.loading = true;
     this.error = null;
-    this.auth.forgotPassword(this.form.value.legajo, this.form.value.dni, this.form.value.next).subscribe({
-      next: () => {
-        this.loading = false;
-        this.ok = true;
-        setTimeout(() => this.close(), 600);
-      },
-      error: (e) => {
-        this.loading = false;
-        this.error = e?.error?.error || 'No se pudo recuperar la contraseña';
-      }
-    });
+    this.auth
+      .forgotPassword(this.form.value.legajo, this.form.value.dni, this.form.value.next)
+      .subscribe({
+        next: () => {
+          this.loading = false;
+          this.ok = true;
+          setTimeout(() => this.close(), 600);
+        },
+        error: (e) => {
+          this.loading = false;
+          this.error = e?.error?.error || 'No se pudo recuperar la contraseña';
+        },
+      });
   }
 
   onPassKey(field: 'next' | 'confirm', event: KeyboardEvent): void {

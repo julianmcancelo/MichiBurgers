@@ -7,9 +7,9 @@ import { ActivatedRoute } from '@angular/router';
 
 interface EstadoMesaItem {
   mesaId: string;
-  estado: 'libre'|'ocupada';
-  pedidoId?: number|null;
-  pedidoEstado?: 'abierto'|'pagado'|'cerrado'|string;
+  estado: 'libre' | 'ocupada';
+  pedidoId?: number | null;
+  pedidoEstado?: 'abierto' | 'pagado' | 'cerrado' | string;
   pagado?: boolean;
 }
 
@@ -17,11 +17,11 @@ interface EstadoMesaItem {
   selector: 'app-estado-mesas',
   templateUrl: './estado-mesas.component.html',
   styleUrls: ['./estado-mesas.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class EstadoMesasComponent implements OnInit, OnDestroy {
-  area: 'interior'|'exterior' = 'interior';
-  filtro: 'todas'|'libres'|'ocupadas' = 'todas';
+  area: 'interior' | 'exterior' = 'interior';
+  filtro: 'todas' | 'libres' | 'ocupadas' = 'todas';
   listado: EstadoMesaItem[] = [];
   cargando = false;
   pedidoIdDialog: number | null = null;
@@ -31,7 +31,16 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
   ancho = 1200;
   alto = 800;
   private padding = 40; // padding para viewBox
-  layoutMesas: Array<{ id: string; nombre?: string; x: number; y: number; forma: 'redonda'|'cuadrada'|'rectangular'|'dinosaurio'; ancho?: number; alto?: number; area?: 'interior'|'exterior' }> = [];
+  layoutMesas: Array<{
+    id: string;
+    nombre?: string;
+    x: number;
+    y: number;
+    forma: 'redonda' | 'cuadrada' | 'rectangular' | 'dinosaurio';
+    ancho?: number;
+    alto?: number;
+    area?: 'interior' | 'exterior';
+  }> = [];
 
   // Zoom/Pan
   scale = 1;
@@ -57,7 +66,12 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private api: MapaSalonApiService, private router: Router, private route: ActivatedRoute, private dialog: MatDialog) {}
+  constructor(
+    private api: MapaSalonApiService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private dialog: MatDialog,
+  ) {}
 
   ngOnInit(): void {
     // Cargar layout inicial
@@ -66,21 +80,27 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
     const display = this.route.snapshot.queryParamMap.get('display');
     this.isDisplay = display === '1';
     if (this.isDisplay) {
-      setTimeout(() => { try { document?.documentElement?.requestFullscreen?.(); } catch {} }, 0);
+      setTimeout(() => {
+        try {
+          document?.documentElement?.requestFullscreen?.();
+        } catch {}
+      }, 0);
     }
 
     interval(5000)
       .pipe(
         startWith(0),
         takeUntil(this.destroy$),
-        switchMap(() => this.api.getEstadoMesas(this.area))
+        switchMap(() => this.api.getEstadoMesas(this.area)),
       )
       .subscribe({
         next: (data) => {
           this.listado = data || [];
           this.cargando = false;
         },
-        error: () => { this.cargando = false; }
+        error: () => {
+          this.cargando = false;
+        },
       });
   }
 
@@ -89,7 +109,7 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  cambiarArea(area: 'interior'|'exterior') {
+  cambiarArea(area: 'interior' | 'exterior') {
     if (this.area !== area) {
       this.area = area;
       this.cargarLayout();
@@ -97,16 +117,22 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
     }
   }
 
-  cambiarFiltro(f: 'todas'|'libres'|'ocupadas') { this.filtro = f; }
+  cambiarFiltro(f: 'todas' | 'libres' | 'ocupadas') {
+    this.filtro = f;
+  }
 
   get filtradas(): EstadoMesaItem[] {
-    if (this.filtro === 'libres') return this.listado.filter(m => m.estado === 'libre');
-    if (this.filtro === 'ocupadas') return this.listado.filter(m => m.estado === 'ocupada');
+    if (this.filtro === 'libres') return this.listado.filter((m) => m.estado === 'libre');
+    if (this.filtro === 'ocupadas') return this.listado.filter((m) => m.estado === 'ocupada');
     return this.listado;
   }
 
-  get totalLibres(): number { return this.listado.filter(m => m.estado === 'libre').length; }
-  get totalOcupadas(): number { return this.listado.filter(m => m.estado === 'ocupada').length; }
+  get totalLibres(): number {
+    return this.listado.filter((m) => m.estado === 'libre').length;
+  }
+  get totalOcupadas(): number {
+    return this.listado.filter((m) => m.estado === 'ocupada').length;
+  }
 
   abrirOMirar(m: EstadoMesaItem) {
     if (m.estado === 'ocupada' && m.pedidoId) {
@@ -134,10 +160,10 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
     if (!m.pedidoId) return;
     this.pedidoIdDialog = m.pedidoId;
     const ref = this.dialog.open(this.dlgPedido, {
-      panelClass: ['dialog-elevada','dialog-movil'],
+      panelClass: ['dialog-elevada', 'dialog-movil'],
       autoFocus: false,
       restoreFocus: true,
-      maxWidth: '1024px'
+      maxWidth: '1024px',
     });
     this.dialogRef = ref;
     ref.afterClosed().subscribe(() => {
@@ -147,7 +173,9 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
     });
   }
 
-  actualizarAhora() { this.refrescarUnaVez(); }
+  actualizarAhora() {
+    this.refrescarUnaVez();
+  }
 
   tomarPedido(m: EstadoMesaItem) {
     if (m.estado !== 'libre') return;
@@ -159,10 +187,10 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
           // Abrir modal con el pedido recién creado
           this.pedidoIdDialog = res.pedidoId;
           const ref = this.dialog.open(this.dlgPedido, {
-            panelClass: ['dialog-elevada','dialog-movil'],
+            panelClass: ['dialog-elevada', 'dialog-movil'],
             autoFocus: false,
             restoreFocus: true,
-            maxWidth: '1024px'
+            maxWidth: '1024px',
           });
           this.dialogRef = ref;
           ref.afterClosed().subscribe(() => {
@@ -174,7 +202,10 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
           this.refrescarUnaVez();
         }
       },
-      error: () => { this.cargando = false; this.refrescarUnaVez(); }
+      error: () => {
+        this.cargando = false;
+        this.refrescarUnaVez();
+      },
     });
   }
 
@@ -182,16 +213,27 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
     if (m.estado !== 'ocupada') return;
     this.cargando = true;
     this.api.liberarMesa(this.area, m.mesaId).subscribe({
-      next: () => { this.cargando = false; this.refrescarUnaVez(); },
-      error: () => { this.cargando = false; this.refrescarUnaVez(); }
+      next: () => {
+        this.cargando = false;
+        this.refrescarUnaVez();
+      },
+      error: () => {
+        this.cargando = false;
+        this.refrescarUnaVez();
+      },
     });
   }
 
   private refrescarUnaVez() {
     this.cargando = true;
     this.api.getEstadoMesas(this.area).subscribe({
-      next: (data) => { this.listado = data || []; this.cargando = false; },
-      error: () => { this.cargando = false; }
+      next: (data) => {
+        this.listado = data || [];
+        this.cargando = false;
+      },
+      error: () => {
+        this.cargando = false;
+      },
     });
   }
 
@@ -199,30 +241,44 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
     this.api.getLayout(this.area).subscribe({
       next: (mesas) => {
         if (Array.isArray(mesas)) {
-          this.layoutMesas = mesas.map((m: any) => {
-            const forma = (m.forma as any) || 'cuadrada';
-            const ancho = Number.isFinite(Number(m.ancho)) ? Number(m.ancho) : (forma === 'redonda' ? 100 : 120);
-            const alto = Number.isFinite(Number(m.alto)) ? Number(m.alto) : (forma === 'redonda' ? (Number(m.ancho) || 100) : 90);
-            return {
-              id: String((m as any).id),
-              nombre: m.nombre,
-              x: Number(m.x) || 0,
-              y: Number(m.y) || 0,
-              forma,
-              ancho,
-              alto,
-              area: ((m as any).area as any) || this.area
-            };
-          }).filter(mm => (mm.area || 'interior') === this.area);
+          this.layoutMesas = mesas
+            .map((m: any) => {
+              const forma = (m.forma as any) || 'cuadrada';
+              const ancho = Number.isFinite(Number(m.ancho))
+                ? Number(m.ancho)
+                : forma === 'redonda'
+                  ? 100
+                  : 120;
+              const alto = Number.isFinite(Number(m.alto))
+                ? Number(m.alto)
+                : forma === 'redonda'
+                  ? Number(m.ancho) || 100
+                  : 90;
+              return {
+                id: String((m as any).id),
+                nombre: m.nombre,
+                x: Number(m.x) || 0,
+                y: Number(m.y) || 0,
+                forma,
+                ancho,
+                alto,
+                area: ((m as any).area as any) || this.area,
+              };
+            })
+            .filter((mm) => (mm.area || 'interior') === this.area);
           this.ajustarDimensiones();
         }
       },
-      error: () => {}
+      error: () => {},
     });
   }
 
-  estadoDeMesa(id: string): { estado: 'libre'|'ocupada'; pagado?: boolean; pedidoEstado?: string } {
-    const m = this.listado.find(x => x.mesaId === id);
+  estadoDeMesa(id: string): {
+    estado: 'libre' | 'ocupada';
+    pagado?: boolean;
+    pedidoEstado?: string;
+  } {
+    const m = this.listado.find((x) => x.mesaId === id);
     if (!m) return { estado: 'libre' };
     return { estado: m.estado, pagado: m.pagado, pedidoEstado: m.pedidoEstado } as any;
   }
@@ -236,11 +292,16 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
   }
 
   private ajustarDimensiones() {
-    if (!this.layoutMesas?.length) { this.ancho = 1200; this.alto = 800; return; }
-    let maxX = 0, maxY = 0;
+    if (!this.layoutMesas?.length) {
+      this.ancho = 1200;
+      this.alto = 800;
+      return;
+    }
+    let maxX = 0,
+      maxY = 0;
     for (const m of this.layoutMesas) {
       const w = m.ancho || (m.forma === 'redonda' ? 100 : 120);
-      const h = m.alto || (m.forma === 'redonda' ? (m.ancho || 100) : 90);
+      const h = m.alto || (m.forma === 'redonda' ? m.ancho || 100 : 90);
       maxX = Math.max(maxX, m.x + w);
       maxY = Math.max(maxY, m.y + h);
     }
@@ -263,8 +324,8 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
     const prev = this.scale;
     if (newScale === prev) return;
     // ajustar translate para que el punto bajo el cursor permanezca estable
-    this.tx = mx - ((mx - this.tx) * (newScale / prev));
-    this.ty = my - ((my - this.ty) * (newScale / prev));
+    this.tx = mx - (mx - this.tx) * (newScale / prev);
+    this.ty = my - (my - this.ty) * (newScale / prev);
     this.scale = newScale;
   }
 
@@ -321,21 +382,31 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
 
   abrirMapaFull() {
     const ref = this.dialog.open(this.tplMapaFull, {
-      panelClass: ['dialog-elevada','dialog-movil'],
+      panelClass: ['dialog-elevada', 'dialog-movil'],
       autoFocus: false,
       restoreFocus: true,
       maxWidth: '95vw',
-      width: '95vw'
+      width: '95vw',
     });
     this.dialogRef = ref;
-    ref.afterClosed().subscribe(() => { this.dialogRef = null; });
+    ref.afterClosed().subscribe(() => {
+      this.dialogRef = null;
+    });
   }
 
   abrirVentanaExclusiva() {
     const tree = this.router.createUrlTree(['./'], {
       relativeTo: this.route,
-      queryParams: { ...Object.fromEntries(this.route.snapshot.queryParamMap.keys.map(k=>[k,this.route.snapshot.queryParamMap.get(k)] as [string, any])), display: 1, area: this.area },
-      queryParamsHandling: 'merge'
+      queryParams: {
+        ...Object.fromEntries(
+          this.route.snapshot.queryParamMap.keys.map(
+            (k) => [k, this.route.snapshot.queryParamMap.get(k)] as [string, any],
+          ),
+        ),
+        display: 1,
+        area: this.area,
+      },
+      queryParamsHandling: 'merge',
     });
     const url = this.router.serializeUrl(tree);
     const abs = (window?.location?.origin || '') + url;
@@ -343,11 +414,15 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
   }
 
   cerrarVentana() {
-    try { window.close(); } catch { /* noop */ }
+    try {
+      window.close();
+    } catch {
+      /* noop */
+    }
   }
 
   private estadoItemPorId(id: string): EstadoMesaItem | undefined {
-    return this.listado.find(x => x.mesaId === id);
+    return this.listado.find((x) => x.mesaId === id);
   }
 
   // ===== Interacciones táctiles/ratón =====
@@ -360,15 +435,17 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
   onMesaTap(id: string) {
     // doble-tap para facturar si está ocupada
     const now = Date.now();
-    if (this.lastTapId === id && (now - this.lastTapTs) < 300) {
+    if (this.lastTapId === id && now - this.lastTapTs < 300) {
       const it = this.estadoItemPorId(id);
       if (it && it.estado === 'ocupada' && it.pedidoId) {
         this.facturar({ mesaId: id, estado: 'ocupada', pedidoId: it.pedidoId });
-        this.lastTapId = null; this.lastTapTs = 0;
+        this.lastTapId = null;
+        this.lastTapTs = 0;
         return;
       }
     }
-    this.lastTapId = id; this.lastTapTs = now;
+    this.lastTapId = id;
+    this.lastTapTs = now;
 
     const item = this.estadoItemPorId(id);
     if (!item) {
@@ -388,7 +465,9 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
 
   onMesaPressStart(id: string, ev: Event) {
     // prevenir scroll en mobile cuando es long-press
-    try { ev.preventDefault(); } catch {}
+    try {
+      ev.preventDefault();
+    } catch {}
     this.clearPress();
     this.pressId = id;
     this.pressFired = false;
@@ -397,7 +476,11 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
       const it = this.estadoItemPorId(id);
       if (it && it.estado === 'ocupada') {
         // long-press: liberar mesa
-        if ('vibrate' in navigator) { try { (navigator as any).vibrate?.(10); } catch {} }
+        if ('vibrate' in navigator) {
+          try {
+            (navigator as any).vibrate?.(10);
+          } catch {}
+        }
         this.liberarMesa({ mesaId: id, estado: 'ocupada', pedidoId: it.pedidoId ?? null });
       }
     }, 550);
@@ -410,14 +493,19 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
     }
     // si se disparó long-press, anulamos el click/tap inmediato
     if (this.pressFired) {
-      try { ev?.stopPropagation?.(); } catch {}
+      try {
+        ev?.stopPropagation?.();
+      } catch {}
     }
     this.pressFired = false;
     this.pressId = null;
   }
 
   private clearPress() {
-    if (this.pressTimer) { clearTimeout(this.pressTimer); this.pressTimer = null; }
+    if (this.pressTimer) {
+      clearTimeout(this.pressTimer);
+      this.pressTimer = null;
+    }
     this.pressFired = false;
     this.pressId = null;
   }
@@ -432,7 +520,7 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
     this.ctxItem = it ?? { mesaId: id, estado: 'libre', pedidoId: null };
     this.ctxPuedeLiberar = !!(this.ctxItem && this.ctxItem.estado === 'ocupada');
     this.ctxPuedeFacturar = !!(this.ctxItem && !!this.ctxItem.pedidoId);
-    this.ctxLabelAbrirVer = (!it || it.estado === 'libre') ? 'Abrir pedido' : 'Ver pedido';
+    this.ctxLabelAbrirVer = !it || it.estado === 'libre' ? 'Abrir pedido' : 'Ver pedido';
     this.ctxVisible = true;
   }
 
@@ -445,22 +533,30 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
   ctxAbrirVer() {
     if (!this.ctxMesaId) return;
     const it = this.estadoItemPorId(this.ctxMesaId);
-    if (!it || it.estado === 'libre') this.tomarPedido({ mesaId: this.ctxMesaId, estado: 'libre', pedidoId: null });
-    else if (it.pedidoId) this.verPedido({ mesaId: this.ctxMesaId, estado: 'ocupada', pedidoId: it.pedidoId });
+    if (!it || it.estado === 'libre')
+      this.tomarPedido({ mesaId: this.ctxMesaId, estado: 'libre', pedidoId: null });
+    else if (it.pedidoId)
+      this.verPedido({ mesaId: this.ctxMesaId, estado: 'ocupada', pedidoId: it.pedidoId });
     this.closeContextMenu();
   }
 
   ctxLiberar() {
     if (!this.ctxMesaId) return;
     const it = this.estadoItemPorId(this.ctxMesaId);
-    if (it && it.estado === 'ocupada') this.liberarMesa({ mesaId: this.ctxMesaId, estado: 'ocupada', pedidoId: it.pedidoId ?? null });
+    if (it && it.estado === 'ocupada')
+      this.liberarMesa({
+        mesaId: this.ctxMesaId,
+        estado: 'ocupada',
+        pedidoId: it.pedidoId ?? null,
+      });
     this.closeContextMenu();
   }
 
   ctxFacturar() {
     if (!this.ctxMesaId) return;
     const it = this.estadoItemPorId(this.ctxMesaId);
-    if (it && it.pedidoId) this.facturar({ mesaId: this.ctxMesaId, estado: 'ocupada', pedidoId: it.pedidoId });
+    if (it && it.pedidoId)
+      this.facturar({ mesaId: this.ctxMesaId, estado: 'ocupada', pedidoId: it.pedidoId });
     this.closeContextMenu();
   }
 }

@@ -12,9 +12,7 @@ import { RouterModule } from '@angular/router';
 import { LayoutPrincipalComponent } from './components/layout-principal/layout-principal.component';
 
 @NgModule({
-  declarations: [
-    LayoutPrincipalComponent
-  ],
+  declarations: [LayoutPrincipalComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -24,10 +22,8 @@ import { LayoutPrincipalComponent } from './components/layout-principal/layout-p
     MatSidenavModule,
     MatListModule,
     MatDialogModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
-  exports: [
-    LayoutPrincipalComponent
-  ]
+  exports: [LayoutPrincipalComponent],
 })
-export class CompartidoModule { }
+export class CompartidoModule {}
