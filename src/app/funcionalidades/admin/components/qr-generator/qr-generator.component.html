@@ -1,0 +1,47 @@
+<mat-card>
+  <mat-card-title>Generador de QR</mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="generar()" class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Área</mat-label>
+        <mat-select formControlName="area" required>
+          <mat-option value="interior">Interior</mat-option>
+          <mat-option value="exterior">Exterior</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Mesa</mat-label>
+        <input matInput formControlName="mesa" placeholder="Ej: 1" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Base URL (opcional)</mat-label>
+        <input matInput formControlName="baseUrl" placeholder="https://tu-dominio.com" />
+        <mat-hint>Si lo dejás vacío, se devuelve solo el path.</mat-hint>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || loading">
+        {{ loading ? 'Generando...' : 'Generar' }}
+      </button>
+    </form>
+
+    <div class="mensaje error" *ngIf="error">{{ error }}</div>
+
+    <div class="resultado" *ngIf="resultado?.ok">
+      <div><strong>Área:</strong> {{ resultado?.area }}</div>
+      <div><strong>Mesa:</strong> {{ resultado?.mesa }}</div>
+      <div><strong>Firma:</strong> {{ resultado?.sig }}</div>
+      <div class="url-row">
+        <strong>Path/URL:</strong>
+        <a *ngIf="resultado?.url; else onlyPath" [href]="resultado?.url!" target="_blank" rel="noopener">
+          {{ resultado?.url }}
+        </a>
+        <ng-template #onlyPath>
+          <code>{{ resultado?.path }}</code>
+        </ng-template>
+        <button mat-button (click)="copy()">Copiar</button>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

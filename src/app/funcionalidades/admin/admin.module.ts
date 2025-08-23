@@ -19,11 +19,13 @@ import { ListaProductosComponent } from './components/lista-productos/lista-prod
 import { FormularioProductoComponent } from './components/formulario-producto/formulario-producto.component';
 import { RegistroUsuarioComponent } from './components/registro-usuario/registro-usuario.component';
 import { NuevoProductoDialogComponent } from './components/nuevo-producto-dialog/nuevo-producto-dialog.component';
+import { QrGeneratorComponent } from './components/qr-generator/qr-generator.component';
 
 @NgModule({
   declarations: [
     ListaProductosComponent,
-    FormularioProductoComponent
+    FormularioProductoComponent,
+    QrGeneratorComponent
   ],
   imports: [
     CommonModule,
@@ -45,7 +47,8 @@ import { NuevoProductoDialogComponent } from './components/nuevo-producto-dialog
       { path: '', component: ListaProductosComponent, canActivate: [authGuard], data: { roles: ['admin'] } },
       { path: 'nuevo', component: FormularioProductoComponent, canActivate: [authGuard], data: { roles: ['admin'] } },
       { path: 'editar/:id', component: FormularioProductoComponent, canActivate: [authGuard], data: { roles: ['admin'] } },
-      { path: 'usuarios/registrar', component: RegistroUsuarioComponent, canActivate: [authGuard], data: { roles: ['admin'] } }
+      { path: 'usuarios/registrar', component: RegistroUsuarioComponent, canActivate: [authGuard], data: { roles: ['admin'] } },
+      { path: 'qr', component: QrGeneratorComponent, canActivate: [authGuard], data: { roles: ['admin'] } }
     ])
   ]
 })
