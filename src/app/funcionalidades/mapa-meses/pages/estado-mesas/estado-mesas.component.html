@@ -1,61 +1,123 @@
-<div class="max-w-5xl mx-auto px-4 py-4">
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
-      <mat-icon class="text-orange-600">monitor_heart</mat-icon>
-      Estado de Mesas — {{ area | titlecase }}
-    </h2>
-    <div class="flex gap-2 items-center">
+<!-- Pantalla de estado en vivo estilo TV -->
+<div class="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 p-4">
+  <!-- Header principal -->
+  <div class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border-4 border-white mb-6 overflow-hidden">
+    <div class="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 px-8 py-6 text-center">
+      <div class="flex items-center justify-center gap-4 mb-4">
+        <div class="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center shadow-lg">
+          <mat-icon class="text-white text-4xl">monitor_heart</mat-icon>
+        </div>
+        <div class="text-left">
+          <h1 class="text-4xl font-black text-white tracking-wide">ESTADO EN VIVO</h1>
+          <p class="text-indigo-100 text-lg font-semibold">Seguimiento de Pedidos - {{ area | titlecase }}</p>
+        </div>
+      </div>
+      <div class="flex items-center justify-center gap-4">
+        <div class="bg-white/10 rounded-xl px-6 py-3">
+          <p class="text-white text-xl font-bold">{{ getCurrentTime() }}</p>
+        </div>
+        <button
+          (click)="actualizarAhora()"
+          class="bg-white/20 hover:bg-white/30 rounded-xl px-6 py-3 text-white font-bold transition-all duration-200 flex items-center gap-2"
+        >
+          <mat-icon>refresh</mat-icon>
+          <span>Actualizar</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Controles de área -->
+    <div class="px-6 py-4 bg-white border-b border-gray-200">
+      <div class="flex justify-center gap-4">
+        <button
+          (click)="cambiarArea('interior')"
+          class="px-8 py-3 rounded-xl font-bold text-lg transition-all duration-200"
+          [class]="area === 'interior' ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+        >
+          INTERIOR
+        </button>
+        <button
+          (click)="cambiarArea('exterior')"
+          class="px-8 py-3 rounded-xl font-bold text-lg transition-all duration-200"
+          [class]="area === 'exterior' ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+        >
+          EXTERIOR
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estadísticas principales -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <div class="bg-white rounded-2xl shadow-xl border-4 border-gray-200 overflow-hidden transform hover:scale-105 transition-all duration-300">
+      <div class="bg-gradient-to-r from-gray-500 to-gray-600 px-6 py-4 text-center">
+        <mat-icon class="text-white text-3xl mb-2">restaurant_menu</mat-icon>
+        <div class="text-white text-2xl font-black">{{ listado.length }}</div>
+        <div class="text-gray-100 font-semibold text-sm">TOTAL MESAS</div>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-2xl shadow-xl border-4 border-green-200 overflow-hidden transform hover:scale-105 transition-all duration-300">
+      <div class="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 text-center">
+        <mat-icon class="text-white text-3xl mb-2">check_circle</mat-icon>
+        <div class="text-white text-2xl font-black">{{ totalLibres }}</div>
+        <div class="text-green-100 font-semibold text-sm">LIBRES</div>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-2xl shadow-xl border-4 border-red-200 overflow-hidden transform hover:scale-105 transition-all duration-300">
+      <div class="bg-gradient-to-r from-red-500 to-red-600 px-6 py-4 text-center">
+        <mat-icon class="text-white text-3xl mb-2">schedule</mat-icon>
+        <div class="text-white text-2xl font-black">{{ totalOcupadas }}</div>
+        <div class="text-red-100 font-semibold text-sm">OCUPADAS</div>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-2xl shadow-xl border-4 border-blue-200 overflow-hidden transform hover:scale-105 transition-all duration-300">
+      <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4 text-center">
+        <mat-icon class="text-white text-3xl mb-2">trending_up</mat-icon>
+        <div class="text-white text-2xl font-black">{{ Math.round((totalOcupadas / listado.length) * 100) }}%</div>
+        <div class="text-blue-100 font-semibold text-sm">OCUPACIÓN</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros modernos -->
+  <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border-2 border-white p-6 mb-6">
+    <div class="flex flex-wrap justify-center gap-4">
       <button
-        mat-stroked-button
-        color="primary"
-        class="!h-9 !rounded-lg"
-        (click)="actualizarAhora()"
+        (click)="cambiarFiltro('todas')"
+        class="px-8 py-3 rounded-xl font-bold text-lg transition-all duration-200 flex items-center gap-2"
+        [class]="filtro === 'todas' ? 'bg-gradient-to-r from-gray-500 to-gray-600 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
       >
-        <mat-icon>refresh</mat-icon>
-        <span class="ml-1">Actualizar</span>
+        <mat-icon>view_list</mat-icon>
+        <span>TODAS ({{ listado.length }})</span>
       </button>
       <button
-        class="px-3 py-1 rounded-lg border text-sm"
-        [class.bg-orange-100]="area === 'interior'"
-        (click)="cambiarArea('interior')"
+        (click)="cambiarFiltro('libres')"
+        class="px-8 py-3 rounded-xl font-bold text-lg transition-all duration-200 flex items-center gap-2"
+        [class]="filtro === 'libres' ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
       >
-        Interior
+        <mat-icon>check_circle</mat-icon>
+        <span>LIBRES ({{ totalLibres }})</span>
       </button>
       <button
-        class="px-3 py-1 rounded-lg border text-sm"
-        [class.bg-orange-100]="area === 'exterior'"
-        (click)="cambiarArea('exterior')"
+        (click)="cambiarFiltro('ocupadas')"
+        class="px-8 py-3 rounded-xl font-bold text-lg transition-all duration-200 flex items-center gap-2"
+        [class]="filtro === 'ocupadas' ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
       >
-        Exterior
+        <mat-icon>schedule</mat-icon>
+        <span>OCUPADAS ({{ totalOcupadas }})</span>
       </button>
     </div>
   </div>
 
-  <div class="flex items-center gap-2 mb-3 text-sm">
-    <button
-      class="px-3 py-1 rounded-full border"
-      [class.bg-gray-100]="filtro === 'todas'"
-      (click)="cambiarFiltro('todas')"
-    >
-      Todas ({{ listado.length }})
-    </button>
-    <button
-      class="px-3 py-1 rounded-full border"
-      [class.bg-green-100]="filtro === 'libres'"
-      (click)="cambiarFiltro('libres')"
-    >
-      Libres ({{ totalLibres }})
-    </button>
-    <button
-      class="px-3 py-1 rounded-full border"
-      [class.bg-red-100]="filtro === 'ocupadas'"
-      (click)="cambiarFiltro('ocupadas')"
-    >
-      Ocupadas ({{ totalOcupadas }})
-    </button>
+  <div *ngIf="cargando" class="text-center mb-6">
+    <div class="inline-flex items-center gap-3 px-6 py-3 bg-blue-50 text-blue-700 rounded-xl">
+      <div class="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      <span class="text-lg font-semibold">Actualizando estado...</span>
+    </div>
   </div>
-
-  <div *ngIf="cargando" class="text-gray-600 text-sm mb-2">Actualizando estado...</div>
 
   <!-- Mapa del salón (solo lectura) -->
   <!-- Vista exclusiva de área: solo mapa a pantalla completa en nueva ventana -->
@@ -534,74 +596,121 @@
     </div>
   </ng-template>
 
-  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+  <!-- Grid de pedidos estilo TV -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
     <div
       *ngFor="let m of filtradas"
-      class="p-3 rounded-xl border shadow-sm"
-      [class.bg-green-50]="m.estado === 'libre'"
-      [class.bg-red-50]="m.estado === 'ocupada'"
+      class="bg-white rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-all duration-300"
+      [class.border-4]="true"
+      [class.border-green-500]="m.estado === 'libre'"
+      [class.border-red-500]="m.estado === 'ocupada'"
     >
-      <div class="flex items-center justify-between mb-2">
-        <div class="font-semibold text-gray-900">Mesa {{ m.mesaId }}</div>
-        <span
-          class="text-xs px-2 py-0.5 rounded-full"
-          [class.bg-green-200]="m.estado === 'libre'"
-          [class.bg-red-200]="m.estado === 'ocupada'"
-        >
-          {{ m.estado | titlecase }}
-        </span>
-      </div>
-      <!-- Badges de estado del pedido -->
-      <div
-        *ngIf="m.estado === 'ocupada' && (m.pedidoEstado || m.pagado)"
-        class="flex items-center gap-2 mb-2"
+      <!-- Header de la mesa -->
+      <div 
+        class="px-6 py-4"
+        [class.bg-gradient-to-r]="true"
+        [class.from-green-500]="m.estado === 'libre'"
+        [class.to-green-600]="m.estado === 'libre'"
+        [class.from-red-500]="m.estado === 'ocupada'"
+        [class.to-red-600]="m.estado === 'ocupada'"
       >
-        <span
-          *ngIf="m.pagado"
-          class="badge bg-emerald-100 text-emerald-800 ring-1 ring-emerald-200 inline-flex items-center gap-1"
-        >
-          <mat-icon class="!text-base">verified</mat-icon>
-          Pagado
-        </span>
-        <span
-          *ngIf="m.pedidoEstado === 'cerrado'"
-          class="badge bg-gray-200 text-gray-800 ring-1 ring-gray-300 inline-flex items-center gap-1"
-        >
-          <mat-icon class="!text-base">task_alt</mat-icon>
-          Cerrado
-        </span>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+              <mat-icon class="text-white text-lg">restaurant</mat-icon>
+            </div>
+            <span class="text-white font-black text-xl">MESA {{ m.mesaId }}</span>
+          </div>
+          <div class="bg-white/20 rounded-lg px-3 py-1">
+            <span class="text-white font-bold text-sm">{{ m.estado | uppercase }}</span>
+          </div>
+        </div>
       </div>
-      <div class="flex gap-2 flex-wrap">
-        <ng-container *ngIf="m.estado === 'libre'; else accionesOcupada">
-          <button
-            mat-flat-button
-            color="primary"
-            class="!h-9 !rounded-lg flex-1"
-            (click)="tomarPedido(m)"
-          >
-            <mat-icon>add_shopping_cart</mat-icon>
-            <span class="ml-1">Tomar pedido</span>
-          </button>
-        </ng-container>
-        <ng-template #accionesOcupada>
-          <button
-            mat-stroked-button
-            color="primary"
-            class="!h-9 !rounded-lg flex-1"
-            (click)="verPedido(m)"
-          >
-            <mat-icon>visibility</mat-icon>
-            <span class="ml-1">Ver</span>
-          </button>
-          <button mat-stroked-button color="accent" class="!h-9 !rounded-lg" (click)="facturar(m)">
-            <mat-icon>receipt_long</mat-icon>
-            <span class="ml-1">Facturar / Pagar</span>
-          </button>
-          <button mat-flat-button color="warn" class="!h-9 !rounded-lg" (click)="liberarMesa(m)">
-            <mat-icon>lock_open</mat-icon>
-            <span class="ml-1">Liberar</span>
-          </button>
-        </ng-template>
+
+      <!-- Contenido de la mesa -->
+      <div class="p-6">
+        <!-- Estados del pedido -->
+        <div *ngIf="m.estado === 'ocupada'" class="space-y-4 mb-6">
+          <!-- Pedido ID -->
+          <div class="flex items-center gap-4 p-4 bg-blue-50 rounded-xl border-2 border-blue-200">
+            <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
+              <mat-icon class="text-white text-lg">receipt</mat-icon>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-black text-gray-900 text-lg">Pedido #{{ m.pedidoId || 'N/A' }}</h3>
+              <p class="text-blue-600 font-semibold">{{ m.pedidoEstado || 'En proceso' | titlecase }}</p>
+            </div>
+          </div>
+
+          <!-- Estado de pago -->
+          <div *ngIf="m.pagado" class="flex items-center gap-4 p-4 bg-emerald-50 rounded-xl border-2 border-emerald-200">
+            <div class="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center">
+              <mat-icon class="text-white text-lg">verified</mat-icon>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-black text-gray-900 text-lg">PAGADO</h3>
+              <p class="text-emerald-600 font-semibold">Listo para entregar</p>
+            </div>
+          </div>
+
+          <!-- Estado cerrado -->
+          <div *ngIf="m.pedidoEstado === 'cerrado'" class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border-2 border-gray-200">
+            <div class="w-12 h-12 bg-gray-500 rounded-xl flex items-center justify-center">
+              <mat-icon class="text-white text-lg">task_alt</mat-icon>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-black text-gray-900 text-lg">CERRADO</h3>
+              <p class="text-gray-600 font-semibold">Pedido completado</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mensaje para mesa libre -->
+        <div *ngIf="m.estado === 'libre'" class="text-center py-8">
+          <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <mat-icon class="text-green-600 text-2xl">check_circle</mat-icon>
+          </div>
+          <h3 class="font-black text-gray-900 text-xl mb-2">MESA DISPONIBLE</h3>
+          <p class="text-green-600 font-semibold">Lista para nuevos clientes</p>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="flex flex-col gap-3">
+          <ng-container *ngIf="m.estado === 'libre'; else accionesOcupada">
+            <button
+              (click)="tomarPedido(m)"
+              class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-black py-4 rounded-xl text-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg flex items-center justify-center gap-2"
+            >
+              <mat-icon class="text-lg">add_shopping_cart</mat-icon>
+              <span>TOMAR PEDIDO</span>
+            </button>
+          </ng-container>
+          <ng-template #accionesOcupada>
+            <button
+              (click)="verPedido(m)"
+              class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-black py-3 rounded-xl text-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg flex items-center justify-center gap-2"
+            >
+              <mat-icon class="text-lg">visibility</mat-icon>
+              <span>VER PEDIDO</span>
+            </button>
+            <div class="grid grid-cols-2 gap-3">
+              <button
+                (click)="facturar(m)"
+                class="bg-gradient-to-r from-purple-500 to-purple-600 text-white font-black py-3 rounded-xl hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg flex items-center justify-center gap-2"
+              >
+                <mat-icon class="text-base">receipt_long</mat-icon>
+                <span class="text-sm">FACTURAR</span>
+              </button>
+              <button
+                (click)="liberarMesa(m)"
+                class="bg-gradient-to-r from-red-500 to-red-600 text-white font-black py-3 rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-lg flex items-center justify-center gap-2"
+              >
+                <mat-icon class="text-base">lock_open</mat-icon>
+                <span class="text-sm">LIBERAR</span>
+              </button>
+            </div>
+          </ng-template>
+        </div>
       </div>
     </div>
   </div>

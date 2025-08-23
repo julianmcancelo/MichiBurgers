@@ -1,51 +1,91 @@
-<div class="contenedor-formulario">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>{{ esEdicion ? 'Editar Producto' : 'Nuevo Producto' }}</mat-card-title>
-      <mat-card-subtitle>{{
-        esEdicion ? 'Modifica los datos del producto' : 'Agrega un nuevo producto al menú'
-      }}</mat-card-subtitle>
-    </mat-card-header>
-
-    <mat-card-content>
-      <form [formGroup]="formularioProducto" (ngSubmit)="guardarProducto()">
-        <mat-form-field appearance="outline" class="campo-completo">
-          <mat-label>Nombre del Producto</mat-label>
-          <input matInput formControlName="nombre" placeholder="Ej: Hamburguesa Clásica" />
-          <mat-error
-            *ngIf="
-              formularioProducto.get('nombre')?.invalid && formularioProducto.get('nombre')?.touched
-            "
-          >
-            {{ obtenerErrorNombre() }}
-          </mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="campo-completo">
-          <mat-label>Precio</mat-label>
-          <input matInput type="number" formControlName="precio" placeholder="0.00" />
-          <span matTextPrefix>$&nbsp;</span>
-          <mat-error
-            *ngIf="
-              formularioProducto.get('precio')?.invalid && formularioProducto.get('precio')?.touched
-            "
-          >
-            {{ obtenerErrorPrecio() }}
-          </mat-error>
-        </mat-form-field>
-
-        <div class="acciones-formulario">
-          <button mat-button type="button" (click)="cancelar()">Cancelar</button>
-          <button
-            mat-raised-button
-            color="primary"
-            type="submit"
-            [disabled]="formularioProducto.invalid"
-          >
-            {{ esEdicion ? 'Actualizar' : 'Crear' }} Producto
-          </button>
+<!-- Formulario de producto con estética moderna -->
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50 p-4 sm:p-6 lg:p-8">
+  <div class="max-w-2xl mx-auto">
+    <!-- Header del formulario -->
+    <div class="bg-white rounded-2xl shadow-xl border border-orange-100 overflow-hidden">
+      <div class="bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 px-6 py-8 text-center">
+        <div class="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-4 shadow overflow-hidden">
+          <mat-icon class="text-white text-2xl">{{ esEdicion ? 'edit' : 'add_box' }}</mat-icon>
         </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+        <h1 class="text-2xl font-bold text-white mb-1 tracking-wide">
+          {{ esEdicion ? 'Editar Producto' : 'Nuevo Producto' }}
+        </h1>
+        <p class="text-orange-100 text-sm">
+          {{ esEdicion ? 'Modifica los datos del producto' : 'Agrega un nuevo producto al menú' }}
+        </p>
+      </div>
+
+      <!-- Formulario -->
+      <div class="px-6 py-6">
+        <form [formGroup]="formularioProducto" (ngSubmit)="guardarProducto()" class="space-y-6">
+          <!-- Campo Nombre -->
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-gray-700">Nombre del Producto</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <mat-icon class="text-orange-500 text-lg">restaurant</mat-icon>
+              </div>
+              <input
+                matInput
+                formControlName="nombre"
+                placeholder="Ej: Hamburguesa Clásica"
+                class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
+              />
+            </div>
+            <div
+              *ngIf="formularioProducto.get('nombre')?.invalid && formularioProducto.get('nombre')?.touched"
+              class="flex items-center gap-2 text-red-600 text-sm"
+            >
+              <mat-icon class="text-base">error</mat-icon>
+              <span>{{ obtenerErrorNombre() }}</span>
+            </div>
+          </div>
+
+          <!-- Campo Precio -->
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-gray-700">Precio</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span class="text-orange-500 font-medium">$</span>
+              </div>
+              <input
+                matInput
+                type="number"
+                formControlName="precio"
+                placeholder="0.00"
+                class="block w-full pl-8 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
+              />
+            </div>
+            <div
+              *ngIf="formularioProducto.get('precio')?.invalid && formularioProducto.get('precio')?.touched"
+              class="flex items-center gap-2 text-red-600 text-sm"
+            >
+              <mat-icon class="text-base">error</mat-icon>
+              <span>{{ obtenerErrorPrecio() }}</span>
+            </div>
+          </div>
+
+          <!-- Botones de acción -->
+          <div class="flex flex-col sm:flex-row gap-3 pt-4">
+            <button
+              type="button"
+              (click)="cancelar()"
+              class="flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all duration-200"
+            >
+              <mat-icon class="text-lg">close</mat-icon>
+              <span>Cancelar</span>
+            </button>
+            <button
+              type="submit"
+              [disabled]="formularioProducto.invalid"
+              class="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none"
+            >
+              <mat-icon class="text-lg">{{ esEdicion ? 'save' : 'add' }}</mat-icon>
+              <span>{{ esEdicion ? 'Actualizar' : 'Crear' }} Producto</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>

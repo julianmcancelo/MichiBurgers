@@ -1,0 +1,219 @@
+<!-- Pantalla de estado de pedidos estilo TV -->
+<div class="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 p-4">
+  <!-- Header principal -->
+  <div class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border-4 border-white mb-6 overflow-hidden">
+    <div class="bg-gradient-to-r from-purple-600 via-purple-700 to-pink-600 px-8 py-6 text-center">
+      <div class="flex items-center justify-center gap-4 mb-4">
+        <div class="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center shadow-lg">
+          <mat-icon class="text-white text-4xl">assignment</mat-icon>
+        </div>
+        <div class="text-left">
+          <h1 class="text-4xl font-black text-white tracking-wide">ESTADO DE PEDIDOS</h1>
+          <p class="text-purple-100 text-lg font-semibold">Seguimiento en Tiempo Real</p>
+        </div>
+      </div>
+      <div class="flex items-center justify-center gap-4">
+        <div class="bg-white/10 rounded-xl px-6 py-3">
+          <p class="text-white text-xl font-bold">{{ getCurrentTime() }}</p>
+        </div>
+        <button
+          (click)="actualizarPedidos()"
+          class="bg-white/20 hover:bg-white/30 rounded-xl px-6 py-3 text-white font-bold transition-all duration-200 flex items-center gap-2"
+        >
+          <mat-icon>refresh</mat-icon>
+          <span>Actualizar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estadísticas de pedidos -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <div class="bg-white rounded-2xl shadow-xl border-4 border-orange-200 overflow-hidden transform hover:scale-105 transition-all duration-300">
+      <div class="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-4 text-center">
+        <mat-icon class="text-white text-3xl mb-2">receipt_long</mat-icon>
+        <div class="text-white text-2xl font-black">{{ pedidosTomados.length }}</div>
+        <div class="text-orange-100 font-semibold text-sm">PEDIDOS TOMADOS</div>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-2xl shadow-xl border-4 border-yellow-200 overflow-hidden transform hover:scale-105 transition-all duration-300">
+      <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 px-6 py-4 text-center">
+        <mat-icon class="text-white text-3xl mb-2">restaurant</mat-icon>
+        <div class="text-white text-2xl font-black">{{ pedidosPreparacion.length }}</div>
+        <div class="text-yellow-100 font-semibold text-sm">EN PREPARACIÓN</div>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-2xl shadow-xl border-4 border-green-200 overflow-hidden transform hover:scale-105 transition-all duration-300">
+      <div class="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 text-center">
+        <mat-icon class="text-white text-3xl mb-2">check_circle</mat-icon>
+        <div class="text-white text-2xl font-black">{{ pedidosListos.length }}</div>
+        <div class="text-green-100 font-semibold text-sm">LISTOS</div>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-2xl shadow-xl border-4 border-blue-200 overflow-hidden transform hover:scale-105 transition-all duration-300">
+      <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4 text-center">
+        <mat-icon class="text-white text-3xl mb-2">local_shipping</mat-icon>
+        <div class="text-white text-2xl font-black">{{ pedidosEntregados.length }}</div>
+        <div class="text-blue-100 font-semibold text-sm">ENTREGADOS</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Secciones de pedidos por estado -->
+  <div class="space-y-8">
+    <!-- Pedidos Tomados -->
+    <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border-2 border-white p-6">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
+          <mat-icon class="text-white text-xl">receipt_long</mat-icon>
+        </div>
+        <h2 class="text-2xl font-black text-gray-900">PEDIDOS TOMADOS</h2>
+        <div class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full font-bold">
+          {{ pedidosTomados.length }}
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div
+          *ngFor="let pedido of pedidosTomados"
+          class="bg-orange-50 border-2 border-orange-200 rounded-xl p-4 hover:shadow-lg transition-all duration-200"
+        >
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xl font-black text-gray-900">PEDIDO #{{ pedido.id }}</span>
+            <span class="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+              MESA {{ pedido.mesaId }}
+            </span>
+          </div>
+          <div class="text-sm text-gray-600 mb-2">
+            <strong>Hora:</strong> {{ pedido.hora }}
+          </div>
+          <div class="text-sm text-gray-600 mb-3">
+            <strong>Items:</strong> {{ pedido.items?.length || 0 }} productos
+          </div>
+          <button
+            (click)="cambiarEstado(pedido, 'preparacion')"
+            class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-bold py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200"
+          >
+            ENVIAR A COCINA
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pedidos en Preparación -->
+    <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border-2 border-white p-6">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 bg-yellow-500 rounded-xl flex items-center justify-center">
+          <mat-icon class="text-white text-xl">restaurant</mat-icon>
+        </div>
+        <h2 class="text-2xl font-black text-gray-900">EN PREPARACIÓN</h2>
+        <div class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full font-bold">
+          {{ pedidosPreparacion.length }}
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div
+          *ngFor="let pedido of pedidosPreparacion"
+          class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-4 hover:shadow-lg transition-all duration-200 animate-pulse"
+        >
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xl font-black text-gray-900">PEDIDO #{{ pedido.id }}</span>
+            <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+              MESA {{ pedido.mesaId }}
+            </span>
+          </div>
+          <div class="text-sm text-gray-600 mb-2">
+            <strong>Hora:</strong> {{ pedido.hora }}
+          </div>
+          <div class="text-sm text-gray-600 mb-2">
+            <strong>Tiempo:</strong> {{ getTiempoPreparacion(pedido) }}
+          </div>
+          <div class="text-sm text-gray-600 mb-3">
+            <strong>Items:</strong> {{ pedido.items?.length || 0 }} productos
+          </div>
+          <button
+            (click)="cambiarEstado(pedido, 'listo')"
+            class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200"
+          >
+            MARCAR LISTO
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pedidos Listos para Entregar -->
+    <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border-2 border-white p-6">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
+          <mat-icon class="text-white text-xl">check_circle</mat-icon>
+        </div>
+        <h2 class="text-2xl font-black text-gray-900">LISTOS PARA ENTREGAR</h2>
+        <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full font-bold">
+          {{ pedidosListos.length }}
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div
+          *ngFor="let pedido of pedidosListos"
+          class="bg-green-50 border-2 border-green-200 rounded-xl p-4 hover:shadow-lg transition-all duration-200 ring-2 ring-green-300 ring-opacity-50"
+        >
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xl font-black text-gray-900">PEDIDO #{{ pedido.id }}</span>
+            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+              MESA {{ pedido.mesaId }}
+            </span>
+          </div>
+          <div class="text-sm text-gray-600 mb-2">
+            <strong>Hora:</strong> {{ pedido.hora }}
+          </div>
+          <div class="text-sm text-gray-600 mb-2">
+            <strong>Listo desde:</strong> {{ pedido.horaListo }}
+          </div>
+          <div class="text-sm text-gray-600 mb-3">
+            <strong>Items:</strong> {{ pedido.items?.length || 0 }} productos
+          </div>
+          <button
+            (click)="cambiarEstado(pedido, 'entregado')"
+            class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200"
+          >
+            MARCAR ENTREGADO
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pedidos Entregados (últimos 10) -->
+    <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border-2 border-white p-6">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
+          <mat-icon class="text-white text-xl">local_shipping</mat-icon>
+        </div>
+        <h2 class="text-2xl font-black text-gray-900">ENTREGADOS RECIENTES</h2>
+        <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-bold">
+          {{ pedidosEntregados.length }}
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div
+          *ngFor="let pedido of pedidosEntregados.slice(0, 8)"
+          class="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 opacity-75"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-lg font-black text-gray-900">PEDIDO #{{ pedido.id }}</span>
+            <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+              MESA {{ pedido.mesaId }}
+            </span>
+          </div>
+          <div class="text-xs text-gray-600 mb-1">
+            <strong>Entregado:</strong> {{ pedido.horaEntregado }}
+          </div>
+          <div class="text-xs text-gray-600">
+            <strong>Items:</strong> {{ pedido.items?.length || 0 }} productos
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

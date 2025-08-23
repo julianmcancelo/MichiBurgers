@@ -62,10 +62,23 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
   ctxPuedeFacturar = false;
   ctxLabelAbrirVer = 'Abrir/Ver';
 
-  @ViewChild('dlgPedido') dlgPedido!: TemplateRef<any>;
-  @ViewChild('tplMapaFull') tplMapaFull!: TemplateRef<any>;
+  @ViewChild('dlgPedido', { static: true }) dlgPedido!: TemplateRef<any>;
+  @ViewChild('tplMapaFull', { static: true }) tplMapaFull!: TemplateRef<any>;
 
   private destroy$ = new Subject<void>();
+
+  // Métodos para el template
+  getCurrentTime(): string {
+    return new Date().toLocaleTimeString('es-AR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  }
+
+  get Math() {
+    return Math;
+  }
 
   constructor(
     private api: MapaSalonApiService,
