@@ -1,6 +1,7 @@
-import { CanActivateFn, Router } from '@angular/router';
-import { PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { PLATFORM_ID, inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+
 import { Rol, Usuario } from './models';
 
 export const authGuard: CanActivateFn = (route) => {

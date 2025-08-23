@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthService } from '../../auth.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
+
+import { AuthService } from '../../auth.service';
 import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
 
 @Component({
@@ -45,22 +46,8 @@ export class LoginComponent {
         this.cargando = false;
         const u = resp.usuario;
         this.snack.open(`Bienvenido, ${u.nombreCompleto}`, 'OK', { duration: 3000 });
-        // Redirección por rol
+        // Redirección por rol - todos van a la raíz
         let destino = '/';
-        switch (u.rol) {
-          case 'admin':
-            destino = '/admin';
-            break;
-          case 'mozo':
-            destino = '/comandera';
-            break;
-          case 'cocina':
-            destino = '/cocina';
-            break;
-          case 'caja':
-            destino = '/mapa-meses';
-            break;
-        }
         this.router.navigateByUrl(destino);
       },
       error: () => {

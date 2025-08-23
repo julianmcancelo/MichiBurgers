@@ -1,5 +1,6 @@
-import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+
 import { MasterAuthService } from './master-auth.service';
 
 export const masterGuard: CanActivateFn = () => {

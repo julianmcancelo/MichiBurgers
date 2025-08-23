@@ -1,11 +1,12 @@
 import { Component, signal } from '@angular/core';
-import { CompartidoModule } from './compartido/compartido.module';
+
+import { SharedModule } from './compartido/compartido.module';
 
 @Component({
   selector: 'app-root',
-  imports: [CompartidoModule],
+  imports: [SharedModule],
   template: `<app-layout-principal></app-layout-principal>`,
-  styleUrl: './app.scss',
+  styleUrl: '../styles.scss',
   standalone: true,
 })
 export class AppComponent {

@@ -1,15 +1,16 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormGroup } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { FormBuilder, Validators } from '@angular/forms';
-import { MasterAuthService } from '../../services/master-auth.service';
+import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
+
+import { MasterAuthService } from '../../services/master-auth.service';
 
 @Component({
   selector: 'app-login-master',

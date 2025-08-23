@@ -1,10 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MapaMesesService } from '../../mapa-meses.service';
-import { MapaMes } from '../../models';
-import { MatTableDataSource } from '@angular/material/table';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+
+import { MapaMesesService } from '../../mapa-meses.service';
+import { MapaMes } from '../../models';
 
 @Component({
   selector: 'app-lista-meses',
@@ -12,7 +13,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./lista-meses.component.scss'],
   standalone: false,
 })
-export class ListaMesesComponent implements OnInit {
+export class ListaMesesComponent implements OnInit, AfterViewInit {
   columnas = ['anio', 'mes', 'titulo', 'acciones'];
   dataSource = new MatTableDataSource<MapaMes>([]);
 

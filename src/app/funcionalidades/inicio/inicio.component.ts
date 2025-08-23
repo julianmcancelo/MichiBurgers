@@ -1,6 +1,4 @@
 import { Component, OnDestroy } from '@angular/core';
-import { AuthService } from '../auth/auth.service';
-import { MapaSalonApiService } from '../mapa-meses/services/mapa-salon-api.service';
 import {
   Subject,
   interval,
@@ -11,6 +9,9 @@ import {
   takeUntil,
   shareReplay,
 } from 'rxjs';
+
+import { AuthService } from '../auth/auth.service';
+import { MapaSalonApiService } from '../mapa-meses/services/mapa-salon-api.service';
 
 @Component({
   selector: 'app-inicio',
@@ -29,7 +30,7 @@ export class InicioComponent implements OnDestroy {
   }
 
   // Logo PNG empaquetado desde src/app/logos
-  logoUrl: string = '/logos/logos.png';
+  logoUrl = '/logos/logos.png';
 
   private destroy$ = new Subject<void>();
 

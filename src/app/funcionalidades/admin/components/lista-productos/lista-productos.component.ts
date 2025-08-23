@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { ProductosService, ProductoDTO } from '../../services/productos.service';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+
+import { ProductosService, ProductoDTO } from '../../services/productos.service';
 import { NuevoProductoDialogComponent } from '../nuevo-producto-dialog/nuevo-producto-dialog.component';
 
 export interface Producto extends ProductoDTO {}

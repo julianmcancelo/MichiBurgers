@@ -1,8 +1,9 @@
+import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { Component, OnInit, Optional, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, debounceTime, interval, takeUntil } from 'rxjs';
+
 import { MapaSalonApiService } from '../../services/mapa-salon-api.service';
-import { CdkDragEnd } from '@angular/cdk/drag-drop';
 
 interface Mesa {
   id: string;
@@ -35,7 +36,7 @@ interface Anotacion {
   styleUrls: ['./mapa-salon.component.scss'],
   standalone: false,
 })
-export class MapaSalonComponent implements OnInit {
+export class MapaSalonComponent implements OnInit, OnDestroy {
   ancho = 1200;
   alto = 800;
 

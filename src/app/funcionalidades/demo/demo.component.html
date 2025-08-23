@@ -1,0 +1,241 @@
+<!-- Componente de Demostración - Todos los Temas Técnicos Obligatorios -->
+<div class="demo-container" appHighlight [highlightColor]="'#f5f5f5'">
+  <mat-card class="demo-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>science</mat-icon>
+        Demostración Técnica - Burgersaurio
+      </mat-card-title>
+      <mat-card-subtitle>
+        Implementación completa de todos los temas técnicos obligatorios
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Sección: Pipes Personalizados -->
+      <section class="demo-section">
+        <h3><mat-icon>transform</mat-icon> Pipes Personalizados</h3>
+        <div class="pipes-demo">
+          <p><strong>Precio:</strong> {{ precio | currencyFormat }}</p>
+          <p><strong>Fecha:</strong> {{ fechaCreacion | timeAgo }}</p>
+          <p><strong>Estado Mesa:</strong> 
+            <mat-chip [color]="(estadoMesa | estadoMesa).color">
+              <mat-icon>{{ (estadoMesa | estadoMesa).icon }}</mat-icon>
+              {{ (estadoMesa | estadoMesa).text }}
+            </mat-chip>
+          </p>
+        </div>
+      </section>
+
+      <!-- Sección: Directivas Personalizadas -->
+      <section class="demo-section">
+        <h3><mat-icon>code</mat-icon> Directivas Personalizadas</h3>
+        <div class="directives-demo">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            appLoading 
+            [isLoading]="loading"
+            (click)="recargarDatos()">
+            Recargar Datos
+          </button>
+          
+          <div *appRoleAccess="['admin', 'mesero']" class="admin-content">
+            <mat-icon>admin_panel_settings</mat-icon>
+            <span>Contenido visible solo para Admin y Mesero</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección: Formularios Reactivos -->
+      <section class="demo-section">
+        <h3><mat-icon>dynamic_form</mat-icon> Formularios Reactivos</h3>
+        <form [formGroup]="demoForm" (ngSubmit)="onSubmit()" class="reactive-form">
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Nombre del Producto</mat-label>
+              <input matInput formControlName="nombre" placeholder="Ej: Hamburguesa Clásica">
+              <mat-error *ngIf="hasFieldError('nombre')">
+                {{ getFieldError('nombre') }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" formControlName="email" placeholder="ejemplo@email.com">
+              <mat-error *ngIf="hasFieldError('email')">
+                {{ getFieldError('email') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Precio</mat-label>
+              <input matInput type="number" formControlName="precio" placeholder="0">
+              <span matPrefix>$</span>
+              <mat-error *ngIf="hasFieldError('precio')">
+                {{ getFieldError('precio') }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Categoría</mat-label>
+              <mat-select formControlName="categoria">
+                <mat-option value="hamburguesas">Hamburguesas</mat-option>
+                <mat-option value="pizzas">Pizzas</mat-option>
+                <mat-option value="ensaladas">Ensaladas</mat-option>
+                <mat-option value="bebidas">Bebidas</mat-option>
+              </mat-select>
+              <mat-error *ngIf="hasFieldError('categoria')">
+                {{ getFieldError('categoria') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput formControlName="descripcion" rows="3" 
+                      placeholder="Descripción del producto..."></textarea>
+          </mat-form-field>
+
+          <div class="form-row">
+            <mat-checkbox formControlName="activo">Producto Activo</mat-checkbox>
+          </div>
+
+          <div class="form-actions">
+            <button mat-raised-button color="primary" type="submit" 
+                    [disabled]="loading" appLoading [isLoading]="loading">
+              <mat-icon>save</mat-icon>
+              Guardar Producto
+            </button>
+            
+            <button mat-button type="button" (click)="demoForm.reset()">
+              <mat-icon>refresh</mat-icon>
+              Limpiar
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Sección: Programación Reactiva (RxJS) -->
+      <section class="demo-section">
+        <h3><mat-icon>timeline</mat-icon> Programación Reactiva (RxJS)</h3>
+        <div class="reactive-demo">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Búsqueda Reactiva</mat-label>
+            <input matInput formControlName="busqueda" placeholder="Buscar productos...">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <div class="timer-display">
+            <mat-icon>timer</mat-icon>
+            <span>Tiempo transcurrido: {{ tiempoTranscurrido$ | async }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección: Lista de Productos (HTTP + Observables) -->
+      <section class="demo-section">
+        <h3><mat-icon>list</mat-icon> Lista de Productos (HTTP + Observables)</h3>
+        
+        <div class="list-actions">
+          <button mat-raised-button color="accent" (click)="exportarDatos()">
+            <mat-icon>download</mat-icon>
+            Exportar Datos
+          </button>
+        </div>
+
+        <div *ngIf="loading" class="loading-container">
+          <mat-spinner diameter="50"></mat-spinner>
+          <p>Cargando productos...</p>
+        </div>
+
+        <div *ngIf="!loading" class="productos-grid">
+          <mat-card *ngFor="let producto of (filteredProductos$ | async); trackBy: trackByProducto" 
+                    class="producto-card" 
+                    appHighlight [highlightColor]="'#e3f2fd'">
+            <mat-card-header>
+              <mat-card-title>{{ producto.nombre }}</mat-card-title>
+              <mat-card-subtitle>{{ producto.categoria }}</mat-card-subtitle>
+              <div class="card-actions">
+                <mat-slide-toggle 
+                  [checked]="producto.activo"
+                  (change)="toggleProductoActivo(producto)"
+                  color="primary">
+                </mat-slide-toggle>
+              </div>
+            </mat-card-header>
+            
+            <mat-card-content>
+              <div class="producto-info">
+                <div class="precio">
+                  <mat-icon>attach_money</mat-icon>
+                  <span>{{ producto.precio | currencyFormat }}</span>
+                </div>
+                <div class="estado">
+                  <mat-chip [color]="producto.activo ? 'primary' : 'warn'">
+                    <mat-icon>{{ producto.activo ? 'check_circle' : 'cancel' }}</mat-icon>
+                    {{ producto.activo ? 'Activo' : 'Inactivo' }}
+                  </mat-chip>
+                </div>
+              </div>
+            </mat-card-content>
+            
+            <mat-card-actions align="end">
+              <button mat-icon-button color="primary" 
+                      matTooltip="Editar producto">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" 
+                      (click)="eliminarProducto(producto.id)"
+                      matTooltip="Eliminar producto">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+
+        <div *ngIf="!loading && (filteredProductos$ | async)?.length === 0" class="no-results">
+          <mat-icon>search_off</mat-icon>
+          <p>No se encontraron productos</p>
+        </div>
+      </section>
+
+      <!-- Sección: Angular Material Components -->
+      <section class="demo-section">
+        <h3><mat-icon>widgets</mat-icon> Angular Material Components</h3>
+        <div class="material-demo">
+          <mat-tab-group>
+            <mat-tab label="Componentes Básicos">
+              <div class="tab-content">
+                <button mat-button>Basic Button</button>
+                <button mat-raised-button color="primary">Raised Button</button>
+                <button mat-fab color="accent"><mat-icon>add</mat-icon></button>
+                <button mat-mini-fab color="warn"><mat-icon>edit</mat-icon></button>
+              </div>
+            </mat-tab>
+            
+            <mat-tab label="Indicadores">
+              <div class="tab-content">
+                <mat-progress-bar mode="determinate" value="40"></mat-progress-bar>
+                <mat-progress-spinner mode="indeterminate" diameter="30"></mat-progress-spinner>
+                <mat-icon matBadge="4" matBadgeColor="warn">notifications</mat-icon>
+              </div>
+            </mat-tab>
+            
+            <mat-tab label="Navegación">
+              <div class="tab-content">
+                <mat-chip-listbox>
+                  <mat-chip-option>Hamburguesas</mat-chip-option>
+                  <mat-chip-option>Pizzas</mat-chip-option>
+                  <mat-chip-option>Bebidas</mat-chip-option>
+                </mat-chip-listbox>
+              </div>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+      </section>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,11 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { authGuard } from './auth/auth.guard';
-import { InicioComponent } from './inicio/inicio.component';
+import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterModule } from '@angular/router';
+
+import { authGuard } from './auth/auth.guard';
+import { InicioComponent } from './inicio/inicio.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 
 @NgModule({
@@ -48,6 +49,12 @@ import { NotFoundComponent } from './not-found/not-found.component';
         loadChildren: () => import('./cocina/cocina.module').then((m) => m.CocinaModule),
         canActivate: [authGuard],
         data: { roles: ['admin', 'cocina'] },
+      },
+      {
+        path: 'demo',
+        loadChildren: () => import('./demo/demo.module').then((m) => m.DemoModule),
+        canActivate: [authGuard],
+        data: { roles: ['admin'] },
       },
       {
         path: '**',

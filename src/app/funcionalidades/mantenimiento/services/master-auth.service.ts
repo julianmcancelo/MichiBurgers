@@ -1,7 +1,7 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, map, of, tap } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 const MASTER_TOKEN_KEY = 'master_token';
 

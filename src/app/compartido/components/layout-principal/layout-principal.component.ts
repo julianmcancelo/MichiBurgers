@@ -1,14 +1,15 @@
-import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Router, NavigationEnd } from '@angular/router';
-import { AuthService } from '../../../funcionalidades/auth/auth.service';
-import { Subscription } from 'rxjs';
+import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router, NavigationEnd } from '@angular/router';
+import { Subscription } from 'rxjs';
+
+import { AuthService } from '../../../funcionalidades/auth/auth.service';
 import { ChangePasswordComponent } from '../../../funcionalidades/auth/components/change-password/change-password.component';
 
 /**
  * LayoutPrincipalComponent
- * 
+ *
  * Contenedor de layout principal (header/nav + outlet de rutas).
  * - Se sincroniza con `AuthService` para mostrar estado de sesión y rol actual.
  * - Evita parpadeos SSR utilizando `isPlatformBrowser` y semillas de estado tempranas.
@@ -24,15 +25,15 @@ import { ChangePasswordComponent } from '../../../funcionalidades/auth/component
 })
 export class LayoutPrincipalComponent implements OnInit, OnDestroy {
   // Estado de autenticación y UI
-  loggedIn = false;             // Usuario autenticado
-  nombreCompleto = '';          // Nombre para mostrar en header
-  ready = false;                // true en browser para evitar flash SSR
-  private isBrowser = false;    // Flag de plataforma
-  hasToken = false;             // Hay token almacenado
-  esAdmin = false;              // Conveniencia para toggles de UI
-  esMozo = false;               // Conveniencia para toggles de UI
+  loggedIn = false; // Usuario autenticado
+  nombreCompleto = ''; // Nombre para mostrar en header
+  ready = false; // true en browser para evitar flash SSR
+  private isBrowser = false; // Flag de plataforma
+  hasToken = false; // Hay token almacenado
+  esAdmin = false; // Conveniencia para toggles de UI
+  esMozo = false; // Conveniencia para toggles de UI
   rolActual: 'admin' | 'mozo' | 'cocina' | 'caja' | '' = '';
-  mobileMenuOpen = false;       // Control del menú en móvil
+  mobileMenuOpen = false; // Control del menú en móvil
 
   // Subscripciones a observables (para limpiar en OnDestroy)
   private sub?: Subscription;
@@ -43,10 +44,10 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
 
   // Datos de UI
   currentYear: number = new Date().getFullYear();
-  logoUrl: string = '/logos/logos.png'; // Logo empaquetado desde `src/app/logos`
+  logoUrl = '/logos/logos.png'; // Logo empaquetado desde `src/app/logos`
 
   constructor(
-    @Inject(PLATFORM_ID) platformId: Object,
+    @Inject(PLATFORM_ID) platformId: object,
     private auth: AuthService,
     private router: Router,
     private dialog: MatDialog,

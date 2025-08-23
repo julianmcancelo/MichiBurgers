@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
-import { interval, Subject, switchMap, takeUntil, startWith } from 'rxjs';
-import { MapaSalonApiService } from '../../services/mapa-salon-api.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
+import { interval, Subject, switchMap, takeUntil, startWith } from 'rxjs';
+
+import { MapaSalonApiService } from '../../services/mapa-salon-api.service';
 
 interface EstadoMesaItem {
   mesaId: string;
@@ -31,7 +32,7 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
   ancho = 1200;
   alto = 800;
   private padding = 40; // padding para viewBox
-  layoutMesas: Array<{
+  layoutMesas: {
     id: string;
     nombre?: string;
     x: number;
@@ -40,7 +41,7 @@ export class EstadoMesasComponent implements OnInit, OnDestroy {
     ancho?: number;
     alto?: number;
     area?: 'interior' | 'exterior';
-  }> = [];
+  }[] = [];
 
   // Zoom/Pan
   scale = 1;
