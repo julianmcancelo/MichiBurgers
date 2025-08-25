@@ -1,14 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject, Optional } from '@angular/core';
 import { FormBuilder, Validators, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 
 import { ProductosService, ProductoDTO, ListarResponse } from '../../services/productos.service';
 
@@ -22,12 +16,6 @@ interface NuevoProductoData {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCheckboxModule,
     MatDialogModule,
   ],
   templateUrl: './nuevo-producto-dialog.component.html',

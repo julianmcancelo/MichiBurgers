@@ -1,55 +1,84 @@
-<mat-card>
-  <mat-card-title>Registrar usuario</mat-card-title>
-  <mat-card-content>
-    <form (ngSubmit)="registrar()" [formGroup]="form">
-      <div class="row">
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Legajo</mat-label>
-          <input matInput formControlName="legajo" placeholder="Ej: A001" />
-          <mat-error *ngIf="form.controls['legajo'].hasError('required')">Requerido</mat-error>
-        </mat-form-field>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 p-4 sm:p-6 lg:p-8">
+  <div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden">
+      <!-- Menú Admin -->
+      <nav class="flex flex-wrap items-center gap-2 sm:gap-3 px-4 sm:px-6 pt-4 sm:pt-5 pb-3 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-blue-100">
+        <a routerLink="/admin" routerLinkActive="!bg-blue-600 !text-white" [routerLinkActiveOptions]="{ exact: true }"
+           class="px-3 py-1.5 rounded-lg text-sm font-medium text-blue-700 hover:bg-blue-50 transition">Productos</a>
+        <a routerLink="/admin/nuevo" routerLinkActive="!bg-blue-600 !text-white"
+           class="px-3 py-1.5 rounded-lg text-sm font-medium text-blue-700 hover:bg-blue-50 transition">Nuevo</a>
+        <a routerLink="/admin/usuarios/registrar" routerLinkActive="!bg-blue-600 !text-white"
+           class="px-3 py-1.5 rounded-lg text-sm font-medium text-blue-700 hover:bg-blue-50 transition">Registrar usuario</a>
+        <a routerLink="/admin/qr" routerLinkActive="!bg-blue-600 !text-white"
+           class="px-3 py-1.5 rounded-lg text-sm font-medium text-blue-700 hover:bg-blue-50 transition">QR</a>
+      </nav>
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 px-6 py-8 text-center">
+        <div class="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-4 shadow overflow-hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+          </svg>
+        </div>
+        <h1 class="text-2xl font-bold text-white mb-1 tracking-wide">Registrar Nuevo Usuario</h1>
+        <p class="text-blue-100 text-sm">Crea una cuenta para un nuevo miembro del equipo</p>
       </div>
-      <div class="row">
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Nombre completo</mat-label>
-          <input matInput formControlName="nombreCompleto" placeholder="Ej: Juan Pérez" />
-          <mat-error *ngIf="form.controls['nombreCompleto'].hasError('required')"
-            >Requerido</mat-error
-          >
-        </mat-form-field>
+
+      <!-- Formulario -->
+      <div class="px-6 py-8">
+        <form [formGroup]="form" (ngSubmit)="registrar()" class="space-y-6">
+          
+          <!-- Campo Legajo -->
+          <div>
+            <label for="legajo" class="block text-sm font-semibold text-gray-700 mb-2">Legajo</label>
+            <input id="legajo" type="text" formControlName="legajo" placeholder="Ej: A001" class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200" />
+            <div *ngIf="form.controls['legajo'].touched && form.controls['legajo'].hasError('required')" class="text-red-600 text-sm mt-1">El legajo es requerido.</div>
+          </div>
+
+          <!-- Campo Nombre Completo -->
+          <div>
+            <label for="nombreCompleto" class="block text-sm font-semibold text-gray-700 mb-2">Nombre completo</label>
+            <input id="nombreCompleto" type="text" formControlName="nombreCompleto" placeholder="Ej: Juan Pérez" class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200" />
+            <div *ngIf="form.controls['nombreCompleto'].touched && form.controls['nombreCompleto'].hasError('required')" class="text-red-600 text-sm mt-1">El nombre es requerido.</div>
+          </div>
+
+          <!-- Campo DNI -->
+          <div>
+            <label for="dni" class="block text-sm font-semibold text-gray-700 mb-2">DNI</label>
+            <input id="dni" type="text" formControlName="dni" placeholder="Ej: 32123456" class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200" />
+            <div *ngIf="form.controls['dni'].touched && form.controls['dni'].hasError('required')" class="text-red-600 text-sm mt-1">El DNI es requerido.</div>
+            <div *ngIf="form.controls['dni'].touched && form.controls['dni'].hasError('pattern')" class="text-red-600 text-sm mt-1">El formato del DNI es inválido.</div>
+          </div>
+
+          <!-- Campo Rol -->
+          <div>
+            <label for="rol" class="block text-sm font-semibold text-gray-700 mb-2">Rol</label>
+            <select id="rol" formControlName="rol" class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 bg-white">
+              <option value="" disabled>Seleccione un rol</option>
+              <option *ngFor="let r of roles" [value]="r.value">{{ r.label }}</option>
+            </select>
+            <div *ngIf="form.controls['rol'].touched && form.controls['rol'].hasError('required')" class="text-red-600 text-sm mt-1">Debe seleccionar un rol.</div>
+          </div>
+
+          <!-- Campo Password -->
+          <div>
+            <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Contraseña</label>
+            <input id="password" type="password" formControlName="password" class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200" />
+            <div *ngIf="form.controls['password'].touched && form.controls['password'].hasError('required')" class="text-red-600 text-sm mt-1">La contraseña es requerida.</div>
+            <div *ngIf="form.controls['password'].touched && form.controls['password'].hasError('minlength')" class="text-red-600 text-sm mt-1">La contraseña debe tener al menos 6 caracteres.</div>
+          </div>
+
+          <!-- Botón de acción -->
+          <div class="pt-4">
+            <button type="submit" [disabled]="cargando()" class="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none">
+              <svg *ngIf="cargando()" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>{{ cargando() ? 'Guardando...' : 'Crear Usuario' }}</span>
+            </button>
+          </div>
+        </form>
       </div>
-      <div class="row">
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>DNI</mat-label>
-          <input matInput formControlName="dni" placeholder="Ej: 32123456" />
-          <mat-error *ngIf="form.controls['dni'].hasError('required')">Requerido</mat-error>
-          <mat-error *ngIf="form.controls['dni'].hasError('pattern')">Formato inválido</mat-error>
-        </mat-form-field>
-      </div>
-      <div class="row">
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Rol</mat-label>
-          <mat-select formControlName="rol">
-            <mat-option *ngFor="let r of roles" [value]="r.value">{{ r.label }}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="form.controls['rol'].hasError('required')">Requerido</mat-error>
-        </mat-form-field>
-      </div>
-      <div class="row">
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Password</mat-label>
-          <input matInput type="password" formControlName="password" />
-          <mat-error *ngIf="form.controls['password'].hasError('required')">Requerido</mat-error>
-          <mat-error *ngIf="form.controls['password'].hasError('minlength')"
-            >Mínimo 6 caracteres</mat-error
-          >
-        </mat-form-field>
-      </div>
-      <div class="actions">
-        <button mat-raised-button color="primary" type="submit" [disabled]="cargando()">
-          {{ cargando() ? 'Guardando...' : 'Crear usuario' }}
-        </button>
-      </div>
-    </form>
-  </mat-card-content>
-</mat-card>
+    </div>
+  </div>
+</div>

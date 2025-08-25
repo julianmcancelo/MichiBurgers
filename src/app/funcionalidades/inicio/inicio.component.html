@@ -103,6 +103,24 @@
         </div>
 
         <!-- Accesos rápidos ampliados -->
+        <div class="mt-8 pt-6 border-t" *ngIf="(usuario$ | async)?.rol === 'admin'">
+          <h3 class="text-xs font-semibold uppercase text-gray-500 tracking-wider mb-3">Administración</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <a routerLink="/admin/productos" class="admin-shortcut">
+              <mat-icon>fastfood</mat-icon>
+              <span>Gestionar Productos</span>
+            </a>
+            <a routerLink="/admin/usuarios" class="admin-shortcut">
+              <mat-icon>people</mat-icon>
+              <span>Gestionar Usuarios</span>
+            </a>
+            <a routerLink="/admin/qr" class="admin-shortcut">
+              <mat-icon>qr_code</mat-icon>
+              <span>Generar QR de Mesas</span>
+            </a>
+          </div>
+        </div>
+
         <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <a
             routerLink="/comandera"

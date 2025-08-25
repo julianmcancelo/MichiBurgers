@@ -6,9 +6,9 @@ import { SharedModule } from './compartido/compartido.module';
   selector: 'app-root',
   imports: [SharedModule],
   template: `<app-layout-principal></app-layout-principal>`,
-  styleUrl: '../styles.scss',
+  styleUrls: ['../styles.scss'],
   standalone: true,
 })
 export class AppComponent {
-  title = signal('burgersaurio');
+  title = 'michiburgers';
 }

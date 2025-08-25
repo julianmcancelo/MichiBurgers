@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 
 import { authGuard } from './auth/auth.guard';
+import { BlankLayoutComponent } from '../core/layouts/blank-layout/blank-layout';
 import { InicioComponent } from './inicio/inicio.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 
@@ -16,6 +17,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
     MatButtonModule,
     MatCardModule,
     MatIconModule,
+    BlankLayoutComponent,
     RouterModule.forChild([
       {
         path: '',
@@ -55,6 +57,17 @@ import { NotFoundComponent } from './not-found/not-found.component';
         loadChildren: () => import('./demo/demo.module').then((m) => m.DemoModule),
         canActivate: [authGuard],
         data: { roles: ['admin'] },
+      },
+      {
+        path: 'pedido-qr',
+        component: BlankLayoutComponent,
+        children: [
+          {
+            path: ':area/:mesaId',
+            loadChildren: () =>
+              import('./pedido-cliente/pedido-cliente.module').then((m) => m.PedidoClienteModule),
+          },
+        ],
       },
       {
         path: '**',

@@ -18,4 +18,15 @@ export default defineConfig({
   ssr: {
     external: ['@angular/animations', '@angular/animations/browser'],
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://burguersaurio.jcancelo.dev',
+        changeOrigin: true,
+        secure: false,
+        // opcional: reescribir si fuera necesario
+        // rewrite: (path) => path.replace(/^\/api/, '/api'),
+      },
+    },
+  },
 });

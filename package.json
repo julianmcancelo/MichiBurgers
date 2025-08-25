@@ -1,5 +1,5 @@
 {
-  "name": "burgersaurio",
+  "name": "michiburgers",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:burgersaurio": "node dist/burgersaurio/server/server.mjs",
+    "serve:ssr:michiburgers": "node dist/michiburgers/server/server.mjs",
     "format": "prettier --cache --write .",
     "format:check": "prettier --check .",
     "lint": "eslint \"src/**/*.{ts,html}\"",
@@ -38,6 +38,7 @@
     "@angular/platform-server": "^20.1.0",
     "@angular/router": "^20.1.0",
     "@angular/ssr": "^20.1.6",
+    "angularx-qrcode": "^20.0.0",
     "express": "^5.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

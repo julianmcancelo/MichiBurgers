@@ -26,7 +26,7 @@ MichiBurgers es una aplicación web Angular para gestión de restaurante con bac
 ## Estructura del Proyecto
 
 ```
-burgersaurio/
+MichiBurgers/
 ├── src/app/                          # Código fuente Angular
 │   ├── compartido/                   # Componentes y servicios compartidos
 │   │   └── components/

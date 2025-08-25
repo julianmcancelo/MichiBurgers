@@ -1,13 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, signal } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
@@ -17,12 +13,8 @@ import { Router } from '@angular/router';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
     MatSnackBarModule,
+    RouterModule,
   ],
   templateUrl: './registro-usuario.component.html',
   styleUrls: ['./registro-usuario.component.scss'],

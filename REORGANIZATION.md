@@ -1,4 +1,4 @@
-# Reorganización del Proyecto Burgersaurio
+# Reorganización del Proyecto MichiBurgers
 
 ## Cambios Realizados
 

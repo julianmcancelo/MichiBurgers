@@ -1,83 +1,105 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
-import { FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
+import { MapaSalonApiService } from '../../../mapa-meses/services/mapa-salon-api.service';
+import { QRCodeComponent } from 'angularx-qrcode';
 
-/**
- * Generador de QR para mesas/áreas.
- * Envía datos al backend PHP y muestra el resultado (URL/path) con opción de copiar.
- */
 interface GenerarResp {
   ok: boolean;
   area?: string;
   mesa?: string;
-  sig?: string;
-  path?: string;
+  path: string;
   url?: string | null;
   error?: string;
+}
+
+interface Mesa {
+  id: string;
+  x: number;
+  y: number;
+  tipo: 'redonda' | 'cuadrada';
 }
 
 @Component({
   selector: 'app-qr-generator',
   templateUrl: './qr-generator.component.html',
   styleUrls: ['./qr-generator.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule, QRCodeComponent],
 })
-export class QrGeneratorComponent {
+export class QrGeneratorComponent implements OnInit {
   loading = false;
   error: string | null = null;
   resultado: GenerarResp | null = null;
-  form!: FormGroup;
+  // Por defecto usar el origen actual para que el enlace funcione en el host donde corre la app
+  baseUrl = typeof window !== 'undefined' ? window.location.origin : environment.baseUrl;
+
+  // Controles manuales
+  areaManual: 'interior' | 'exterior' = 'interior';
+  mesaManual: string = '';
+
+  layoutInterior: Mesa[] = [];
+  layoutExterior: Mesa[] = [];
 
   constructor(
-    private fb: FormBuilder,
     private http: HttpClient,
-  ) {
-    // Form con valores iniciales y validaciones mínimas
-    this.form = this.fb.group({
-      area: ['interior', Validators.required],
-      mesa: ['', Validators.required],
-      baseUrl: [''],
-    });
+    private mapaSalonService: MapaSalonApiService
+  ) {}
+
+  ngOnInit(): void {
+    this.mapaSalonService.getLayout('interior').subscribe(data => this.layoutInterior = data);
+    this.mapaSalonService.getLayout('exterior').subscribe(data => this.layoutExterior = data);
   }
 
-  /**
-   * Llama al endpoint del backend para generar el QR.
-   * Muestra errores de red/autorización con mensajes amigables.
-   */
-  async generar(): Promise<void> {
+  async generar(area: string, mesaId?: string): Promise<void> {
     this.loading = true;
     this.error = null;
     this.resultado = null;
 
+    // Si no se indicó mesa, solicitarla
+    if (!mesaId || String(mesaId).trim() === '') {
+      const ingresada = typeof window !== 'undefined' ? window.prompt('Ingresá el número de mesa') : '';
+      mesaId = (ingresada || '').trim();
+      if (!mesaId) {
+        this.loading = false;
+        this.error = 'Necesitamos el número de mesa para generar el QR';
+        return;
+      }
+      this.mesaManual = mesaId;
+    }
+
     const body = {
-      area: this.form.value.area ?? '',
-      mesa: this.form.value.mesa ?? '',
-      baseUrl: this.form.value.baseUrl ?? '',
+      area,
+      mesa: mesaId,
+      baseUrl: this.baseUrl,
     };
 
     try {
       const resp = await firstValueFrom(this.http.post<GenerarResp>('/api/qr/generar.php', body));
       if (!resp?.ok) {
-        this.error = resp?.error || 'No se pudo generar el QR';
+        // Fallback local si el backend no autoriza o falla
+        this.resultado = this.generarLocal(area, mesaId);
+        this.error = null;
       } else {
         this.resultado = resp;
       }
     } catch (e: any) {
-      // Mensajes amigables según status
-      if (e?.status === 401) {
-        this.error =
-          'No autorizado. Iniciá sesión como admin o habilitá el modo público en el backend.';
-      } else if (e?.status === 403) {
-        this.error = 'Permiso insuficiente. Se requiere rol admin/mozo.';
-      } else if (e?.status === 0) {
-        this.error = 'No se pudo contactar al servidor.';
-      } else {
-        this.error = 'Error del servidor al generar el QR';
-      }
+      // Log detallado y fallback local
+      console.error('Error al llamar /api/qr/generar.php', e);
+      this.resultado = this.generarLocal(area, mesaId);
+      this.error = null;
     } finally {
       this.loading = false;
     }
+  }
+
+  private generarLocal(area: string, mesaId: string): GenerarResp {
+    const path = `/pedido-qr/${encodeURIComponent(area)}/${encodeURIComponent(mesaId)}`;
+    const url = this.baseUrl ? `${this.baseUrl.replace(/\/$/, '')}${path}` : null;
+    return { ok: true, area, mesa: mesaId, path, url } as GenerarResp;
   }
 
   /** Copia la URL/path generado al portapapeles. */

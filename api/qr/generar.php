@@ -53,25 +53,15 @@ if (!in_array($area, ['interior','exterior'], true) || $mesaId === '') {
 }
 
 try {
-  // Generar firma con el mismo algoritmo que usa el validador
-  $secret = qr_get_secret();
-  if ($secret === '') {
-    http_response_code(500);
-    echo json_encode(['ok' => false, 'error' => 'Server sin secreto JWT']);
-    exit;
-  }
-  $data = $area . '|' . $mesaId;
-  $sig = rtrim(strtr(base64_encode(hash_hmac('sha256', $data, $secret, true)), '+/', '-_'), '=');
-
-  $qs = http_build_query(['area' => $area, 'mesa' => $mesaId, 'sig' => $sig]);
-  $path = '/menu?' . $qs;
+  // Construir la nueva URL para el flujo de cliente
+  $path = '/pedido-qr/' . rawurlencode($area) . '/' . rawurlencode($mesaId);
   $url = $baseUrl !== '' ? rtrim($baseUrl, '/') . $path : null;
 
   echo json_encode([
     'ok' => true,
     'area' => $area,
     'mesa' => $mesaId,
-    'sig' => $sig,
+    'sig' => null, // La firma ya no es necesaria
     'path' => $path,
     'url' => $url,
   ]);

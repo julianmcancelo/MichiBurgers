@@ -1,85 +1,83 @@
-<div
-  class="dialog-card border border-orange-200/60 rounded-xl shadow-sm hover:shadow-md transition p-0"
->
-  <div
-    class="flex items-center justify-between px-4 py-2.5 border-b border-orange-200/70 bg-white/80 sticky top-0 z-10"
-  >
-    <div class="flex items-center gap-2">
-      <mat-icon class="text-orange-500">fastfood</mat-icon>
-      <h2 class="text-base font-semibold">Nuevo producto</h2>
+<div class="bg-white rounded-2xl shadow-xl border border-orange-100 w-full max-w-lg mx-auto overflow-hidden">
+  <!-- Header -->
+  <div class="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-orange-50 to-orange-100 border-b border-orange-200">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-orange-500/10 rounded-lg flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v11.494m-9-5.747h18M5.47 7.713l13.06 9.574M5.47 16.287l13.06-9.574" />
+        </svg>
+      </div>
+      <h2 class="text-lg font-bold text-gray-800">{{ isEdit ? 'Editar Producto' : 'Nuevo Producto' }}</h2>
     </div>
-    <button
-      type="button"
-      class="icon-btn"
-      (click)="cerrar()"
-      [disabled]="loading"
-      aria-label="Cerrar"
-    >
-      <mat-icon>close</mat-icon>
+    <button type="button" (click)="cerrar()" [disabled]="loading" class="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-200 hover:text-gray-800 transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
     </button>
   </div>
 
-  <form [formGroup]="form" class="p-4 space-y-3" (ngSubmit)="guardar()">
-    <div class="grid grid-cols-1 gap-1.5">
-      <mat-form-field appearance="fill" class="w-full tonal compact">
-        <mat-label>Nombre</mat-label>
-        <input matInput formControlName="nombre" placeholder="Ej: Hamburguesa BBQ" />
-        <mat-icon matPrefix>badge</mat-icon>
-        <mat-error *ngIf="form.get('nombre')?.hasError('required')">Requerido</mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="w-full tonal compact">
-        <mat-label>Categoría</mat-label>
-        <mat-select formControlName="categoria_id">
-          <mat-option *ngFor="let c of categorias" [value]="c.id">{{ c.nombre }}</mat-option>
-        </mat-select>
-        <mat-icon matPrefix>category</mat-icon>
-        <mat-error *ngIf="form.get('categoria_id')?.hasError('required')">Requerido</mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="w-full tonal compact">
-        <mat-label>Precio</mat-label>
-        <input matInput type="number" step="0.01" formControlName="precio" placeholder="0" />
-        <span matPrefix class="text-gray-500 mr-1">$</span>
-        <mat-error *ngIf="form.get('precio')?.hasError('required')">Requerido</mat-error>
-        <mat-error *ngIf="form.get('precio')?.hasError('min')">Debe ser mayor a 0</mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="w-full tonal compact">
-        <mat-label>Descripción</mat-label>
-        <textarea matInput formControlName="descripcion" rows="2" placeholder="Opcional"></textarea>
-        <mat-icon matPrefix>description</mat-icon>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="w-full tonal compact">
-        <mat-label>URL de imagen</mat-label>
-        <input matInput formControlName="imagen_url" placeholder="https://..." />
-        <mat-icon matPrefix>image</mat-icon>
-      </mat-form-field>
-
-      <mat-checkbox formControlName="activo">Activo</mat-checkbox>
+  <!-- Formulario -->
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="p-6 space-y-5">
+    
+    <!-- Campo Nombre -->
+    <div>
+      <label for="nombre" class="block text-sm font-semibold text-gray-700 mb-1.5">Nombre</label>
+      <input id="nombre" type="text" formControlName="nombre" placeholder="Ej: Hamburguesa BBQ" class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" />
+      <div *ngIf="form.get('nombre')?.touched && form.get('nombre')?.hasError('required')" class="text-red-600 text-xs mt-1">El nombre es requerido.</div>
     </div>
 
-    <div class="flex items-center justify-end gap-2 pt-2 border-t border-orange-200/60">
-      <button
-        type="button"
-        mat-stroked-button
-        class="rounded-full"
-        (click)="cerrar()"
-        [disabled]="loading"
-      >
+    <!-- Campo Categoría -->
+    <div>
+      <label for="categoria" class="block text-sm font-semibold text-gray-700 mb-1.5">Categoría</label>
+      <select id="categoria" formControlName="categoria_id" class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white">
+        <option [ngValue]="null" disabled>Seleccione una categoría</option>
+        <option *ngFor="let c of categorias" [value]="c.id">{{ c.nombre }}</option>
+      </select>
+      <div *ngIf="form.get('categoria_id')?.touched && form.get('categoria_id')?.hasError('required')" class="text-red-600 text-xs mt-1">Debe seleccionar una categoría.</div>
+    </div>
+
+    <!-- Campo Precio -->
+    <div>
+      <label for="precio" class="block text-sm font-semibold text-gray-700 mb-1.5">Precio</label>
+      <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <span class="text-gray-500 sm:text-sm">$</span>
+        </div>
+        <input id="precio" type="number" step="0.01" formControlName="precio" placeholder="0.00" class="block w-full pl-7 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" />
+      </div>
+      <div *ngIf="form.get('precio')?.touched && form.get('precio')?.hasError('required')" class="text-red-600 text-xs mt-1">El precio es requerido.</div>
+      <div *ngIf="form.get('precio')?.touched && form.get('precio')?.hasError('min')" class="text-red-600 text-xs mt-1">El precio debe ser mayor a 0.</div>
+    </div>
+
+    <!-- Campo Descripción -->
+    <div>
+      <label for="descripcion" class="block text-sm font-semibold text-gray-700 mb-1.5">Descripción</label>
+      <textarea id="descripcion" formControlName="descripcion" rows="3" placeholder="(Opcional)" class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"></textarea>
+    </div>
+
+    <!-- Campo URL Imagen -->
+    <div>
+      <label for="imagen_url" class="block text-sm font-semibold text-gray-700 mb-1.5">URL de imagen</label>
+      <input id="imagen_url" type="text" formControlName="imagen_url" placeholder="https://..." class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" />
+    </div>
+
+    <!-- Checkbox Activo -->
+    <div class="flex items-center">
+      <input id="activo" type="checkbox" formControlName="activo" class="h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500">
+      <label for="activo" class="ml-2 block text-sm text-gray-900">Activo</label>
+    </div>
+
+    <!-- Acciones -->
+    <div class="flex items-center justify-end gap-4 pt-4 border-t border-gray-200">
+      <button type="button" (click)="cerrar()" [disabled]="loading" class="px-6 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 transition-colors">
         Cancelar
       </button>
-      <button
-        type="submit"
-        mat-flat-button
-        color="primary"
-        class="rounded-full gradient-btn"
-        [disabled]="loading || form.invalid"
-      >
-        <mat-icon *ngIf="!loading">check_circle</mat-icon>
-        <span *ngIf="!loading">Guardar</span>
-        <span *ngIf="loading">Guardando...</span>
+      <button type="submit" [disabled]="loading || form.invalid" class="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg">
+        <svg *ngIf="loading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>{{ loading ? 'Guardando...' : 'Guardar' }}</span>
       </button>
     </div>
   </form>

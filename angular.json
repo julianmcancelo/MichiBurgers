@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "burgersaurio": {
+    "michiburgers": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -62,10 +62,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "burgersaurio:build:production"
+              "buildTarget": "michiburgers:build:production"
             },
             "development": {
-              "buildTarget": "burgersaurio:build:development",
+              "buildTarget": "michiburgers:build:development",
               "proxyConfig": "proxy.conf.json"
             }
           },
@@ -75,9 +75,9 @@
           "builder": "@angular/build:extract-i18n"
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "tsConfig": "tsconfig.spec.json",
+            "polyfills": ["tsconfig.spec.json"],
             "inlineStyleLanguage": "scss",
             "assets": [
               {
@@ -85,7 +85,8 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.scss"]
+            "styles": ["src/styles.scss"],
+            "scripts": []
           }
         }
       }

@@ -1,18 +1,17 @@
 <div class="max-w-5xl mx-auto px-4 py-4">
   <div class="flex items-center justify-between mb-4">
     <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
-      <mat-icon class="text-orange-600">monitor_heart</mat-icon>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+      </svg>
       Estado de Mesas — {{ area | titlecase }}
     </h2>
     <div class="flex gap-2 items-center">
-      <button
-        mat-stroked-button
-        color="primary"
-        class="!h-9 !rounded-lg"
-        (click)="actualizarAhora()"
-      >
-        <mat-icon>refresh</mat-icon>
-        <span class="ml-1">Actualizar</span>
+      <button class="inline-flex items-center gap-2 px-3 py-1.5 border border-orange-500 text-orange-600 rounded-lg hover:bg-orange-50 transition-colors" (click)="actualizarAhora()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 12M20 20l-1.5-1.5A9 9 0 003.5 12" />
+        </svg>
+        <span>Actualizar</span>
       </button>
       <button
         class="px-3 py-1 rounded-lg border text-sm"
@@ -64,15 +63,21 @@
       class="px-3 py-2 text-xs text-gray-600 flex items-center justify-between bg-gray-50 border-b"
     >
       <div class="flex items-center gap-2">
-        <mat-icon class="!text-base text-orange-600">map</mat-icon>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13v-6m0 6l5.447 2.724A1 1 0 0015 20.382V9.618a1 1 0 00-1.447-.894L9 11m0-4v6m0 0l5.447-2.724A1 1 0 0115 5.618V4.618a1 1 0 00-1.447-.894L9 7m0 0l-5.447-2.724A1 1 0 002 4.618V3.618a1 1 0 011.447-.894L9 4m6 1l-6-3" />
+        </svg>
         <span>Área — {{ area | titlecase }}</span>
       </div>
       <div class="flex items-center gap-1">
-        <button mat-button (click)="resetView()" class="!min-w-0 !px-2" aria-label="Centrar">
-          <mat-icon>center_focus_strong</mat-icon>
+        <button (click)="resetView()" class="p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="Centrar">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5-5" />
+          </svg>
         </button>
-        <button mat-icon-button (click)="cerrarVentana()" aria-label="Cerrar ventana">
-          <mat-icon>close</mat-icon>
+        <button (click)="cerrarVentana()" class="p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="Cerrar ventana">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       </div>
     </div>
@@ -228,28 +233,36 @@
         class="px-3 py-2 text-xs text-gray-600 flex items-center justify-between bg-gray-50 border-b"
       >
         <div class="flex items-center gap-2">
-          <mat-icon class="!text-base text-orange-600">map</mat-icon>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13v-6m0 6l5.447 2.724A1 1 0 0015 20.382V9.618a1 1 0 00-1.447-.894L9 11m0-4v6m0 0l5.447-2.724A1 1 0 0115 5.618V4.618a1 1 0 00-1.447-.894L9 7m0 0l-5.447-2.724A1 1 0 002 4.618V3.618a1 1 0 011.447-.894L9 4m6 1l-6-3" />
+        </svg>
           <span>Mapa del salón — {{ area | titlecase }}</span>
         </div>
         <button
           class="hidden md:inline-flex items-center gap-1 px-2 py-1 text-[11px] rounded border hover:bg-gray-100 mr-2"
           (click)="resetView()"
         >
-          <mat-icon class="!text-sm">center_focus_strong</mat-icon>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5-5" />
+          </svg>
           Centrar
         </button>
         <button
           class="hidden md:inline-flex items-center gap-1 px-2 py-1 text-[11px] rounded border hover:bg-gray-100 mr-2"
           (click)="abrirVentanaExclusiva()"
         >
-          <mat-icon class="!text-sm">open_in_new</mat-icon>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
           Ventana exclusiva
         </button>
         <button
           class="hidden md:inline-flex items-center gap-1 px-2 py-1 text-[11px] rounded border hover:bg-gray-100"
           (click)="abrirMapaFull()"
         >
-          <mat-icon class="!text-sm">fullscreen</mat-icon>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5-5" />
+          </svg>
           Pantalla completa
         </button>
       </div>
@@ -415,23 +428,26 @@
     <div class="w-[95vw] max-w-none">
       <div class="flex items-center justify-between px-2 py-2 border-b bg-gray-50 rounded-t">
         <div class="flex items-center gap-2 text-sm text-gray-700">
-          <mat-icon class="!text-base text-orange-600">map</mat-icon>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13v-6m0 6l5.447 2.724A1 1 0 0015 20.382V9.618a1 1 0 00-1.447-.894L9 11m0-4v6m0 0l5.447-2.724A1 1 0 0115 5.618V4.618a1 1 0 00-1.447-.894L9 7m0 0l-5.447-2.724A1 1 0 002 4.618V3.618a1 1 0 011.447-.894L9 4m6 1l-6-3" />
+        </svg>
           <span class="font-semibold">Mapa de salón</span>
         </div>
         <div class="flex items-center gap-1">
-          <button mat-button (click)="resetView()" class="!min-w-0 !px-2" aria-label="Centrar">
-            <mat-icon>center_focus_strong</mat-icon>
+          <button (click)="resetView()" class="p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="Centrar">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5-5" />
+            </svg>
           </button>
-          <button
-            mat-button
-            (click)="abrirVentanaExclusiva()"
-            class="!min-w-0 !px-2"
-            aria-label="Ventana exclusiva"
-          >
-            <mat-icon>open_in_new</mat-icon>
+          <button (click)="abrirVentanaExclusiva()" class="p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="Ventana exclusiva">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
           </button>
-          <button mat-icon-button (click)="dialogRef?.close()" aria-label="Cerrar">
-            <mat-icon>close</mat-icon>
+          <button (click)="dialogRef?.close()" class="p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="Cerrar">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
       </div>
@@ -560,46 +576,49 @@
           *ngIf="m.pagado"
           class="badge bg-emerald-100 text-emerald-800 ring-1 ring-emerald-200 inline-flex items-center gap-1"
         >
-          <mat-icon class="!text-base">verified</mat-icon>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
           Pagado
         </span>
         <span
           *ngIf="m.pedidoEstado === 'cerrado'"
           class="badge bg-gray-200 text-gray-800 ring-1 ring-gray-300 inline-flex items-center gap-1"
         >
-          <mat-icon class="!text-base">task_alt</mat-icon>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
           Cerrado
         </span>
       </div>
       <div class="flex gap-2 flex-wrap">
         <ng-container *ngIf="m.estado === 'libre'; else accionesOcupada">
-          <button
-            mat-flat-button
-            color="primary"
-            class="!h-9 !rounded-lg flex-1"
-            (click)="tomarPedido(m)"
-          >
-            <mat-icon>add_shopping_cart</mat-icon>
-            <span class="ml-1">Tomar pedido</span>
+          <button class="inline-flex items-center justify-center gap-2 w-full px-3 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors shadow" (click)="tomarPedido(m)">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span>Tomar pedido</span>
           </button>
         </ng-container>
         <ng-template #accionesOcupada>
-          <button
-            mat-stroked-button
-            color="primary"
-            class="!h-9 !rounded-lg flex-1"
-            (click)="verPedido(m)"
-          >
-            <mat-icon>visibility</mat-icon>
-            <span class="ml-1">Ver</span>
+          <button class="inline-flex items-center justify-center gap-2 flex-1 px-3 py-2 border border-orange-500 text-orange-600 rounded-lg hover:bg-orange-50 transition-colors" (click)="verPedido(m)">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            <span>Ver</span>
           </button>
-          <button mat-stroked-button color="accent" class="!h-9 !rounded-lg" (click)="facturar(m)">
-            <mat-icon>receipt_long</mat-icon>
-            <span class="ml-1">Facturar / Pagar</span>
+          <button class="inline-flex items-center justify-center gap-2 px-3 py-2 border border-sky-500 text-sky-600 rounded-lg hover:bg-sky-50 transition-colors" (click)="facturar(m)">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>Facturar / Pagar</span>
           </button>
-          <button mat-flat-button color="warn" class="!h-9 !rounded-lg" (click)="liberarMesa(m)">
-            <mat-icon>lock_open</mat-icon>
-            <span class="ml-1">Liberar</span>
+          <button class="inline-flex items-center justify-center gap-2 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow" (click)="liberarMesa(m)">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+            </svg>
+            <span>Liberar</span>
           </button>
         </ng-template>
       </div>

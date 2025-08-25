@@ -1,17 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 
 import { authGuard } from '../auth/auth.guard';
@@ -22,20 +14,13 @@ import { QrGeneratorComponent } from './components/qr-generator/qr-generator.com
 import { RegistroUsuarioComponent } from './components/registro-usuario/registro-usuario.component';
 
 @NgModule({
-  declarations: [ListaProductosComponent, FormularioProductoComponent, QrGeneratorComponent],
+  declarations: [ListaProductosComponent, FormularioProductoComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
+    FormsModule,
     MatSnackBarModule,
     MatDialogModule,
-    MatCheckboxModule,
     HttpClientModule,
     RegistroUsuarioComponent,
     NuevoProductoDialogComponent,

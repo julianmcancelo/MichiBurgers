@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 // Ajusta estas variables (hardcoded para hosting sin .env)
 $DB_HOST = 'localhost';
-$DB_NAME = 'jcancelo_burgersaurio';
+$DB_NAME = 'jcancelo_michiburgers';
 $DB_USER = 'jcancelo_barberia';
 $DB_PASS = 'feelthesky1';
 $DB_CHARSET = 'utf8mb4';

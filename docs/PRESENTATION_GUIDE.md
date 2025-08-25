@@ -1,4 +1,4 @@
-# 📊 Guía de Presentación - Proyecto Final Burgersaurio
+# 📊 Guía de Presentación - Proyecto Final MichiBurgers
 
 ## 🎯 Estructura de Presentación Recomendada
 
@@ -195,7 +195,7 @@ export class PedidoService {
 
 ### **Apertura** (30 segundos)
 
-"Burgersaurio es un sistema completo de gestión para restaurantes que optimiza desde la toma de pedidos hasta la administración. Desarrollado con Angular 20 y siguiendo las mejores prácticas de la industria."
+"MichiBurgers es un sistema completo de gestión para restaurantes que optimiza desde la toma de pedidos hasta la administración. Desarrollado con Angular 20 y siguiendo las mejores prácticas de la industria."
 
 ### **Demo Principal** (10 minutos)
 

@@ -3,54 +3,13 @@
 @tailwind components;
 @tailwind utilities;
 
-// Paleta de colores personalizada para Burguersaurio
-$burguer-primary: (
-  50: #fff3e0,
-  100: #ffe0b2,
-  200: #ffcc80,
-  300: #ffb74d,
-  400: #ffa726,
-  500: #ff9800,
-  600: #fb8c00,
-  700: #f57c00,
-  800: #ef6c00,
-  900: #e65100,
-  A100: #ffd180,
-  A200: #ffab40,
-  A400: #ff9100,
-  A700: #ff6d00,
-  contrast: (
-    50: rgba(black, 0.87),
-    100: rgba(black, 0.87),
-    200: rgba(black, 0.87),
-    300: rgba(black, 0.87),
-    400: rgba(black, 0.87),
-    500: white,
-    600: white,
-    700: white,
-    800: white,
-    900: white,
-    A100: rgba(black, 0.87),
-    A200: rgba(black, 0.87),
-    A400: rgba(black, 0.87),
-    A700: white,
-  ),
-);
+/* ===== TIPOGRAFÍA MODERNA ===== */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Inter:wght@300;400;500;600;700&display=swap');
 
 body {
-  color-scheme: light;
-  background: #fafbfc;
+  @apply bg-secondary-50 text-secondary-800;
   min-height: 100vh;
-  color: #1a1a1a;
-  font-family:
-    'Inter',
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    sans-serif;
-  font-size: 14px;
-  line-height: 1.6;
-  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -79,36 +38,16 @@ body {
   }
 }
 
-/* ===== TIPOGRAFÍA MODERNA ===== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: 'Inter', system-ui, sans-serif;
-  font-weight: 600;
+h1, h2, h3, h4, h5, h6 {
+  @apply font-display font-bold text-secondary-900;
   letter-spacing: -0.02em;
   line-height: 1.2;
-  color: #111827; /* Tailwind gray-900 */
-  margin: 0 0 1rem 0;
 }
 
-h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-}
-h2 {
-  font-size: 2rem;
-}
-h3 {
-  font-size: 1.5rem;
-}
-h4 {
-  font-size: 1.25rem;
-}
+h1 { @apply text-4xl md:text-5xl; }
+h2 { @apply text-3xl md:text-4xl; }
+h3 { @apply text-2xl md:text-3xl; }
+h4 { @apply text-xl md:text-2xl; }
 
 /* ===== UTILIDADES ===== */
 .glass-effect {

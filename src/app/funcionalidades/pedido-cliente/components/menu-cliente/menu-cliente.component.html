@@ -1,0 +1,106 @@
+<div class="bg-secondary-50 min-h-screen">
+
+  <!-- Spinner de Carga -->
+  <div *ngIf="isLoading" class="fixed inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50">
+    <mat-spinner diameter="60" color="primary"></mat-spinner>
+  </div>
+
+  <!-- Navegación Pedido QR -->
+  <nav class="sticky top-0 z-30 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-secondary-100">
+    <div class="container mx-auto px-4 py-3 flex flex-wrap items-center gap-2 text-sm">
+      <a [routerLink]="['../']"
+         routerLinkActive="!bg-primary-600 !text-white"
+         [routerLinkActiveOptions]="{ exact: true }"
+         class="px-3 py-1.5 rounded-lg font-medium text-primary-700 hover:bg-primary-50 transition">Registro</a>
+      <a [routerLink]="['./']"
+         routerLinkActive="!bg-primary-600 !text-white"
+         [routerLinkActiveOptions]="{ exact: true }"
+         class="px-3 py-1.5 rounded-lg font-medium text-primary-700 hover:bg-primary-50 transition">Menú</a>
+      <a [routerLink]="['../pago']"
+         routerLinkActive="!bg-primary-600 !text-white"
+         class="px-3 py-1.5 rounded-lg font-medium text-primary-700 hover:bg-primary-50 transition">Pago</a>
+      <a [routerLink]="['../confirmacion']"
+         routerLinkActive="!bg-primary-600 !text-white"
+         class="px-3 py-1.5 rounded-lg font-medium text-primary-700 hover:bg-primary-50 transition">Confirmación</a>
+      <span class="ms-auto text-secondary-600">Paso 2 de 4 • Área: {{ pedidoState.area || '-' }} • Mesa: {{ pedidoState.mesaId || '-' }}</span>
+    </div>
+  </nav>
+
+  <!-- Contenido del Menú -->
+  <div *ngIf="!isLoading" class="container mx-auto px-4 py-8 pb-32 animate-fade-in">
+
+    <!-- Cabecera -->
+    <header class="text-center mb-10">
+      <img src="/logos/logos.png" alt="Logo MichiBurgers" class="w-20 h-20 mx-auto mb-2">
+      <h1 class="font-display text-4xl font-bold text-secondary-800">Nuestro Menú</h1>
+      <p class="text-secondary-500 mt-1">Hola, {{ pedidoState.cliente?.nombre || 'Miau' }}</p>
+    </header>
+
+    <!-- Error visible -->
+    <div *ngIf="errorMessage" class="mb-6 p-4 rounded-lg border border-red-200 bg-red-50 text-red-700">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Lista de Categorías y Productos -->
+    <div *ngIf="categorias?.length; else emptyState">
+      <div *ngFor="let categoria of categorias" class="mb-12">
+        <h2 class="font-display text-3xl font-bold text-primary-700 mb-6 pb-2 border-b-4 border-primary-200">{{ categoria.nombre }}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
+          
+          <!-- Tarjeta de Producto -->
+          <div *ngFor="let producto of getProductosPorCategoria(categoria.id)" 
+               class="bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 flex flex-col">
+            
+            <div class="h-48 w-full overflow-hidden">
+              <img [src]="producto.imagen_url || 'https://via.placeholder.com/400x300'" [alt]="producto.nombre" class="w-full h-full object-cover">
+            </div>
+
+            <div class="p-5 flex flex-col flex-grow">
+              <h3 class="text-xl font-bold text-secondary-800 truncate">{{ producto.nombre }}</h3>
+              <p class="text-secondary-500 text-sm mt-1 flex-grow">{{ producto.descripcion }}</p>
+              
+              <div class="flex justify-between items-center mt-4">
+                <span class="text-2xl font-bold text-primary-600">{{ producto.precio | currency:'$' }}</span>
+                
+                <!-- Selector de Cantidad -->
+                <div class="flex items-center gap-2 bg-primary-100 rounded-full">
+                  <button (click)="quitarItem(producto)" class="w-8 h-8 text-primary-700 hover:bg-primary-200 rounded-full transition-colors duration-200">
+                    -
+                  </button>
+                  <span class="font-bold text-lg min-w-[20px] text-center">{{ cantidadEnCarrito(producto.id) }}</span>
+                  <button (click)="agregarItem(producto)" class="w-8 h-8 text-primary-700 hover:bg-primary-200 rounded-full transition-colors duration-200">
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <ng-template #emptyState>
+      <div class="text-center text-secondary-600 py-16">
+        <p class="text-xl">No hay productos para mostrar en este momento.</p>
+        <p class="text-sm mt-2">Actualizá la página o intentá nuevamente más tarde.</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Barra de Pedido Flotante -->
+  <footer *ngIf="!isLoading && cantidadTotalItems > 0" 
+          class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-lg mx-auto bg-white/70 backdrop-blur-xl shadow-2xl rounded-2xl p-4 z-40 animate-slide-up">
+    <div class="flex justify-between items-center">
+      <div>
+        <p class="font-bold text-secondary-800">{{ cantidadTotalItems }} {{ cantidadTotalItems === 1 ? 'item' : 'items' }}</p>
+        <p class="text-2xl font-bold text-primary-600">{{ total | currency:'$' }}</p>
+      </div>
+      <button (click)="irAPagar()"
+              class="bg-primary-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary-300 transform hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-primary-400/40">
+        Revisar y Pagar
+      </button>
+    </div>
+  </footer>
+</div>

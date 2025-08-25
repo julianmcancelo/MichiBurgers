@@ -1,8 +1,8 @@
-# 🏗️ Arquitectura del Sistema Burgersaurio
+# 🏗️ Arquitectura del Sistema MichiBurgers
 
 ## Visión General
 
-Burgersaurio implementa una arquitectura modular basada en Angular siguiendo las mejores prácticas de desarrollo empresarial. El sistema está diseñado para ser escalable, mantenible y testeable.
+MichiBurgers implementa una arquitectura modular basada en Angular siguiendo las mejores prácticas de desarrollo empresarial. El sistema está diseñado para ser escalable, mantenible y testeable.
 
 ## Arquitectura Frontend (Angular)
 

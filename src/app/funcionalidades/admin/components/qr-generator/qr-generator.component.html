@@ -1,52 +1,115 @@
-<mat-card>
-  <mat-card-title>Generador de QR</mat-card-title>
-  <mat-card-content>
-    <form [formGroup]="form" (ngSubmit)="generar()" class="form-grid">
-      <mat-form-field appearance="outline">
-        <mat-label>Área</mat-label>
-        <mat-select formControlName="area" required>
-          <mat-option value="interior">Interior</mat-option>
-          <mat-option value="exterior">Exterior</mat-option>
-        </mat-select>
-      </mat-form-field>
+<div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+  <h1 class="font-display text-3xl font-bold text-secondary-800 mb-2">Generador de Códigos QR</h1>
+  <p class="text-secondary-500 mb-6">Haz clic en una mesa para generar su código QR y el enlace de pedido.</p>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Mesa</mat-label>
-        <input matInput formControlName="mesa" placeholder="Ej: 1" required />
-      </mat-form-field>
+  <!-- Input para Base URL -->
+  <div>
+    <label for="baseUrl" class="block text-sm font-medium text-secondary-700">Base URL (Opcional)</label>
+    <input type="text" id="baseUrl" [(ngModel)]="baseUrl" 
+           class="mt-1 block w-full px-4 py-2 bg-secondary-50 border border-secondary-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+           placeholder="https://tu-dominio.com">
+    <p class="mt-1 text-xs text-secondary-400">Si lo dejas vacío, se generará solo la ruta relativa.</p>
+  </div>
 
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Base URL (opcional)</mat-label>
-        <input matInput formControlName="baseUrl" placeholder="https://tu-dominio.com" />
-        <mat-hint>Si lo dejás vacío, se devuelve solo el path.</mat-hint>
-      </mat-form-field>
-
-      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || loading">
-        {{ loading ? 'Generando...' : 'Generar' }}
-      </button>
-    </form>
-
-    <div class="mensaje error" *ngIf="error">{{ error }}</div>
-
-    <div class="resultado" *ngIf="resultado?.ok">
-      <div><strong>Área:</strong> {{ resultado?.area }}</div>
-      <div><strong>Mesa:</strong> {{ resultado?.mesa }}</div>
-      <div><strong>Firma:</strong> {{ resultado?.sig }}</div>
-      <div class="url-row">
-        <strong>Path/URL:</strong>
-        <a
-          *ngIf="resultado?.url; else onlyPath"
-          [href]="resultado?.url!"
-          target="_blank"
-          rel="noopener"
-        >
-          {{ resultado?.url }}
-        </a>
-        <ng-template #onlyPath>
-          <code>{{ resultado?.path }}</code>
-        </ng-template>
-        <button mat-button (click)="copy()">Copiar</button>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+    <!-- Columna de Mapas -->
+    <div class="space-y-6">
+      <!-- Mapa Interior -->
+      <div>
+        <h3 class="font-display text-xl font-semibold text-primary-700 mb-3">Salón Interior</h3>
+        <div class="relative bg-secondary-100 h-64 rounded-lg border-2 border-secondary-200 p-2">
+          <div *ngFor="let mesa of layoutInterior" 
+               (click)="generar('interior', mesa.id)"
+               [style.left.px]="mesa.x" [style.top.px]="mesa.y"
+               class="absolute w-10 h-10 flex items-center justify-center font-bold text-sm text-white bg-primary-500 hover:bg-primary-700 cursor-pointer transition-all duration-200 shadow-md transform hover:scale-110"
+               [ngClass]="{'rounded-full': mesa.tipo === 'redonda', 'rounded-md': mesa.tipo === 'cuadrada'}">
+            {{mesa.id}}
+          </div>
+        </div>
+      </div>
+      <!-- Mapa Exterior -->
+      <div>
+        <h3 class="font-display text-xl font-semibold text-accent-700 mb-3">Terraza Exterior</h3>
+        <div class="relative bg-secondary-100 h-64 rounded-lg border-2 border-secondary-200 p-2">
+          <div *ngFor="let mesa of layoutExterior" 
+               (click)="generar('exterior', mesa.id)"
+               [style.left.px]="mesa.x" [style.top.px]="mesa.y"
+               class="absolute w-10 h-10 flex items-center justify-center font-bold text-sm text-white bg-accent-500 hover:bg-accent-700 cursor-pointer transition-all duration-200 shadow-md transform hover:scale-110"
+               [ngClass]="{'rounded-full': mesa.tipo === 'redonda', 'rounded-md': mesa.tipo === 'cuadrada'}">
+            {{mesa.id}}
+          </div>
+        </div>
       </div>
     </div>
-  </mat-card-content>
-</mat-card>
+
+    <!-- Columna de Resultados -->
+    <div class="bg-secondary-50 rounded-lg p-6 flex items-center justify-center min-h-[300px]">
+      <!-- Estado de Carga -->
+      <div *ngIf="loading" class="text-center">
+        <svg class="animate-spin h-12 w-12 text-primary-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="mt-4 text-secondary-600 font-semibold">Generando QR...</p>
+      </div>
+
+      <!-- Estado de Error -->
+      <div *ngIf="error" class="text-center text-red-600 bg-red-100 p-4 rounded-lg">
+        <p class="font-bold">Error</p>
+        <p>{{ error }}</p>
+      </div>
+
+      <!-- Generación manual -->
+      <div class="w-full mb-4">
+        <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-end">
+          <div class="flex-1">
+            <label class="block text-xs font-semibold text-secondary-600">Área</label>
+            <select [(ngModel)]="areaManual" class="mt-1 w-full px-3 py-2 bg-white border border-secondary-300 rounded-md">
+              <option [ngValue]="'interior'">interior</option>
+              <option [ngValue]="'exterior'">exterior</option>
+            </select>
+          </div>
+          <div class="flex-1">
+            <label class="block text-xs font-semibold text-secondary-600">Mesa (opcional)</label>
+            <input [(ngModel)]="mesaManual" type="text" class="mt-1 w-full px-3 py-2 bg-white border border-secondary-300 rounded-md" placeholder="Ej: 1" />
+          </div>
+          <button (click)="generar(areaManual, mesaManual)" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md font-semibold">Generar</button>
+        </div>
+      </div>
+
+      <!-- Estado Inicial / Sin Resultado -->
+      <div *ngIf="!loading && !resultado && !error" class="text-center text-secondary-500">
+        <p>Selecciona una mesa para ver aquí el resultado.</p>
+      </div>
+
+      <!-- Resultado Exitoso -->
+      <div *ngIf="resultado?.ok as qrResult" class="w-full animate-fade-in text-center">
+        <h3 class="font-display text-2xl font-bold text-secondary-800 mb-4">¡QR Generado!</h3>
+
+        <!-- Contenedor del QR Code -->
+        <div class="my-4 p-4 bg-white inline-block rounded-lg border shadow-sm">
+          <qrcode 
+            [qrdata]="resultado!.url || resultado!.path"
+            [width]="200"
+            [errorCorrectionLevel]="'M'">
+          </qrcode>
+        </div>
+
+        <div class="space-y-2 text-sm text-left">
+          <p><strong>Área:</strong> <span class="font-mono bg-secondary-200 px-2 py-1 rounded">{{ resultado!.area }}</span></p>
+          <p><strong>Mesa:</strong> <span class="font-mono bg-secondary-200 px-2 py-1 rounded">{{ resultado!.mesa }}</span></p>
+        </div>
+        <div class="mt-4 p-3 bg-white rounded-lg border">
+          <label class="text-xs font-semibold text-secondary-500">Enlace generado</label>
+          <div class="flex items-center justify-between gap-2 mt-1">
+            <code class="text-sm text-primary-700 truncate">{{ resultado!.url || resultado!.path }}</code>
+            <button (click)="copy()" class="p-2 rounded-md hover:bg-secondary-200 transition-colors">
+              <svg class="w-5 h-5 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            </button>
+          </div>
+        </div>
+        <a [href]="resultado!.url || resultado!.path" target="_blank" rel="noopener" *ngIf="resultado!.url || resultado!.path" class="block text-center mt-4 text-primary-600 hover:underline text-sm font-semibold">Probar enlace &rarr;</a>
+      </div>
+    </div>
+  </div>
+</div>

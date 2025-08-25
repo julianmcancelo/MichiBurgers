@@ -140,3 +140,43 @@ INSERT INTO app_config (`key`, `value`) VALUES
   ('colorSecundario', '#e91e63'),
   ('apiBaseUrl', 'https://burguersaurio.jcancelo.dev/api')
 ON DUPLICATE KEY UPDATE `value` = `value`;
+
+-- ===================================================================
+-- NUEVA TABLA PARA CARRITOS DE CLIENTES (PEDIDOS NO CONFIRMADOS)
+-- ===================================================================
+CREATE TABLE IF NOT EXISTS pedidos_clientes (
+  id VARCHAR(36) NOT NULL PRIMARY KEY, -- Usaremos un UUID para evitar colisiones
+  area ENUM('interior','exterior') NOT NULL,
+  mesa_id VARCHAR(20) NOT NULL,
+  cliente_nombre VARCHAR(150) NULL,
+  cliente_telefono VARCHAR(50) NULL,
+  items JSON NOT NULL, -- { "producto_id": cantidad, ... }
+  total DECIMAL(12,2) NOT NULL,
+  estado ENUM('pendiente', 'pagado', 'expirado') NOT NULL DEFAULT 'pendiente',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  expires_at TIMESTAMP NOT NULL, -- Para limpiar carritos abandonados
+  UNIQUE KEY uq_pedidos_clientes_mesa (area, mesa_id, estado)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ===================================================================
+-- MODIFICACIONES A LA TABLA DE PEDIDOS EXISTENTE
+-- ===================================================================
+
+-- Hacemos una copia de seguridad antes de alterar
+-- CREATE TABLE IF NOT EXISTS pedidos_backup LIKE pedidos;
+-- INSERT INTO pedidos_backup SELECT * FROM pedidos;
+
+-- Alteramos la tabla original
+ALTER TABLE pedidos
+  ADD COLUMN cliente_nombre VARCHAR(150) NULL AFTER mesa_id,
+  ADD COLUMN cliente_telefono VARCHAR(50) NULL AFTER cliente_nombre,
+  ADD COLUMN tipo ENUM('mozo', 'cliente') NOT NULL DEFAULT 'mozo' AFTER estado,
+  MODIFY COLUMN mozo_legajo VARCHAR(50) NULL,
+  MODIFY COLUMN estado ENUM('abierto', 'listo_para_cocina', 'en_preparacion', 'listo_para_entregar', 'pagado', 'anulado') NOT NULL DEFAULT 'abierto';
+
+-- Actualizamos la vista de mesas ocupadas para incluir el nuevo estado
+CREATE OR REPLACE VIEW v_mesas_ocupadas AS
+SELECT p.area, p.mesa_id, p.id AS pedido_id, p.mozo_legajo, p.created_at
+FROM pedidos p
+WHERE p.estado IN ('abierto', 'listo_para_cocina', 'en_preparacion', 'listo_para_entregar');
