@@ -19,11 +19,26 @@
     <header class="text-center mb-8">
       <h1 class="font-display text-4xl md:text-5xl font-bold text-secondary-800">Casi listo...</h1>
       <p class="text-secondary-500 mt-1 text-lg">Revisa tu pedido antes de confirmar.</p>
+      <p class="text-secondary-600 mt-2" *ngIf="pedidoState?.cliente">
+        Hola, <span class="font-semibold">{{ pedidoState.cliente?.nombre }}</span>
+        <span *ngIf="pedidoState.cliente?.telefono"> ({{ pedidoState.cliente?.telefono }})</span>
+      </p>
     </header>
 
     <!-- Panel Principal -->
     <div class="bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg overflow-hidden">
       <div class="p-6 md:p-8">
+        <!-- Datos del cliente -->
+        <div class="mb-5 p-4 rounded-xl ring-1 ring-secondary-200 bg-white/70" *ngIf="pedidoState">
+          <div class="text-sm text-secondary-600 mb-2 font-semibold">Tus datos</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-secondary-700">
+            <div><span class="text-secondary-500">Nombre:</span> {{ pedidoState.cliente?.nombre || '-' }}</div>
+            <div><span class="text-secondary-500">Teléfono:</span> {{ pedidoState.cliente?.telefono || '-' }}</div>
+            <div><span class="text-secondary-500">Área:</span> {{ pedidoState.area || '-' }}</div>
+            <div><span class="text-secondary-500">Mesa:</span> {{ pedidoState.mesaId || '-' }}</div>
+          </div>
+        </div>
+
         <h2 class="text-xl font-bold text-secondary-800 mb-5">Resumen del Pedido</h2>
 
         <!-- Lista de Items -->
@@ -112,12 +127,17 @@
           </div>
 
           <!-- Transferencia (demo) -->
-          <div *ngIf="selectedMetodo === 'transferencia'" class="bg-white/70 p-4 rounded-xl ring-1 ring-secondary-200 space-y-1">
+          <div *ngIf="selectedMetodo === 'transferencia'" class="bg-white/70 p-4 rounded-xl ring-1 ring-secondary-200 space-y-2">
             <div class="text-sm"><span class="font-medium">Alias:</span> {{ transferenciaDatos.alias }}</div>
             <div class="text-sm"><span class="font-medium">CBU:</span> {{ transferenciaDatos.cbu }}</div>
             <div class="text-sm"><span class="font-medium">Titular:</span> {{ transferenciaDatos.titular }}</div>
             <div class="text-sm"><span class="font-medium">Banco:</span> {{ transferenciaDatos.banco }}</div>
-            <p class="text-xs text-secondary-500 pt-1">Carga el comprobante con el mozo. Este flujo es solo de muestra.</p>
+            <div class="pt-2">
+              <label class="block text-sm text-secondary-600 mb-1">Comprobante de transferencia</label>
+              <input type="file" (change)="onTransferenciaFileSelected($event)" accept="image/*,application/pdf" class="block w-full text-sm text-secondary-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" />
+              <div *ngIf="transferenciaComprobanteNombre" class="text-xs text-secondary-600 mt-1">Archivo: {{ transferenciaComprobanteNombre }}</div>
+              <p class="text-xs text-secondary-500 mt-1">Subí una foto o PDF del comprobante para continuar.</p>
+            </div>
           </div>
         </div>
 

@@ -18,10 +18,32 @@ const initialState: PedidoClienteState = {
   providedIn: 'root',
 })
 export class PedidoClienteService {
+  private readonly STORAGE_KEY = 'pedidoClienteState';
   private readonly state = new BehaviorSubject<PedidoClienteState>(initialState);
 
   // Observable para que los componentes se suscriban a los cambios
   state$ = this.state.asObservable();
+
+  constructor() {
+    // Hidratar desde sessionStorage si existe
+    try {
+      const raw = sessionStorage.getItem(this.STORAGE_KEY);
+      if (raw) {
+        const parsed: PedidoClienteState = JSON.parse(raw);
+        // Validación mínima del shape
+        if (parsed && typeof parsed === 'object' && parsed.items && typeof parsed.total === 'number') {
+          this.state.next(parsed);
+        }
+      }
+    } catch {}
+
+    // Persistir cada cambio de estado
+    this.state$.subscribe((s) => {
+      try {
+        sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(s));
+      } catch {}
+    });
+  }
 
   setMesa(area: string, mesaId: string): void {
     const currentState = this.state.getValue();
@@ -69,5 +91,6 @@ export class PedidoClienteService {
 
   resetState(): void {
     this.state.next(initialState);
+    try { sessionStorage.removeItem(this.STORAGE_KEY); } catch {}
   }
 }

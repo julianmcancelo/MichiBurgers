@@ -44,6 +44,8 @@ export class PagoClienteComponent implements OnInit, OnDestroy {
     titular: 'Michi Burgers SRL',
     banco: 'Banco Ficticio S.A.',
   };
+  transferenciaComprobanteBase64: string | null = null;
+  transferenciaComprobanteNombre: string | null = null;
 
   private stateSubscription!: Subscription;
 
@@ -66,6 +68,20 @@ export class PagoClienteComponent implements OnInit, OnDestroy {
     }
   }
 
+  onTransferenciaFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files && input.files[0];
+    if (!file) { this.transferenciaComprobanteBase64 = null; this.transferenciaComprobanteNombre = null; return; }
+    this.transferenciaComprobanteNombre = file.name;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      // result may be a data URL. Keep full data URL for easier backend parsing.
+      this.transferenciaComprobanteBase64 = result;
+    };
+    reader.readAsDataURL(file);
+  }
+
   confirmarPedido(): void {
     this.isLoading = true;
     this.errorMessage = null;
@@ -84,10 +100,17 @@ export class PagoClienteComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         return;
       }
+    } else if (this.selectedMetodo === 'transferencia') {
+      if (!this.transferenciaComprobanteBase64) {
+        this.errorMessage = 'Subí el comprobante de la transferencia para continuar.';
+        this.isLoading = false;
+        return;
+      }
     }
 
-    const mesaId = this.route.snapshot.parent?.paramMap.get('mesa_id');
-    const area = this.route.snapshot.parent?.paramMap.get('area');
+    // Los parámetros ':area/:mesaId' están dos niveles arriba del hijo 'pago'
+    const mesaId = this.route.parent?.parent?.snapshot.paramMap.get('mesaId');
+    const area = this.route.parent?.parent?.snapshot.paramMap.get('area');
     if (!mesaId || !area || !this.pedidoState.cliente) {
       this.errorMessage = 'Faltan datos para crear el pedido (mesa o cliente).';
       this.isLoading = false;
@@ -115,7 +138,7 @@ export class PagoClienteComponent implements OnInit, OnDestroy {
           : this.selectedMetodo === 'mercado_pago'
           ? { tipo: 'qr_demo' }
           : this.selectedMetodo === 'transferencia'
-          ? { ...this.transferenciaDatos }
+          ? { ...this.transferenciaDatos, comprobante: { nombre: this.transferenciaComprobanteNombre, dataUrl: this.transferenciaComprobanteBase64 } }
           : null;
         const referencia = this.selectedMetodo === 'tarjeta'
           ? this.cardForm.numero.slice(-4)

@@ -23,8 +23,10 @@ export class RegistroClienteComponent implements OnInit, OnDestroy {
   isLoading = true;
   categorias: Categoria[] = [];
   productos: Producto[] = [];
+  categoriaEntrada?: Categoria;
   errorMessage: string | null = null;
   private stateSub?: Subscription;
+  private formSub?: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -40,8 +42,9 @@ export class RegistroClienteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const area = this.route.snapshot.paramMap.get('area');
-    const mesaId = this.route.snapshot.paramMap.get('mesaId');
+    // Los parámetros vienen de la ruta padre ':area/:mesaId'
+    const area = this.route.snapshot.paramMap.get('area') ?? this.route.parent?.snapshot.paramMap.get('area') ?? undefined;
+    const mesaId = this.route.snapshot.paramMap.get('mesaId') ?? this.route.parent?.snapshot.paramMap.get('mesaId') ?? undefined;
 
     if (area && mesaId) {
       this.pedidoClienteService.setMesa(area, mesaId);
@@ -56,6 +59,9 @@ export class RegistroClienteComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.categorias = data.categorias;
         this.productos = data.productos;
+        this.categoriaEntrada = this.categorias.find(
+          (c) => (c.nombre || '').toLowerCase() === 'entrada'
+        );
         this.isLoading = false;
         this.errorMessage = null;
       },
@@ -68,6 +74,15 @@ export class RegistroClienteComponent implements OnInit, OnDestroy {
 
     // Mantener total/cantidades sincronizadas si se muestra el menú rápido
     this.stateSub = this.pedidoClienteService.state$.subscribe();
+
+    // Sincronizar datos del cliente al servicio en cuanto estén presentes
+    this.formSub = this.form.valueChanges.subscribe(val => {
+      const nombre = (val?.nombre || '').trim();
+      const telefono = (val?.telefono || '').trim();
+      if (nombre && telefono) {
+        this.pedidoClienteService.setCliente(nombre, telefono);
+      }
+    });
   }
 
   iniciarPedido(): void {
@@ -102,5 +117,6 @@ export class RegistroClienteComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.stateSub?.unsubscribe();
+    this.formSub?.unsubscribe();
   }
 }

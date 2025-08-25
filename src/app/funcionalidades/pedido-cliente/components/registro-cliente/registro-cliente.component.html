@@ -18,7 +18,7 @@
     <!-- Columna Izquierda: Bienvenida y Branding -->
     <div class="p-8 md:p-12 bg-primary-500 text-white flex flex-col justify-center items-center md:items-start text-center md:text-left">
       <img src="/logos/logos.png" alt="Logo Burgersaurio" class="w-24 h-24 mb-4">
-      <h1 class="font-display text-4xl md:text-5xl font-bold leading-tight mb-2">¡Hola, Miau!</h1>
+      <h1 class="font-display text-4xl md:text-5xl font-bold leading-tight mb-2">¡Hola, {{ form.get('nombre')?.value || 'Miau' }}<span *ngIf="form.get('telefono')?.value"> ({{ form.get('telefono')?.value }})</span>!</h1>
       <p class="text-primary-100 text-lg">Estás a un paso de probar las mejores hamburguesas.</p>
     </div>
 
@@ -55,31 +55,28 @@
       </form>
 
       <!-- Vista rápida del menú para empezar a armar el pedido -->
-      <div class="mt-10">
+      <div class="mt-10" *ngIf="!isLoading && categoriaEntrada">
         <h2 class="font-display text-2xl font-bold text-secondary-800 mb-3">Elegí algo para empezar</h2>
 
-        <!-- Estado de carga / error -->
-        <p *ngIf="isLoading" class="text-secondary-500">Cargando menú...</p>
-        <div *ngIf="!isLoading && errorMessage" class="mb-4 p-3 rounded-lg border border-red-200 bg-red-50 text-red-700">
+        <!-- Estado de error (opcional) -->
+        <div *ngIf="errorMessage" class="mb-4 p-3 rounded-lg border border-red-200 bg-red-50 text-red-700">
           {{ errorMessage }}
         </div>
 
-        <!-- Lista simple por categorías -->
-        <div *ngIf="!isLoading && categorias?.length">
-          <div *ngFor="let categoria of categorias" class="mb-6">
-            <h3 class="text-lg font-bold text-primary-700 mb-2">{{ categoria.nombre }}</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div *ngFor="let producto of getProductosPorCategoria(categoria.id)" class="p-3 bg-secondary-50 rounded-xl border border-secondary-100 flex gap-3 items-center">
-                <img [src]="producto.imagen_url || 'https://via.placeholder.com/80x60'" [alt]="producto.nombre" class="w-20 h-16 object-cover rounded-lg" />
-                <div class="flex-1 min-w-0">
-                  <p class="font-semibold text-secondary-800 truncate">{{ producto.nombre }}</p>
-                  <p class="text-sm text-secondary-500 truncate">{{ producto.descripcion }}</p>
-                  <p class="font-bold text-primary-600">{{ producto.precio | currency:'$' }}</p>
-                </div>
-                <div class="flex items-center gap-2">
-                  <button type="button" (click)="quitarItem(producto)" class="w-8 h-8 text-primary-700 hover:bg-primary-200 rounded-full">-</button>
-                  <button type="button" (click)="agregarItem(producto)" class="w-8 h-8 text-primary-700 hover:bg-primary-200 rounded-full">+</button>
-                </div>
+        <!-- Solo categoría 'Entrada' -->
+        <div class="mb-6">
+          <h3 class="text-lg font-bold text-primary-700 mb-2">{{ categoriaEntrada!.nombre }}</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div *ngFor="let producto of getProductosPorCategoria(categoriaEntrada!.id)" class="p-3 bg-secondary-50 rounded-xl border border-secondary-100 flex gap-3 items-center">
+              <img [src]="producto.imagen_url || 'https://via.placeholder.com/80x60'" [alt]="producto.nombre" class="w-20 h-16 object-cover rounded-lg" />
+              <div class="flex-1 min-w-0">
+                <p class="font-semibold text-secondary-800 truncate">{{ producto.nombre }}</p>
+                <p class="text-sm text-secondary-500 truncate">{{ producto.descripcion }}</p>
+                <p class="font-bold text-primary-600">{{ producto.precio | currency:'$' }}</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" (click)="quitarItem(producto)" class="w-8 h-8 text-primary-700 hover:bg-primary-200 rounded-full">-</button>
+                <button type="button" (click)="agregarItem(producto)" class="w-8 h-8 text-primary-700 hover:bg-primary-200 rounded-full">+</button>
               </div>
             </div>
           </div>
