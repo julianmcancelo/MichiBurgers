@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -71,15 +71,22 @@ export class QrGeneratorComponent implements OnInit {
       this.mesaManual = mesaId;
     }
 
+    // Token opcional (admin/master) para endpoints protegidos
+    const token = typeof window !== 'undefined'
+      ? (localStorage.getItem('auth_token') || localStorage.getItem('master_token') || '')
+      : '';
+
     const body = {
       area,
       mesa: mesaId,
       baseUrl: this.baseUrl,
+      token,
     };
 
     try {
+      const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
       const resp = await firstValueFrom(
-        this.http.post<GenerarResp>(`${environment.apiUrl}/qr/generar.php`, body)
+        this.http.post<GenerarResp>(`${environment.apiUrl}/qr/generar.php`, body, { headers })
       );
       if (!resp?.ok) {
         // Fallback local si el backend no autoriza o falla
