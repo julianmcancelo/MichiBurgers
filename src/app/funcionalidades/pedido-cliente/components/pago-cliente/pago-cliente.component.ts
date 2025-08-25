@@ -1,14 +1,16 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
-import { PedidoClienteService, PedidoClienteState } from '../../pedido-cliente.service';
-import { PedidoApiService } from '../../pedido-api.service';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
-import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
+
+import { Subscription } from 'rxjs';
+
+import { PedidoApiService, MesaEstadoItem } from '../../pedido-api.service';
+import { PedidoClienteService, PedidoClienteState } from '../../pedido-cliente.service';
 
 @Component({
   selector: 'app-pago-cliente',
@@ -46,26 +48,69 @@ export class PagoClienteComponent implements OnInit, OnDestroy {
   };
   transferenciaComprobanteBase64: string | null = null;
   transferenciaComprobanteNombre: string | null = null;
+  mesaEstado?: MesaEstadoItem;
+  private statusInterval: any;
 
   private stateSubscription!: Subscription;
 
-  constructor(
-    private pedidoClienteService: PedidoClienteService,
-    private pedidoApiService: PedidoApiService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {}
+  // Preferir inject() (Angular 16+)
+  private pedidoClienteService = inject(PedidoClienteService);
+  private pedidoApiService = inject(PedidoApiService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   ngOnInit(): void {
     this.stateSubscription = this.pedidoClienteService.state$.subscribe(state => {
       this.pedidoState = state;
     });
+
+    // Si el estado no tiene mesa/área, intentar hidratar desde los params actuales
+    const mesaIdParam = this.route.snapshot.paramMap.get('mesaId')
+      || this.route.parent?.snapshot.paramMap.get('mesaId')
+      || this.route.parent?.parent?.snapshot.paramMap.get('mesaId');
+    const areaParam = this.route.snapshot.paramMap.get('area')
+      || this.route.parent?.snapshot.paramMap.get('area')
+      || this.route.parent?.parent?.snapshot.paramMap.get('area');
+    if ((!this.pedidoState.mesaId || !this.pedidoState.area) && areaParam && mesaIdParam) {
+      this.pedidoClienteService.setMesa(areaParam, mesaIdParam);
+    }
+
+    // Comenzar a consultar estado de mesa cada 5s
+    this.startMesaStatusPolling();
   }
 
   ngOnDestroy(): void {
     if (this.stateSubscription) {
       this.stateSubscription.unsubscribe();
     }
+    if (this.statusInterval) {
+      globalThis.clearInterval(this.statusInterval);
+    }
+  }
+
+  private startMesaStatusPolling(): void {
+    if (!this.pedidoState?.area || !this.pedidoState?.mesaId) {
+      return;
+    }
+    const area = this.pedidoState.area as 'interior' | 'exterior';
+    const mesaId = String(this.pedidoState.mesaId);
+
+    const fetchOnce = () => {
+      this.pedidoApiService.getEstadoMesas(area).subscribe({
+        next: (resp) => {
+          const found = resp.mesas.find((m) => String(m.mesaId) === mesaId);
+          this.mesaEstado = found;
+        },
+        error: () => {
+          // silencio: no bloquear UI por errores intermitentes
+        },
+      });
+    };
+
+    // primera carga inmediata
+    fetchOnce();
+    // polling cada 5s
+    this.statusInterval = globalThis.setInterval(fetchOnce, 5000);
   }
 
   onTransferenciaFileSelected(event: Event): void {
@@ -92,6 +137,12 @@ export class PagoClienteComponent implements OnInit, OnDestroy {
       this.isLoading = false;
       return;
     }
+    // No permitir confirmar sin items
+    if (!this.pedidoState?.total || this.pedidoState.total <= 0) {
+      this.errorMessage = 'Tu pedido está vacío. Agregá productos antes de continuar.';
+      this.isLoading = false;
+      return;
+    }
     if (this.selectedMetodo === 'tarjeta') {
       const { nombre, numero, vencimiento, cvv } = this.cardForm;
       const ok = nombre.trim().length > 2 && numero.replace(/\s+/g, '').length >= 16 && /\d{2}\/\d{2}/.test(vencimiento) && cvv.trim().length >= 3;
@@ -108,16 +159,24 @@ export class PagoClienteComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Los parámetros ':area/:mesaId' están dos niveles arriba del hijo 'pago'
-    const mesaId = this.route.parent?.parent?.snapshot.paramMap.get('mesaId');
-    const area = this.route.parent?.parent?.snapshot.paramMap.get('area');
+    // Tomar primero del estado (más confiable), con fallback a params en la cadena de rutas
+    const mesaId = this.pedidoState.mesaId
+      || this.route.snapshot.paramMap.get('mesaId')
+      || this.route.parent?.snapshot.paramMap.get('mesaId')
+      || this.route.parent?.parent?.snapshot.paramMap.get('mesaId')
+      || undefined;
+    const area = this.pedidoState.area
+      || this.route.snapshot.paramMap.get('area')
+      || this.route.parent?.snapshot.paramMap.get('area')
+      || this.route.parent?.parent?.snapshot.paramMap.get('area')
+      || undefined;
     if (!mesaId || !area || !this.pedidoState.cliente) {
       this.errorMessage = 'Faltan datos para crear el pedido (mesa o cliente).';
       this.isLoading = false;
       return;
     }
 
-    const itemsMap: { [id: number]: number } = {};
+    const itemsMap: Record<number, number> = {};
     Object.entries(this.pedidoState.items).forEach(([id, item]: any) => {
       itemsMap[+id] = item.cantidad;
     });
@@ -163,7 +222,7 @@ export class PagoClienteComponent implements OnInit, OnDestroy {
           }
         });
       },
-      error: (err) => {
+      error: (_err) => {
         this.errorMessage = 'Hubo un error al crear tu pedido. Por favor, intenta de nuevo.';
         this.isLoading = false;
       }

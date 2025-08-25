@@ -4,6 +4,7 @@ const typescript = require('@typescript-eslint/eslint-plugin');
 const typescriptParser = require('@typescript-eslint/parser');
 const angular = require('@angular-eslint/eslint-plugin');
 const angularTemplate = require('@angular-eslint/eslint-plugin-template');
+const angularTemplateParser = require('@angular-eslint/template-parser');
 const importPlugin = require('eslint-plugin-import');
 
 /** @type {import('eslint').Linter.FlatConfig[]} */
@@ -60,6 +61,9 @@ module.exports = [
   // HTML template files configuration
   {
     files: ['**/*.html'],
+    languageOptions: {
+      parser: angularTemplateParser,
+    },
     plugins: {
       '@angular-eslint/template': angularTemplate,
     },

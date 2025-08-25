@@ -25,8 +25,9 @@ try {
 
   $pdo = db();
 
-  // 2. Validar que la mesa no tenga un pedido activo
-  $stmt = $pdo->prepare("SELECT id FROM v_mesas_ocupadas WHERE area = :area AND mesa_id = :mesa_id");
+  // 2. Validar que la mesa no tenga un pedido activo (la vista expone 'pedido_id', no 'id')
+  //    Usamos SELECT 1 ya que solo necesitamos existencia
+  $stmt = $pdo->prepare("SELECT 1 FROM v_mesas_ocupadas WHERE area = :area AND mesa_id = :mesa_id LIMIT 1");
   $stmt->execute([':area' => $area, ':mesa_id' => $mesa_id]);
   if ($stmt->fetch()) {
     http_response_code(409);
@@ -53,23 +54,52 @@ try {
     $items_validados[$producto_id] = $cantidad;
   }
 
-  // 4. Crear el pedido del cliente (carrito)
-  $pedido_id = uuid_v4();
+  // 4. Crear/actualizar el pedido del cliente (carrito) evitando duplicados por mesa/estado
   $expires_at = date('Y-m-d H:i:s', time() + 3600); // Expira en 1 hora
 
+  // ¿Existe ya un carrito pendiente para esta mesa?
+  $stmt = $pdo->prepare('SELECT id FROM pedidos_clientes WHERE area = :area AND mesa_id = :mesa_id AND estado = "pendiente" LIMIT 1');
+  $stmt->execute([':area' => $area, ':mesa_id' => $mesa_id]);
+  $existing_id = $stmt->fetchColumn();
+
+  if ($existing_id) {
+    // Actualizamos el carrito existente y reutilizamos su ID
+    $pedido_id = (string)$existing_id;
+    $stmt = $pdo->prepare(
+      'UPDATE pedidos_clientes SET cliente_nombre = :nombre, cliente_telefono = :tel, items = :items, total = :total, expires_at = :expira WHERE id = :id'
+    );
+    $stmt->execute([
+      ':id' => $pedido_id,
+      ':nombre' => $cliente_nombre,
+      ':tel' => $cliente_telefono,
+      ':items' => json_encode($items_validados),
+      ':total' => $total,
+      ':expira' => $expires_at
+    ]);
+  } else {
+    // Creamos uno nuevo
+    $pedido_id = uuid_v4();
+    $stmt = $pdo->prepare(
+      'INSERT INTO pedidos_clientes (id, area, mesa_id, cliente_nombre, cliente_telefono, items, total, expires_at) VALUES (:id, :area, :mesa_id, :nombre, :tel, :items, :total, :expira)'
+    );
+    $stmt->execute([
+      ':id' => $pedido_id,
+      ':area' => $area,
+      ':mesa_id' => $mesa_id,
+      ':nombre' => $cliente_nombre,
+      ':tel' => $cliente_telefono,
+      ':items' => json_encode($items_validados),
+      ':total' => $total,
+      ':expira' => $expires_at
+    ]);
+  }
+
+  // 5. Marcar la mesa como 'ocupada' desde este momento (sin asociar pedido_id aún)
   $stmt = $pdo->prepare(
-    'INSERT INTO pedidos_clientes (id, area, mesa_id, cliente_nombre, cliente_telefono, items, total, expires_at) VALUES (:id, :area, :mesa_id, :nombre, :tel, :items, :total, :expira)'
+    "INSERT INTO mesas_estado (area, mesa_id, estado) VALUES (:area, :mesa_id, 'ocupada')
+     ON DUPLICATE KEY UPDATE estado = 'ocupada'"
   );
-  $stmt->execute([
-    ':id' => $pedido_id,
-    ':area' => $area,
-    ':mesa_id' => $mesa_id,
-    ':nombre' => $cliente_nombre,
-    ':tel' => $cliente_telefono,
-    ':items' => json_encode($items_validados),
-    ':total' => $total,
-    ':expira' => $expires_at
-  ]);
+  $stmt->execute([':area' => $area, ':mesa_id' => $mesa_id]);
 
   echo json_encode(['ok' => true, 'pedido_id' => $pedido_id, 'total' => $total]);
 

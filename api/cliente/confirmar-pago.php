@@ -30,7 +30,12 @@ try {
 
   // 1. Buscar el pedido del cliente y bloquear la fila para evitar concurrencia
   $stmt = $pdo->prepare('SELECT * FROM pedidos_clientes WHERE id = :id AND estado = \'pendiente\' FOR UPDATE');
-  $stmt->execute([':id' => $pedido_cliente_id]);
+  try {
+    $stmt->execute([':id' => $pedido_cliente_id]);
+  } catch (Throwable $e) {
+    error_log('confirmar-pago SELECT pedidos_clientes failed: ' . $e->getMessage());
+    throw $e;
+  }
   $pedido_cliente = $stmt->fetch(PDO::FETCH_ASSOC);
 
   if (!$pedido_cliente) {
@@ -40,22 +45,29 @@ try {
     exit;
   }
 
-  // 2. Crear el pedido principal
+  // Normalizar detalles como JSON string o null
+  $detalles_json = $detalles !== null ? (is_string($detalles) ? $detalles : json_encode($detalles)) : null;
+
+  // 2. Crear el pedido principal (dejamos created_at por defecto de la DB)
   $stmt = $pdo->prepare(
-    'INSERT INTO pedidos (area, mesa_id, cliente_nombre, cliente_telefono, estado, tipo, total, pago_metodo, pago_detalles, pago_referencia, created_at)
-     VALUES (:area, :mesa_id, :nombre, :tel, \'listo_para_cocina\', \'cliente\', :total, :pago_metodo, :pago_detalles, :pago_ref, :creado)'
+    'INSERT INTO pedidos (area, mesa_id, cliente_nombre, cliente_telefono, estado, tipo, total, pago_metodo, pago_detalles, pago_referencia)
+     VALUES (:area, :mesa_id, :nombre, :tel, \'listo_para_cocina\', \'cliente\', :total, :pago_metodo, :pago_detalles, :pago_ref)'
   );
-  $stmt->execute([
-    ':area' => $pedido_cliente['area'],
-    ':mesa_id' => $pedido_cliente['mesa_id'],
-    ':nombre' => $pedido_cliente['cliente_nombre'],
-    ':tel' => $pedido_cliente['cliente_telefono'],
-    ':total' => $pedido_cliente['total'],
-    ':pago_metodo' => $metodo,
-    ':pago_detalles' => $detalles !== null ? json_encode($detalles) : null,
-    ':pago_ref' => $referencia,
-    ':creado' => $pedido_cliente['created_at']
-  ]);
+  try {
+    $stmt->execute([
+      ':area' => $pedido_cliente['area'],
+      ':mesa_id' => $pedido_cliente['mesa_id'],
+      ':nombre' => $pedido_cliente['cliente_nombre'],
+      ':tel' => $pedido_cliente['cliente_telefono'],
+      ':total' => $pedido_cliente['total'],
+      ':pago_metodo' => $metodo,
+      ':pago_detalles' => $detalles_json,
+      ':pago_ref' => $referencia,
+    ]);
+  } catch (Throwable $e) {
+    error_log('confirmar-pago INSERT pedidos failed: ' . $e->getMessage());
+    throw $e;
+  }
   $pedido_principal_id = (int)$pdo->lastInsertId();
 
   // 3. Insertar los ítems del pedido
@@ -66,18 +78,28 @@ try {
   );
 
   foreach ($items as $producto_id => $cantidad) {
-    $stmt_items_info->execute([':id' => $producto_id]);
+    try {
+      $stmt_items_info->execute([':id' => $producto_id]);
+    } catch (Throwable $e) {
+      error_log('confirmar-pago SELECT producto failed (id=' . $producto_id . '): ' . $e->getMessage());
+      throw $e;
+    }
     $producto_info = $stmt_items_info->fetch(PDO::FETCH_ASSOC);
     $subtotal = $producto_info['precio'] * $cantidad;
 
-    $stmt_insert_item->execute([
-      ':pid' => $pedido_principal_id,
-      ':prod_id' => $producto_id,
-      ':nombre' => $producto_info['nombre'],
-      ':precio' => $producto_info['precio'],
-      ':cant' => $cantidad,
-      ':subtotal' => $subtotal
-    ]);
+    try {
+      $stmt_insert_item->execute([
+        ':pid' => $pedido_principal_id,
+        ':prod_id' => $producto_id,
+        ':nombre' => $producto_info['nombre'],
+        ':precio' => $producto_info['precio'],
+        ':cant' => $cantidad,
+        ':subtotal' => $subtotal
+      ]);
+    } catch (Throwable $e) {
+      error_log('confirmar-pago INSERT item failed (producto_id=' . $producto_id . '): ' . $e->getMessage());
+      throw $e;
+    }
   }
 
   // 4. Registrar pago (opcional) y actualizar estado del pedido del cliente a 'pagado'
@@ -89,26 +111,44 @@ try {
 
   if ($metodo_pagos !== null) {
     $stmtPago = $pdo->prepare('INSERT INTO pagos (pedido_id, metodo, monto) VALUES (:pid, :metodo, :monto)');
-    $stmtPago->execute([
-      ':pid' => $pedido_principal_id,
-      ':metodo' => $metodo_pagos,
-      ':monto' => $pedido_cliente['total']
-    ]);
+    try {
+      $stmtPago->execute([
+        ':pid' => $pedido_principal_id,
+        ':metodo' => $metodo_pagos,
+        ':monto' => $pedido_cliente['total']
+      ]);
+    } catch (Throwable $e) {
+      error_log('confirmar-pago INSERT pago failed: ' . $e->getMessage());
+      throw $e;
+    }
   }
 
   // Actualizar estado del pedido del cliente a 'pagado'
   $stmt = $pdo->prepare('UPDATE pedidos_clientes SET estado = \'pagado\' WHERE id = :id');
-  $stmt->execute([':id' => $pedido_cliente_id]);
+  try {
+    $stmt->execute([':id' => $pedido_cliente_id]);
+  } catch (Throwable $e) {
+    error_log('confirmar-pago UPDATE pedidos_clientes failed: ' . $e->getMessage());
+    throw $e;
+  }
 
   // 5. Actualizar estado de la mesa a 'ocupada'
   $stmt = $pdo->prepare(
-    "INSERT INTO mesas_estado (area, mesa_id, estado, pedido_id) VALUES (:area, :mesa_id, 'ocupada', :pid) ON DUPLICATE KEY UPDATE estado = 'ocupada', pedido_id = :pid"
+    "INSERT INTO mesas_estado (area, mesa_id, estado, pedido_id)
+     VALUES (:area, :mesa_id, 'ocupada', :pid_ins)
+     ON DUPLICATE KEY UPDATE estado = 'ocupada', pedido_id = :pid_upd"
   );
-  $stmt->execute([
-      ':area' => $pedido_cliente['area'],
-      ':mesa_id' => $pedido_cliente['mesa_id'],
-      ':pid' => $pedido_principal_id
-  ]);
+  try {
+    $stmt->execute([
+        ':area' => $pedido_cliente['area'],
+        ':mesa_id' => $pedido_cliente['mesa_id'],
+        ':pid_ins' => $pedido_principal_id,
+        ':pid_upd' => $pedido_principal_id,
+    ]);
+  } catch (Throwable $e) {
+    error_log('confirmar-pago UPSERT mesas_estado failed: ' . $e->getMessage());
+    throw $e;
+  }
 
   // Confirmar transacción
   $pdo->commit();
