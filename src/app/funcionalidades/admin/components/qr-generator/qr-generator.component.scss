@@ -60,7 +60,10 @@ code {
   .label-box {
     border: none !important;
     padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
   }
+  .labels-grid { gap: 0 !important; }
 }
 
 .labels-grid {

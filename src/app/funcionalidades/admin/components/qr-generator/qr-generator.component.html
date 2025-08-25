@@ -1,10 +1,33 @@
 <div class="bg-white rounded-xl shadow-md p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
   <h1 class="font-display text-2xl sm:text-3xl font-bold text-secondary-800 mb-2">Generador de Códigos QR</h1>
-  <p class="text-secondary-500 mb-6">Haz clic en una mesa para generar su código QR y el enlace de pedido.</p>
+  <p class="text-secondary-500">Haz clic en una mesa para generar su código QR y el enlace de pedido.</p>
+
+  <!-- Barra de acciones pegajosa -->
+  <div class="no-print sticky top-0 z-20 -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 py-2 mt-3 bg-white/90 backdrop-blur border-b">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <button (click)="downloadPdf()" class="inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold text-white bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 shadow-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M12 16a1 1 0 0 1-.7-.29l-4-4a1 1 0 1 1 1.4-1.42L11 12.59V3a1 1 0 1 1 2 0v9.59l2.3-2.3a1 1 0 1 1 1.4 1.42l-4 4A1 1 0 0 1 12 16z"/><path d="M5 19a2 2 0 0 1-2-2v-1a1 1 0 1 1 2 0v1h14v-1a1 1 0 1 1 2 0v1a2 2 0 0 1-2 2H5z"/></svg>
+          Descargar PDF
+          <span class="ml-1 inline-flex items-center rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold" *ngIf="posterMode">Afiche</span>
+          <span class="ml-1 inline-flex items-center rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold" *ngIf="tableSignMode">Mesa</span>
+        </button>
+        <button (click)="print()" class="inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold text-primary-700 bg-white border border-primary-200 hover:bg-primary-50">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M6 7V3h12v4H6zm12 2H6a3 3 0 0 0-3 3v4h4v4h10v-4h4v-4a3 3 0 0 0-3-3zm-3 9H9v-3h6v3z"/></svg>
+          Imprimir etiquetas
+        </button>
+      </div>
+      <div class="flex items-center gap-2 text-xs">
+        <span class="px-2 py-1 rounded bg-secondary-100 text-secondary-700">{{ tableSignMode ? 'Modo Mesa' : 'Modo Afiche' }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="mt-4"></div>
 
   <!-- Controles de impresión de etiquetas (solo pantalla) -->
-  <div class="no-print mt-2 bg-secondary-50 border border-secondary-200 rounded-lg p-3">
-    <h3 class="text-sm font-semibold text-secondary-700 mb-2">Impresión de etiquetas</h3>
+  <details class="no-print mt-2 bg-secondary-50 border border-secondary-200 rounded-lg p-3" open>
+    <summary class="cursor-pointer select-none text-sm font-semibold text-secondary-700">Impresión de etiquetas</summary>
+    <div class="h-2"></div>
     <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 items-end">
       <label class="text-xs text-secondary-600">Ancho (mm)
         <input type="number" [(ngModel)]="labelWidthMm" min="20" max="100" class="mt-1 w-full px-2 py-1 border rounded" />
@@ -38,11 +61,197 @@
         <input type="checkbox" [(ngModel)]="includeLogo" class="h-4 w-4" /> Incluir logo
       </label>
     </div>
-    <div class="mt-2 flex gap-2">
-      <button (click)="print()" class="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm font-semibold">Imprimir etiquetas</button>
-      <span class="text-xs text-secondary-500">Se imprimen las etiquetas de la lista “QRs generados”.</span>
+    <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex flex-wrap gap-2">
+        <button (click)="downloadPdf()" class="inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold text-white bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 shadow-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+            <path d="M12 16a1 1 0 0 1-.7-.29l-4-4a1 1 0 1 1 1.4-1.42L11 12.59V3a1 1 0 1 1 2 0v9.59l2.3-2.3a1 1 0 1 1 1.4 1.42l-4 4A1 1 0 0 1 12 16z"/>
+            <path d="M5 19a2 2 0 0 1-2-2v-1a1 1 0 1 1 2 0v1h14v-1a1 1 0 1 1 2 0v1a2 2 0 0 1-2 2H5z"/>
+          </svg>
+          Descargar QR (PDF)
+          <span class="ml-1 inline-flex items-center rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold" *ngIf="posterMode">Afiche</span>
+        </button>
+        <button (click)="print()" class="inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold text-primary-700 bg-white border border-primary-200 hover:bg-primary-50">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+            <path d="M6 7V3h12v4H6zm12 2H6a3 3 0 0 0-3 3v4h4v4h10v-4h4v-4a3 3 0 0 0-3-3zm-3 9H9v-3h6v3z"/>
+          </svg>
+          Imprimir etiquetas
+        </button>
+      </div>
+      <!-- CTA inferior -->
+      <div class="mt-3 grid grid-cols-2 sm:grid-cols-6 gap-2">
+        <label class="flex items-center gap-2 text-xs text-secondary-700">
+          <input type="checkbox" [(ngModel)]="showCta" class="h-4 w-4" /> Mostrar CTA inferior
+        </label>
+        <label class="text-xs text-secondary-600 col-span-2 sm:col-span-3">Texto CTA
+          <input type="text" [(ngModel)]="ctaText" class="mt-1 w-full px-2 py-1 border rounded" placeholder="ESCANEÁ" />
+        </label>
+        <label class="text-xs text-secondary-600">Fondo CTA
+          <input type="color" [(ngModel)]="ctaBgColor" class="mt-1 w-full h-8 p-0 border rounded" />
+        </label>
+        <label class="text-xs text-secondary-600">Texto CTA
+          <input type="color" [(ngModel)]="ctaTextColor" class="mt-1 w-full h-8 p-0 border rounded" />
+        </label>
+      </div>
+      <!-- Tema Gatuno / Estética extra -->
+      <div class="mt-4 rounded border bg-white p-3">
+        <div class="flex items-center justify-between">
+          <h4 class="text-sm font-semibold text-secondary-800">Detalles gatunos</h4>
+          <label class="flex items-center gap-2 text-xs text-secondary-700">
+            <input type="checkbox" [(ngModel)]="catTheme" class="h-4 w-4" /> Activar tema
+          </label>
+        </div>
+        <div class="mt-2 grid grid-cols-2 sm:grid-cols-6 gap-2" [class.opacity-50]="!catTheme">
+          <label class="flex items-center gap-2 text-xs text-secondary-700">
+            <input type="checkbox" [(ngModel)]="catPaws" class="h-4 w-4" /> Huellitas de fondo
+          </label>
+          <label class="text-xs text-secondary-600">Cantidad huellas
+            <input type="number" [(ngModel)]="catPawCount" min="0" max="16" class="mt-1 w-full px-2 py-1 border rounded" />
+          </label>
+          <label class="text-xs text-secondary-600">Tamaño huella (mm)
+            <input type="number" [(ngModel)]="catPawSizeMm" min="3" max="16" class="mt-1 w-full px-2 py-1 border rounded" />
+          </label>
+          <label class="text-xs text-secondary-600">Color huella
+            <input type="color" [(ngModel)]="catPawColor" class="mt-1 w-full h-8 p-0 border rounded" />
+          </label>
+          <label class="flex items-center gap-2 text-xs text-secondary-700">
+            <input type="checkbox" [(ngModel)]="catWhiskers" class="h-4 w-4" /> Bigotes divisor
+          </label>
+          <label class="text-xs text-secondary-600">Color bigotes
+            <input type="color" [(ngModel)]="catWhiskerColor" class="mt-1 w-full h-8 p-0 border rounded" />
+          </label>
+          <label class="text-xs text-secondary-600 col-span-2 sm:col-span-3">URL imagen mascota (PNG/JPG)
+            <input type="text" [(ngModel)]="catMascotUrl" class="mt-1 w-full px-2 py-1 border rounded" placeholder="https://.../gatito.png o data:image/png;base64,..." />
+          </label>
+          <label class="flex items-center gap-2 text-xs text-secondary-700">
+            <input type="checkbox" [(ngModel)]="catMascotBadge" class="h-4 w-4" /> Mostrar badge de mascota
+          </label>
+          <label class="text-xs text-secondary-600">Tamaño badge (mm)
+            <input type="number" [(ngModel)]="catMascotBadgeSizeMm" min="14" max="40" class="mt-1 w-full px-2 py-1 border rounded" />
+          </label>
+        </div>
+      </div>
+      <span class="text-xs text-secondary-500">Se generan/imprimen las etiquetas de la lista “QRs generados”.</span>
     </div>
-  </div>
+  </details>
+
+  <!-- Configuración Afiche (Tailwind-like) -->
+  <details class="mt-4 rounded-lg border border-secondary-200 bg-white p-3" open>
+    <summary class="cursor-pointer select-none text-sm font-semibold text-secondary-700">Afiche</summary>
+    <div class="h-2"></div>
+    <div class="flex items-center justify-between">
+      <h4 class="text-sm font-semibold text-secondary-700">Afiche</h4>
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1">
+          <span class="text-xs text-secondary-500">Modo:</span>
+          <select [(ngModel)]="tableSignMode" (change)="onTableSignModeChange()" class="text-xs border rounded px-2 py-1">
+            <option [ngValue]="false">Afiche</option>
+            <option [ngValue]="true">Mesa</option>
+          </select>
+        </div>
+        <button *ngIf="!tableSignMode" type="button" (click)="applyStickerCatPreset()" class="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs font-semibold text-white bg-primary-600 hover:bg-primary-700">
+          Preset: Sticker Gatito
+        </button>
+        <label class="flex items-center gap-2 text-xs text-secondary-700">
+          <input type="checkbox" [(ngModel)]="posterMode" class="h-4 w-4"/>
+          {{ tableSignMode ? 'Modo mesa activo' : 'Usar modo afiche' }}
+        </label>
+      </div>
+    </div>
+    <!-- Grupo: Tamaño y colores base -->
+    <div class="mt-3 grid grid-cols-2 sm:grid-cols-6 gap-2">
+      <label class="text-xs text-secondary-600">Ancho afiche (mm)
+        <input type="number" [(ngModel)]="posterWidthMm" min="60" max="210" class="mt-1 w-full px-2 py-1 border rounded" />
+      </label>
+      <label class="text-xs text-secondary-600">Alto afiche (mm)
+        <input type="number" [(ngModel)]="posterHeightMm" min="80" max="297" class="mt-1 w-full px-2 py-1 border rounded" />
+      </label>
+      <label class="text-xs text-secondary-600 col-span-2">Tamaño del QR
+        <div class="mt-1 flex items-center gap-2">
+          <input type="range" [(ngModel)]="posterQrScale" min="0.4" max="0.95" step="0.01" class="w-full" />
+          <span class="text-[10px] text-secondary-500 w-10 text-right">{{ (posterQrScale * 100) | number:'1.0-0' }}%</span>
+        </div>
+      </label>
+      <label class="text-xs text-secondary-600">Color cabecera
+        <input type="color" [(ngModel)]="posterHeaderColor" class="mt-1 w-full h-8 p-0 border rounded" />
+      </label>
+      <label class="text-xs text-secondary-600">Fondo (card)
+        <input type="color" [(ngModel)]="posterBgColor" class="mt-1 w-full h-8 p-0 border rounded" />
+      </label>
+      <label class="text-xs text-secondary-600">Texto cabecera
+        <input type="color" [(ngModel)]="posterHeaderTextColor" class="mt-1 w-full h-8 p-0 border rounded" />
+      </label>
+      <label class="text-xs text-secondary-600">Texto cuerpo
+        <input type="color" [(ngModel)]="posterTextColor" class="mt-1 w-full h-8 p-0 border rounded" />
+      </label>
+      <label class="text-xs text-secondary-600">Radio (mm)
+        <input type="number" [(ngModel)]="posterRadiusMm" min="0" max="12" class="mt-1 w-full px-2 py-1 border rounded" />
+      </label>
+      <label class="flex items-center gap-2 text-xs text-secondary-700">
+        <input type="checkbox" [(ngModel)]="posterShowBorder" class="h-4 w-4" /> Borde sutil (card)
+      </label>
+      <label class="text-xs text-secondary-600">Borde ancho (mm)
+        <input type="number" [(ngModel)]="posterBorderWidthMm" min="0" max="4" class="mt-1 w-full px-2 py-1 border rounded" />
+      </label>
+      <label class="text-xs text-secondary-600">Padding card (mm)
+        <input type="number" [(ngModel)]="posterPaddingMm" min="0" max="20" class="mt-1 w-full px-2 py-1 border rounded" />
+      </label>
+      <label class="flex items-center gap-2 text-xs text-secondary-700">
+        <input type="checkbox" [(ngModel)]="posterShadow" class="h-4 w-4" /> Sombra sutil
+      </label>
+      <label class="text-xs text-secondary-600">Borde color
+        <input type="color" [(ngModel)]="posterBorderColor" class="mt-1 w-full h-8 p-0 border rounded" />
+      </label>
+    </div>
+
+    <!-- Grupo: Header -->
+    <div class="mt-4">
+      <h5 class="text-xs font-semibold text-secondary-600 mb-2">Cabecera</h5>
+      <div class="grid grid-cols-2 sm:grid-cols-6 gap-2">
+        <label class="text-xs text-secondary-600 col-span-2 sm:col-span-3">Título
+          <input type="text" [(ngModel)]="posterTitle" class="mt-1 w-full px-2 py-1 border rounded" placeholder="MichiBurgers"/>
+        </label>
+        <label class="text-xs text-secondary-600">Altura cabecera (mm)
+          <input type="number" [(ngModel)]="posterHeaderHeightMm" min="16" max="80" class="mt-1 w-full px-2 py-1 border rounded" />
+        </label>
+        <label class="flex items-center gap-2 text-xs text-secondary-700">
+          <input type="checkbox" [(ngModel)]="posterTitleAutoFit" class="h-4 w-4" /> Auto-fit título
+        </label>
+      </div>
+    </div>
+
+    <!-- Grupo: QR -->
+    <div class="mt-4">
+      <h5 class="text-xs font-semibold text-secondary-600 mb-2">Contenedor del QR</h5>
+      <div class="grid grid-cols-2 sm:grid-cols-6 gap-2">
+        <label class="flex items-center gap-2 text-xs text-secondary-700 col-span-2">
+          <input type="checkbox" [(ngModel)]="posterShowQrFrame" class="h-4 w-4" /> Marco detrás del QR
+        </label>
+        <label class="text-xs text-secondary-600">Padding marco (mm)
+          <input type="number" [(ngModel)]="posterQrFramePaddingMm" min="0" max="12" class="mt-1 w-full px-2 py-1 border rounded" />
+        </label>
+        <label class="text-xs text-secondary-600">Radio marco (mm)
+          <input type="number" [(ngModel)]="posterQrFrameRadiusMm" min="0" max="12" class="mt-1 w-full px-2 py-1 border rounded" />
+        </label>
+        <label class="text-xs text-secondary-600 col-span-2">Color marco
+          <input type="color" [(ngModel)]="posterQrFrameColor" class="mt-1 w-full h-8 p-0 border rounded" />
+        </label>
+      </div>
+    </div>
+
+    <!-- Grupo: Textos -->
+    <div class="mt-4">
+      <h5 class="text-xs font-semibold text-secondary-600 mb-2">Textos</h5>
+      <div class="grid grid-cols-2 sm:grid-cols-6 gap-2">
+        <label class="text-xs text-secondary-600 col-span-2 sm:col-span-3">Subtítulo 1
+          <input type="text" [(ngModel)]="posterSubtitle1" class="mt-1 w-full px-2 py-1 border rounded" placeholder="Escaneá para pedir"/>
+        </label>
+        <label class="text-xs text-secondary-600 col-span-2 sm:col-span-3">Subtítulo 2
+          <input type="text" [(ngModel)]="posterSubtitle2" class="mt-1 w-full px-2 py-1 border rounded" placeholder="Opcional"/>
+        </label>
+      </div>
+    </div>
+  </details>
 
   <!-- Input para Base URL -->
   <div>
@@ -84,8 +293,47 @@
       </div>
     </div>
 
-    <!-- Columna de Resultados -->
+    <!-- Columna de Resultados / Vista previa -->
     <div class="bg-secondary-50 rounded-lg p-4 sm:p-6 flex flex-col items-stretch justify-start min-h-[260px] sm:min-h-[300px] lg:sticky lg:top-4 h-fit">
+      <!-- Vista previa Afiche -->
+      <div *ngIf="posterMode" class="mb-5">
+        <h3 class="font-display text-lg font-semibold text-secondary-800 mb-2">Vista previa afiche</h3>
+        <div class="rounded-xl border bg-white p-3 shadow-sm">
+          <div class="mx-auto max-w-sm">
+            <!-- Card del afiche -->
+            <div class="overflow-hidden" [ngStyle]="{
+                  'background': posterBgColor,
+                  'borderColor': posterShowBorder ? posterBorderColor : 'transparent',
+                  'borderStyle': posterShowBorder ? 'solid' : 'none',
+                  'borderWidth.px': posterShowBorder ? (posterBorderWidthMm * 3.78) : 0,
+                  'borderRadius.px': (posterRadiusMm * 3.78),
+                  'boxShadow': posterShadow ? '0 6px 20px rgba(0,0,0,0.12)' : 'none',
+                  'padding.px': (posterPaddingMm * 3.78)
+                }">
+              <!-- Header -->
+              <div class="w-full flex items-center justify-center" [ngStyle]="{ 'background': posterHeaderColor, 'height.px': (posterHeaderHeightMm * 3.78), 'color': posterHeaderTextColor }">
+                <span class="font-bold" [ngStyle]="{ 'color': posterHeaderTextColor }">{{ posterTitle || 'MichiBurgers' }}</span>
+              </div>
+              <!-- Cuerpo con QR simulado -->
+              <div class="flex flex-col items-center text-center" [ngStyle]="{ 'color': posterTextColor, 'paddingTop.px': (posterPaddingMm * 1.5 * 3.78), 'paddingBottom.px': (posterPaddingMm * 1.5 * 3.78) }">
+                <div class="relative flex items-center justify-center" [ngStyle]="{
+                      'background': posterShowQrFrame ? posterQrFrameColor : 'transparent',
+                      'padding.px': (posterShowQrFrame ? (posterQrFramePaddingMm * 3.78) : 0),
+                      'borderRadius.px': (posterQrFrameRadiusMm * 3.78)
+                    }">
+                  <div class="bg-white" [ngStyle]="{ 'width.px': (posterQrScale * 240), 'height.px': (posterQrScale * 240), 'borderRadius.px': 8, 'boxShadow': 'inset 0 0 0 2px rgba(0,0,0,0.06)'}"></div>
+                </div>
+                <div class="mt-3 text-sm opacity-90">{{ posterSubtitle1 || 'Escaneá para pedir' }}</div>
+                <div class="text-xs opacity-70">{{ posterSubtitle2 }}</div>
+              </div>
+              <!-- CTA -->
+              <div *ngIf="showCta" class="px-4 pb-4">
+                <div class="mx-auto w-fit px-4 py-1.5 rounded-full text-xs font-semibold" [ngStyle]="{ 'background': ctaBgColor, 'color': ctaTextColor }">{{ ctaText || 'ESCANEÁ' }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- Estado de Carga -->
       <div *ngIf="loading" class="text-center">
         <svg class="animate-spin h-12 w-12 text-primary-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -134,7 +382,7 @@
 
         <!-- Contenedor del QR Code -->
         <div class="my-4 p-4 bg-white inline-block rounded-lg border shadow-sm">
-          <qrcode 
+          <qrcode
             [qrdata]="resultado!.url || resultado!.path"
             [width]="200"
             [errorCorrectionLevel]="'M'">
