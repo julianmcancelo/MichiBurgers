@@ -1,9 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { map, Observable } from 'rxjs';
 
-// Usar el dominio público en producción
-const BASE_URL = 'https://burguersaurio.jcancelo.dev/api';
+// Base unificada según environment (prod ahora apunta directo al backend)
+const BASE_URL = environment.apiUrl;
 
 @Injectable({ providedIn: 'root' })
 export class MapaSalonApiService {
