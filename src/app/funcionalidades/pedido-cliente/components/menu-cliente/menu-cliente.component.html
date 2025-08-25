@@ -54,7 +54,10 @@
                class="bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 flex flex-col">
             
             <div class="h-48 w-full overflow-hidden">
-              <img [src]="producto.imagen_url || 'https://via.placeholder.com/400x300'" [alt]="producto.nombre" class="w-full h-full object-cover">
+              <img (click)="openImage(producto)"
+                   [src]="producto.imagen_url || 'https://via.placeholder.com/400x300'"
+                   [alt]="producto.nombre"
+                   class="w-full h-full object-cover cursor-zoom-in">
             </div>
 
             <div class="p-5 flex flex-col flex-grow">
@@ -105,4 +108,14 @@
       </button>
     </div>
   </footer>
+
+  <!-- Lightbox Imagen Completa -->
+  <div *ngIf="lightboxUrl" (click)="closeLightbox()" class="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4">
+    <div (click)="stop($event)" class="relative max-w-5xl w-full">
+      <button (click)="closeLightbox()" class="absolute -top-3 -right-3 bg-white text-black rounded-full w-9 h-9 shadow flex items-center justify-center" aria-label="Cerrar">
+        ✕
+      </button>
+      <img [src]="lightboxUrl" [alt]="lightboxAlt" class="w-full h-auto max-h-[85vh] object-contain rounded-lg shadow-2xl bg-white">
+    </div>
+  </div>
 </div>

@@ -53,22 +53,32 @@ code {
   body * { visibility: hidden; }
   .print-area, .print-area * { visibility: visible; }
   .print-area { position: absolute; left: 0; top: 0; right: 0; }
+
+  /* Solo mostrar los QR: ocultar textos, logos, bordes y márgenes internos */
+  .label-text { display: none !important; }
+  .label-logo { display: none !important; }
+  .label-box {
+    border: none !important;
+    padding: 0 !important;
+  }
 }
 
 .labels-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6mm;
+  grid-template-columns: repeat(var(--cols, 3), 1fr);
+  gap: var(--gap-mm, 6mm);
+  align-items: start;
 }
 
 .label-box {
-  border: 1px dashed #d1d5db;
+  border: 1px var(--border-style, dashed) #d1d5db;
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3mm;
+  padding: 6mm;
   box-sizing: border-box;
+  page-break-inside: avoid;
 }
 
 .label-content {
@@ -80,6 +90,13 @@ code {
   text-align: center;
 }
 
+.label-logo {
+  width: 14mm;
+  height: auto;
+  display: block;
+}
+
 .label-text {
-  font-size: 10pt;
+  font-size: var(--text-pt, 10pt);
+  line-height: 1.1;
 }

@@ -1,13 +1,13 @@
-import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Categoria, Producto, ProductosService } from '../../../../core/services/productos.service';
-import { PedidoClienteService } from '../../pedido-cliente.service';
-import { Observable, Subscription } from 'rxjs';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+
+import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { ActivatedRoute, Router } from '@angular/router';
-import { PedidoClienteState } from '../../pedido-cliente.service';
+
+import { Categoria, Producto, ProductosService } from '../../../../core/services/productos.service';
+import { PedidoClienteService, PedidoClienteState } from '../../pedido-cliente.service';
 
 @Component({
   selector: 'app-menu-cliente',
@@ -20,7 +20,7 @@ import { PedidoClienteState } from '../../pedido-cliente.service';
   templateUrl: './menu-cliente.component.html',
   styleUrls: ['./menu-cliente.component.scss'],
 })
-export class MenuClienteComponent implements OnInit {
+export class MenuClienteComponent implements OnInit, OnDestroy {
   isLoading = true;
   categorias: Categoria[] = [];
   productos: Producto[] = [];
@@ -28,14 +28,16 @@ export class MenuClienteComponent implements OnInit {
   private stateSubscription!: Subscription;
   errorMessage: string | null = null;
 
-  constructor(
-    private productosService: ProductosService,
-    private pedidoClienteService: PedidoClienteService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-    private zone: NgZone
-  ) {}
+  // Lightbox
+  lightboxUrl: string | null = null;
+  lightboxAlt = '';
+  // Preferir inject() (Angular v16+)
+  private productosService = inject(ProductosService);
+  private pedidoClienteService = inject(PedidoClienteService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef);
+  private zone = inject(NgZone);
 
   ngOnInit(): void {
     this.productosService
@@ -48,15 +50,10 @@ export class MenuClienteComponent implements OnInit {
             this.productos = data.productos;
             this.errorMessage = null;
             // forzar actualización
-            try { this.cdr.markForCheck(); this.cdr.detectChanges(); } catch {}
-            console.log('[MenuCliente] menu cargado', {
-              categorias: this.categorias.length,
-              productos: this.productos.length,
-            });
+            try { this.cdr.markForCheck(); this.cdr.detectChanges(); } catch { /* noop */ }
           });
         },
-        error: (err) => {
-          console.error('[MenuCliente] Error cargando menú', err);
+        error: (_err) => {
           this.errorMessage = 'No pudimos cargar el menú. Intenta de nuevo en unos minutos.';
         },
       });
@@ -99,4 +96,18 @@ export class MenuClienteComponent implements OnInit {
   irAPagar(): void {
     this.router.navigate(['../pago'], { relativeTo: this.route });
   }
+
+  // --- Imagen completa (lightbox) ---
+  openImage(prod: Producto): void {
+    const url = prod.imagen_url || 'https://via.placeholder.com/1200x900';
+    this.lightboxUrl = url;
+    this.lightboxAlt = prod.nombre || 'Imagen';
+  }
+
+  closeLightbox(): void {
+    this.lightboxUrl = null;
+    this.lightboxAlt = '';
+  }
+
+  stop(event: Event): void { event.stopPropagation(); }
 }

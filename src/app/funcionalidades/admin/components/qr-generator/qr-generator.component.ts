@@ -54,6 +54,12 @@ export class QrGeneratorComponent implements OnInit {
   labelHeightMm = 50;
   includeTexto = true;
   copias = 1;
+  // Mejoras de PDF/impresión
+  columns = 3;
+  gapMm = 4;
+  includeLogo = true;
+  textSizePt = 10;
+  borderStyle: 'solid' | 'dashed' | 'none' = 'dashed';
 
   // Angular v16+: preferir inject() sobre constructor
   private http = inject(HttpClient);
@@ -142,8 +148,13 @@ export class QrGeneratorComponent implements OnInit {
 
   // Calcula el ancho del QR (px) a partir del ancho de la etiqueta (mm)
   getQrPxWidth(): number {
-    // 1mm ~ 3.78px en pantallas típicas. Dejamos un margen interior de 12px
-    const px = Math.floor(this.labelWidthMm * 3.78) - 12;
+    // 1mm ~ 3.78px en pantallas típicas.
+    // Reservar padding y espacio para texto/logo si están activos.
+    const paddingMm = 6; // coincide con padding label-box
+    const usableWidthMm = Math.max(10, this.labelWidthMm - paddingMm * 2);
+    const usableHeightMm = Math.max(10, this.labelHeightMm - paddingMm * 2 - (this.includeTexto ? 8 : 0) - (this.includeLogo ? 8 : 0));
+    const sideMm = Math.max(10, Math.min(usableWidthMm, usableHeightMm));
+    const px = Math.floor(sideMm * 3.78);
     return Math.max(64, px);
   }
 

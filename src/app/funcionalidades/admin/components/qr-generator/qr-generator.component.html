@@ -5,7 +5,7 @@
   <!-- Controles de impresión de etiquetas (solo pantalla) -->
   <div class="no-print mt-2 bg-secondary-50 border border-secondary-200 rounded-lg p-3">
     <h3 class="text-sm font-semibold text-secondary-700 mb-2">Impresión de etiquetas</h3>
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 items-end">
+    <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 items-end">
       <label class="text-xs text-secondary-600">Ancho (mm)
         <input type="number" [(ngModel)]="labelWidthMm" min="20" max="100" class="mt-1 w-full px-2 py-1 border rounded" />
       </label>
@@ -15,8 +15,27 @@
       <label class="text-xs text-secondary-600">Copias por QR
         <input type="number" [(ngModel)]="copias" min="1" max="100" class="mt-1 w-full px-2 py-1 border rounded" />
       </label>
+      <label class="text-xs text-secondary-600">Columnas
+        <input type="number" [(ngModel)]="columns" min="1" max="6" class="mt-1 w-full px-2 py-1 border rounded" />
+      </label>
+      <label class="text-xs text-secondary-600">Espacio (mm)
+        <input type="number" [(ngModel)]="gapMm" min="0" max="20" class="mt-1 w-full px-2 py-1 border rounded" />
+      </label>
+      <label class="text-xs text-secondary-600">Texto (pt)
+        <input type="number" [(ngModel)]="textSizePt" min="8" max="18" class="mt-1 w-full px-2 py-1 border rounded" />
+      </label>
+      <label class="text-xs text-secondary-600">Borde
+        <select [(ngModel)]="borderStyle" class="mt-1 w-full px-2 py-1 border rounded">
+          <option [ngValue]="'none'">Sin borde</option>
+          <option [ngValue]="'solid'">Sólido</option>
+          <option [ngValue]="'dashed'">Punteado</option>
+        </select>
+      </label>
       <label class="flex items-center gap-2 text-xs text-secondary-700">
         <input type="checkbox" [(ngModel)]="includeTexto" class="h-4 w-4" /> Incluir texto (Área y Mesa)
+      </label>
+      <label class="flex items-center gap-2 text-xs text-secondary-700">
+        <input type="checkbox" [(ngModel)]="includeLogo" class="h-4 w-4" /> Incluir logo
       </label>
     </div>
     <div class="mt-2 flex gap-2">
@@ -170,16 +189,17 @@
   </div>
 
   <!-- Área de impresión (solo print) -->
-  <div class="print-area">
+  <div class="print-area" [style.--cols]="columns" [style.--gap-mm]="gapMm + 'mm'" [style.--text-pt]="textSizePt + 'pt'" [style.--border-style]="borderStyle">
     <div class="labels-grid">
       <ng-container *ngFor="let g of generados">
         <ng-container *ngFor="let _ of copiasArray(copias)">
           <div class="label-box" [style.width.mm]="labelWidthMm" [style.height.mm]="labelHeightMm">
             <div class="label-content">
+              <img *ngIf="includeLogo" src="/logos/logos.png" alt="Logo" class="label-logo" />
               <qrcode [qrdata]="g.url || g.path" [width]="getQrPxWidth()" [errorCorrectionLevel]="'M'"></qrcode>
-              <div *ngIf="includeTexto" class="label-text">
-                <div>Área: {{ g.area }}</div>
-                <div>Mesa: {{ g.mesa }}</div>
+              <div *ngIf="includeTexto" class="label-text" [style.fontSize]="textSizePt + 'pt'">
+                <div><strong>Área:</strong> {{ g.area }}</div>
+                <div><strong>Mesa:</strong> {{ g.mesa }}</div>
               </div>
             </div>
           </div>
