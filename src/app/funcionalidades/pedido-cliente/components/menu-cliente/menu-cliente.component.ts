@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Categoria, Producto, ProductosService } from '../../../../core/services/productos.service';
 import { PedidoClienteService } from '../../pedido-cliente.service';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, finalize } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PedidoClienteState } from '../../pedido-cliente.service';
 
@@ -35,19 +35,24 @@ export class MenuClienteComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.productosService.getMenu().subscribe({
-      next: (data) => {
-        this.categorias = data.categorias;
-        this.productos = data.productos;
-        this.isLoading = false;
-        this.errorMessage = null;
-      },
-      error: (err) => {
-        console.error('Error cargando menú', err);
-        this.errorMessage = 'No pudimos cargar el menú. Intenta de nuevo en unos minutos.';
-        this.isLoading = false;
-      },
-    });
+    this.productosService
+      .getMenu()
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (data) => {
+          this.categorias = data.categorias;
+          this.productos = data.productos;
+          this.errorMessage = null;
+          console.debug('[MenuCliente] menu cargado', {
+            categorias: this.categorias.length,
+            productos: this.productos.length,
+          });
+        },
+        error: (err) => {
+          console.error('Error cargando menú', err);
+          this.errorMessage = 'No pudimos cargar el menú. Intenta de nuevo en unos minutos.';
+        },
+      });
 
     this.stateSubscription = this.pedidoClienteService.state$.subscribe(state => {
       this.pedidoState = state;
