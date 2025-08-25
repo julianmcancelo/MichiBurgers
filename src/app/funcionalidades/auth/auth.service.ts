@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 import { LoginResponse, Usuario } from './models';
 
-const BASE_URL = 'https://burguersaurio.jcancelo.dev/api';
+const BASE_URL = environment.apiUrl;
 const TOKEN_KEY = 'auth_token';
 const USER_KEY = 'auth_user';
 

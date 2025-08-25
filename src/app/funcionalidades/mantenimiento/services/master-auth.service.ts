@@ -1,11 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, map, of, tap } from 'rxjs';
 
 const MASTER_TOKEN_KEY = 'master_token';
 
-const API_BASE = 'https://burguersaurio.jcancelo.dev/api';
+const API_BASE = environment.apiUrl;
 
 @Injectable({ providedIn: 'root' })
 export class MasterAuthService {

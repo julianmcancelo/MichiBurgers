@@ -6,6 +6,7 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-registro-usuario',
@@ -54,8 +55,8 @@ export class RegistroUsuarioComponent {
       this.cargando.set(true);
       const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') || '' : '';
       const body = { ...this.form.value, token } as const;
-      // Usamos URL absoluta para apuntar explícitamente al backend
-      this.http.post('https://burguersaurio.jcancelo.dev/api/auth/register.php', body).subscribe({
+      // Usar base unificada del environment (compatibles con rewrites de Vercel)
+      this.http.post(`${environment.apiUrl}/auth/register.php`, body).subscribe({
         next: () => {
           this.cargando.set(false);
           this.snack.open('Usuario creado', 'OK', { duration: 2500 });
