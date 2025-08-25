@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { environment } from '../../../../../environments/environment';
 
 import { MasterAuthService } from '../../services/master-auth.service';
 
@@ -35,7 +36,7 @@ export class PanelMantenimientoComponent implements OnInit {
       nombreEmprendimiento: ['', [Validators.required, Validators.maxLength(80)]],
       colorPrimario: ['#0b57d0'],
       colorSecundario: ['#00a36c'],
-      apiBaseUrl: ['http://localhost:8080'],
+      apiBaseUrl: [environment.apiUrl],
     });
   }
 
