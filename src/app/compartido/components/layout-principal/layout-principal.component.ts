@@ -39,8 +39,8 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
   private sub?: Subscription;
   private subRouter?: Subscription;
 
-  // Ruta actual es login (para ocultar elementos del layout)
-  isLoginRoute = false;
+  // Layout minimal (oculta header/footer): login y flujo QR (/pedido-qr/...)
+  isMinimalLayout = false;
 
   // Datos de UI
   currentYear: number = new Date().getFullYear();
@@ -109,14 +109,14 @@ export class LayoutPrincipalComponent implements OnInit, OnDestroy {
     });
 
     // Determinar si estamos en la ruta de login y actualizar en cada navegación
-    const updateLoginFlag = () => {
+    const updateMinimalFlag = () => {
       const url = this.router.url || '';
-      this.isLoginRoute = url.startsWith('/auth/login');
+      this.isMinimalLayout = url.startsWith('/auth/login') || url.startsWith('/pedido-qr/');
     };
-    updateLoginFlag();
+    updateMinimalFlag();
     this.subRouter = this.router.events.subscribe((ev) => {
       if (ev instanceof NavigationEnd) {
-        updateLoginFlag();
+        updateMinimalFlag();
       }
     });
 
