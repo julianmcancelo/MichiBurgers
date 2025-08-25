@@ -27,7 +27,7 @@
   </nav>
 
   <!-- Contenido del Menú (siempre presente; el spinner sólo cubre cuando isLoading=true) -->
-  <div class="container mx-auto px-4 py-8 pb-32 animate-fade-in relative z-50">
+  <div class="container mx-auto px-4 py-8 pb-32 animate-fade-in relative">
 
     <!-- Cabecera -->
     <header class="text-center mb-10">
@@ -93,7 +93,7 @@
 
   <!-- Barra de Pedido Flotante (siempre visible cuando no está cargando) -->
   <footer *ngIf="!isLoading" 
-          class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-lg mx-auto bg-white/70 backdrop-blur-xl shadow-2xl rounded-2xl p-4 z-40 animate-slide-up">
+          class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-lg mx-auto bg-white/70 backdrop-blur-xl shadow-2xl rounded-2xl p-4 z-60 animate-slide-up">
     <div class="flex justify-between items-center">
       <div>
         <p class="font-bold text-secondary-800">{{ cantidadTotalItems }} {{ cantidadTotalItems === 1 ? 'item' : 'items' }}</p>
