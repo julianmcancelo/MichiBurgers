@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://burguersaurio.jcancelo.dev/api/$1" }
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false
+}

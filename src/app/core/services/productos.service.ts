@@ -31,9 +31,7 @@ export class ProductosService {
   // Base tomada del environment para evitar typos y mantener un único origen
   private apiUrl = `${environment.apiUrl}/productos`;
   // Base absoluta para recursos (imágenes) servidos por el backend PHP
-  private assetBase = environment.production
-    ? environment.apiUrl
-    : 'https://burguersaurio.jcancelo.dev/api';
+  private assetBase = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 

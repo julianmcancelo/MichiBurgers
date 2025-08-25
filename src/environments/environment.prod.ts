@@ -5,7 +5,7 @@
 export const environment = {
   production: true,
   baseUrl: 'https://burguersaurio.jcancelo.dev/',
-  apiUrl: 'https://burguersaurio.jcancelo.dev/api',
+  apiUrl: '/api',
   appName: 'MichiBurgers',
   version: '1.0.0',
   enableLogging: false,
