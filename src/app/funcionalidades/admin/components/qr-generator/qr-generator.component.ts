@@ -78,7 +78,9 @@ export class QrGeneratorComponent implements OnInit {
     };
 
     try {
-      const resp = await firstValueFrom(this.http.post<GenerarResp>('/api/qr/generar.php', body));
+      const resp = await firstValueFrom(
+        this.http.post<GenerarResp>(`${environment.apiUrl}/qr/generar.php`, body)
+      );
       if (!resp?.ok) {
         // Fallback local si el backend no autoriza o falla
         this.resultado = this.generarLocal(area, mesaId);
