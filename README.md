@@ -33,39 +33,7 @@ MichiBurgers es un sistema que digitaliza la operación de un restaurante. Permi
 - ESLint y Prettier - Para mantener el código limpio
 - Vite - Para compilar la aplicación
 
-## 🔧 Cómo instalarlo
 
-**Necesitas tener instalado:**
-- Node.js (versión 18 o superior)
-- PHP (versión 8 o superior)
-- MySQL
-- Git
-
-**Pasos:**
-
-1. **Descargar el proyecto**
-```bash
-git clone https://github.com/julianmcancelo/MichiBurgers.git
-cd MichiBurgers
-```
-
-2. **Instalar dependencias**
-```bash
-npm install
-```
-
-3. **Configurar la base de datos**
-- Crear una base de datos MySQL llamada `michiburgers`
-- Configurar las credenciales en `api/.env`
-
-4. **Ejecutar la aplicación**
-```bash
-npm start
-```
-
-La aplicación estará disponible en `http://localhost:4200`
-
-## 📱 Funcionalidades
 
 **Para Administradores:**
 - Crear, editar y eliminar productos
