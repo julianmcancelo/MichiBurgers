@@ -40,7 +40,11 @@ export class ProductosService {
   getMenu(): Observable<MenuData> {
     return this.http.get<MenuData>(`${this.apiUrl}/listar.php`).pipe(
       map((data) => ({
-        categorias: data.categorias || [],
+        categorias: (data.categorias || []).map(c => ({
+          ...c,
+          id: typeof c.id === 'string' ? Number(c.id) : c.id,
+          orden: typeof c.orden === 'string' ? Number(c.orden) : c.orden,
+        })),
         productos: (data.productos || []).map(p => ({
           ...p,
           // normalizar tipos numéricos que pueden venir como string

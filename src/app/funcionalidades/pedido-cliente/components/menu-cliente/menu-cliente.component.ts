@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Categoria, Producto, ProductosService } from '../../../../core/services/productos.service';
 import { PedidoClienteService } from '../../pedido-cliente.service';
-import { Observable, Subscription, finalize } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PedidoClienteState } from '../../pedido-cliente.service';
 
@@ -31,7 +32,9 @@ export class MenuClienteComponent implements OnInit {
     private productosService: ProductosService,
     private pedidoClienteService: PedidoClienteService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
   ) {}
 
   ngOnInit(): void {
@@ -40,16 +43,20 @@ export class MenuClienteComponent implements OnInit {
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (data) => {
-          this.categorias = data.categorias;
-          this.productos = data.productos;
-          this.errorMessage = null;
-          console.debug('[MenuCliente] menu cargado', {
-            categorias: this.categorias.length,
-            productos: this.productos.length,
+          this.zone.run(() => {
+            this.categorias = data.categorias;
+            this.productos = data.productos;
+            this.errorMessage = null;
+            // forzar actualización
+            try { this.cdr.markForCheck(); this.cdr.detectChanges(); } catch {}
+            console.log('[MenuCliente] menu cargado', {
+              categorias: this.categorias.length,
+              productos: this.productos.length,
+            });
           });
         },
         error: (err) => {
-          console.error('Error cargando menú', err);
+          console.error('[MenuCliente] Error cargando menú', err);
           this.errorMessage = 'No pudimos cargar el menú. Intenta de nuevo en unos minutos.';
         },
       });
@@ -66,7 +73,7 @@ export class MenuClienteComponent implements OnInit {
   }
 
   getProductosPorCategoria(categoriaId: number): Producto[] {
-    return this.productos.filter(p => p.categoria_id === categoriaId);
+    return this.productos.filter(p => Number(p.categoria_id) === Number(categoriaId));
   }
 
   agregarItem(producto: Producto): void {
