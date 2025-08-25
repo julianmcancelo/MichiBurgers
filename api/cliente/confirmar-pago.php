@@ -9,13 +9,17 @@ try {
   $raw = file_get_contents('php://input');
   $body = json_decode($raw, true) ?? [];
 
-  $pedido_cliente_id = $body['pedido_id'] ?? '';
-  // En un caso real, aquí se procesaría un token de pago
+  // Permitir ambas claves por compatibilidad
+  $pedido_cliente_id = $body['pedido_cliente_id'] ?? ($body['pedido_id'] ?? '');
+  // En un caso real, aquí se procesaría un token de pago. En demo puede venir vacío.
   $payment_token = $body['payment_token'] ?? '';
+  $metodo = $body['metodo'] ?? null; // 'tarjeta' | 'mercado_pago' | 'transferencia' | etc
+  $detalles = $body['detalles'] ?? null; // string|array (lo guardamos como JSON)
+  $referencia = $body['referencia'] ?? null; // opcional (p.ej. último 4 dígitos, nro op, etc)
 
-  if (empty($pedido_cliente_id) || empty($payment_token)) {
+  if (empty($pedido_cliente_id)) {
     http_response_code(400);
-    echo json_encode(['error' => 'Falta ID de pedido o token de pago']);
+    echo json_encode(['error' => 'Falta ID de pedido de cliente']);
     exit;
   }
 
@@ -38,7 +42,8 @@ try {
 
   // 2. Crear el pedido principal
   $stmt = $pdo->prepare(
-    'INSERT INTO pedidos (area, mesa_id, cliente_nombre, cliente_telefono, estado, tipo, total, created_at) VALUES (:area, :mesa_id, :nombre, :tel, \'listo_para_cocina\', \'cliente\', :total, :creado)'
+    'INSERT INTO pedidos (area, mesa_id, cliente_nombre, cliente_telefono, estado, tipo, total, pago_metodo, pago_detalles, pago_referencia, created_at)
+     VALUES (:area, :mesa_id, :nombre, :tel, \'listo_para_cocina\', \'cliente\', :total, :pago_metodo, :pago_detalles, :pago_ref, :creado)'
   );
   $stmt->execute([
     ':area' => $pedido_cliente['area'],
@@ -46,6 +51,9 @@ try {
     ':nombre' => $pedido_cliente['cliente_nombre'],
     ':tel' => $pedido_cliente['cliente_telefono'],
     ':total' => $pedido_cliente['total'],
+    ':pago_metodo' => $metodo,
+    ':pago_detalles' => $detalles !== null ? json_encode($detalles) : null,
+    ':pago_ref' => $referencia,
     ':creado' => $pedido_cliente['created_at']
   ]);
   $pedido_principal_id = (int)$pdo->lastInsertId();
@@ -72,7 +80,23 @@ try {
     ]);
   }
 
-  // 4. Actualizar estado del pedido del cliente a 'pagado'
+  // 4. Registrar pago (opcional) y actualizar estado del pedido del cliente a 'pagado'
+  // Mapear método para tabla pagos (enum: efectivo, tarjeta, qr, mixto)
+  $metodo_pagos = null;
+  if ($metodo === 'tarjeta') { $metodo_pagos = 'tarjeta'; }
+  elseif ($metodo === 'mercado_pago') { $metodo_pagos = 'qr'; }
+  elseif ($metodo === 'transferencia') { $metodo_pagos = 'efectivo'; } // sin enum específico, usamos efectivo como marcador
+
+  if ($metodo_pagos !== null) {
+    $stmtPago = $pdo->prepare('INSERT INTO pagos (pedido_id, metodo, monto) VALUES (:pid, :metodo, :monto)');
+    $stmtPago->execute([
+      ':pid' => $pedido_principal_id,
+      ':metodo' => $metodo_pagos,
+      ':monto' => $pedido_cliente['total']
+    ]);
+  }
+
+  // Actualizar estado del pedido del cliente a 'pagado'
   $stmt = $pdo->prepare('UPDATE pedidos_clientes SET estado = \'pagado\' WHERE id = :id');
   $stmt->execute([':id' => $pedido_cliente_id]);
 

@@ -5,20 +5,24 @@ import { Observable } from 'rxjs';
 import { PedidoClienteState } from './pedido-cliente.service';
 
 export interface CrearPedidoPayload {
-  nombre_cliente: string;
-  telefono_cliente: string;
-  mesa_id: number;
-  items: { id: number; cantidad: number }[];
-  total: number;
+  area: 'interior' | 'exterior';
+  mesa_id: string | number;
+  cliente_nombre: string;
+  cliente_telefono: string;
+  items: { [productoId: number]: number };
 }
 
 export interface CrearPedidoResponse {
-  id: string; // UUID del pedido_cliente
-  // ... cualquier otro dato que devuelva el backend
+  id?: string; // UUID del pedido_cliente (algunas versiones devuelven 'id')
+  pedido_id?: string; // otras devuelven 'pedido_id'
 }
 
 export interface ConfirmarPagoPayload {
-  pedido_cliente_id: string;
+  pedido_cliente_id?: string; // principal
+  pedido_id?: string; // compat
+  metodo?: 'tarjeta' | 'mercado_pago' | 'transferencia' | 'efectivo' | 'qr' | 'mixto';
+  detalles?: any; // se enviará como JSON al backend
+  referencia?: string; // último 4 dígitos, nro de operación, etc.
 }
 
 @Injectable({

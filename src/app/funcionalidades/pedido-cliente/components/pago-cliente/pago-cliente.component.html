@@ -46,6 +46,81 @@
           <p class="font-display text-4xl font-extrabold text-primary-600">{{ pedidoState.total | currency:'$' }}</p>
         </div>
 
+        <!-- Métodos de pago (demo) -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-secondary-800 mb-3">Elegí un método de pago</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+            <button type="button"
+                    (click)="selectedMetodo = 'tarjeta'"
+                    [ngClass]="selectedMetodo === 'tarjeta' ? 'ring-2 ring-primary-400 bg-primary-50' : 'ring-1 ring-secondary-200 bg-white'"
+                    class="w-full p-4 rounded-xl text-left hover:bg-primary-50 transition">
+              <div class="font-medium text-secondary-800">Tarjeta</div>
+              <div class="text-xs text-secondary-500">Crédito/Débito</div>
+            </button>
+            <button type="button"
+                    (click)="selectedMetodo = 'mercado_pago'"
+                    [ngClass]="selectedMetodo === 'mercado_pago' ? 'ring-2 ring-primary-400 bg-primary-50' : 'ring-1 ring-secondary-200 bg-white'"
+                    class="w-full p-4 rounded-xl text-left hover:bg-primary-50 transition">
+              <div class="font-medium text-secondary-800">Mercado Pago</div>
+              <div class="text-xs text-secondary-500">QR (Demo)</div>
+            </button>
+            <button type="button"
+                    (click)="selectedMetodo = 'transferencia'"
+                    [ngClass]="selectedMetodo === 'transferencia' ? 'ring-2 ring-primary-400 bg-primary-50' : 'ring-1 ring-secondary-200 bg-white'"
+                    class="w-full p-4 rounded-xl text-left hover:bg-primary-50 transition">
+              <div class="font-medium text-secondary-800">Transferencia</div>
+              <div class="text-xs text-secondary-500">Datos ficticios</div>
+            </button>
+          </div>
+
+          <!-- Form Tarjeta (demo) -->
+          <div *ngIf="selectedMetodo === 'tarjeta'" class="space-y-3 bg-white/70 p-4 rounded-xl ring-1 ring-secondary-200">
+            <div>
+              <label class="block text-sm text-secondary-600 mb-1">Nombre en la tarjeta</label>
+              <input [(ngModel)]="cardForm.nombre" placeholder="Juan P. Ejemplo" class="w-full px-3 py-2 rounded-lg border border-secondary-200 focus:outline-none focus:ring-2 focus:ring-primary-300" />
+            </div>
+            <div>
+              <label class="block text-sm text-secondary-600 mb-1">Número</label>
+              <input [(ngModel)]="cardForm.numero" placeholder="4111 1111 1111 1111" class="w-full px-3 py-2 rounded-lg border border-secondary-200 focus:outline-none focus:ring-2 focus:ring-primary-300" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-sm text-secondary-600 mb-1">Vencimiento (MM/AA)</label>
+                <input [(ngModel)]="cardForm.vencimiento" placeholder="12/29" class="w-full px-3 py-2 rounded-lg border border-secondary-200 focus:outline-none focus:ring-2 focus:ring-primary-300" />
+              </div>
+              <div>
+                <label class="block text-sm text-secondary-600 mb-1">CVV</label>
+                <input [(ngModel)]="cardForm.cvv" placeholder="123" class="w-full px-3 py-2 rounded-lg border border-secondary-200 focus:outline-none focus:ring-2 focus:ring-primary-300" />
+              </div>
+            </div>
+            <p class="text-xs text-secondary-500">Esta es una simulación. No se procesará ningún pago real.</p>
+          </div>
+
+          <!-- Mercado Pago QR (demo) -->
+          <div *ngIf="selectedMetodo === 'mercado_pago'" class="bg-white/70 p-4 rounded-xl ring-1 ring-secondary-200">
+            <div class="flex items-center gap-4">
+              <div class="w-28 h-28 bg-secondary-100 grid place-content-center rounded-lg">
+                <!-- Placeholder de QR -->
+                <div class="w-24 h-24 bg-secondary-200 grid place-content-center text-secondary-600 text-xs">QR DEMO</div>
+              </div>
+              <div>
+                <div class="font-semibold text-secondary-800">Escaneá para pagar</div>
+                <div class="text-sm text-secondary-600">Monto: {{ pedidoState.total | currency:'$' }}</div>
+                <div class="text-xs text-secondary-500">Este QR es ilustrativo (sin integración real).</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Transferencia (demo) -->
+          <div *ngIf="selectedMetodo === 'transferencia'" class="bg-white/70 p-4 rounded-xl ring-1 ring-secondary-200 space-y-1">
+            <div class="text-sm"><span class="font-medium">Alias:</span> {{ transferenciaDatos.alias }}</div>
+            <div class="text-sm"><span class="font-medium">CBU:</span> {{ transferenciaDatos.cbu }}</div>
+            <div class="text-sm"><span class="font-medium">Titular:</span> {{ transferenciaDatos.titular }}</div>
+            <div class="text-sm"><span class="font-medium">Banco:</span> {{ transferenciaDatos.banco }}</div>
+            <p class="text-xs text-secondary-500 pt-1">Carga el comprobante con el mozo. Este flujo es solo de muestra.</p>
+          </div>
+        </div>
+
         <!-- Mensaje de Error -->
         <div *ngIf="errorMessage" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6 animate-fade-in" role="alert">
           <p class="font-bold">¡Ups! Algo salió mal</p>
@@ -55,7 +130,12 @@
         <!-- Botón de Acción -->
         <button (click)="confirmarPedido()" [disabled]="isLoading"
                 class="w-full bg-primary-600 text-white font-bold py-4 px-6 rounded-xl hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary-300 disabled:bg-primary-300 disabled:cursor-not-allowed transform hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-primary-400/40 flex items-center justify-center h-16">
-          <span *ngIf="!isLoading" class="text-lg">Confirmar y Pagar Ahora</span>
+          <span *ngIf="!isLoading" class="text-lg">
+            {{ selectedMetodo === 'tarjeta' ? 'Pagar con Tarjeta (demo)'
+               : selectedMetodo === 'mercado_pago' ? 'Confirmar Pago por Mercado Pago (demo)'
+               : selectedMetodo === 'transferencia' ? 'He realizado la transferencia (demo)'
+               : 'Confirmar y Pagar Ahora' }}
+          </span>
           <div *ngIf="isLoading" class="flex items-center gap-3">
             <svg class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

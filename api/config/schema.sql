@@ -175,6 +175,12 @@ ALTER TABLE pedidos
   MODIFY COLUMN mozo_legajo VARCHAR(50) NULL,
   MODIFY COLUMN estado ENUM('abierto', 'listo_para_cocina', 'en_preparacion', 'listo_para_entregar', 'pagado', 'anulado') NOT NULL DEFAULT 'abierto';
 
+-- Campos de pago (para registrar método/detalles elegidos por el cliente)
+ALTER TABLE pedidos
+  ADD COLUMN pago_metodo ENUM('tarjeta','mercado_pago','transferencia','efectivo','qr','mixto') NULL AFTER total,
+  ADD COLUMN pago_detalles TEXT NULL AFTER pago_metodo,
+  ADD COLUMN pago_referencia VARCHAR(120) NULL AFTER pago_detalles;
+
 -- Actualizamos la vista de mesas ocupadas para incluir el nuevo estado
 CREATE OR REPLACE VIEW v_mesas_ocupadas AS
 SELECT p.area, p.mesa_id, p.id AS pedido_id, p.mozo_legajo, p.created_at
