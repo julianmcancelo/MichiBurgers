@@ -2,6 +2,29 @@
   <h1 class="font-display text-2xl sm:text-3xl font-bold text-secondary-800 mb-2">Generador de Códigos QR</h1>
   <p class="text-secondary-500 mb-6">Haz clic en una mesa para generar su código QR y el enlace de pedido.</p>
 
+  <!-- Controles de impresión de etiquetas (solo pantalla) -->
+  <div class="no-print mt-2 bg-secondary-50 border border-secondary-200 rounded-lg p-3">
+    <h3 class="text-sm font-semibold text-secondary-700 mb-2">Impresión de etiquetas</h3>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 items-end">
+      <label class="text-xs text-secondary-600">Ancho (mm)
+        <input type="number" [(ngModel)]="labelWidthMm" min="20" max="100" class="mt-1 w-full px-2 py-1 border rounded" />
+      </label>
+      <label class="text-xs text-secondary-600">Alto (mm)
+        <input type="number" [(ngModel)]="labelHeightMm" min="20" max="100" class="mt-1 w-full px-2 py-1 border rounded" />
+      </label>
+      <label class="text-xs text-secondary-600">Copias por QR
+        <input type="number" [(ngModel)]="copias" min="1" max="100" class="mt-1 w-full px-2 py-1 border rounded" />
+      </label>
+      <label class="flex items-center gap-2 text-xs text-secondary-700">
+        <input type="checkbox" [(ngModel)]="includeTexto" class="h-4 w-4" /> Incluir texto (Área y Mesa)
+      </label>
+    </div>
+    <div class="mt-2 flex gap-2">
+      <button (click)="print()" class="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm font-semibold">Imprimir etiquetas</button>
+      <span class="text-xs text-secondary-500">Se imprimen las etiquetas de la lista “QRs generados”.</span>
+    </div>
+  </div>
+
   <!-- Input para Base URL -->
   <div>
     <label for="baseUrl" class="block text-sm font-medium text-secondary-700">Base URL (Opcional)</label>
@@ -43,7 +66,7 @@
     </div>
 
     <!-- Columna de Resultados -->
-    <div class="bg-secondary-50 rounded-lg p-4 sm:p-6 flex items-center justify-center min-h-[260px] sm:min-h-[300px] lg:sticky lg:top-4 h-fit">
+    <div class="bg-secondary-50 rounded-lg p-4 sm:p-6 flex flex-col items-stretch justify-start min-h-[260px] sm:min-h-[300px] lg:sticky lg:top-4 h-fit">
       <!-- Estado de Carga -->
       <div *ngIf="loading" class="text-center">
         <svg class="animate-spin h-12 w-12 text-primary-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -74,6 +97,10 @@
             <input [(ngModel)]="mesaManual" type="text" class="mt-1 w-full px-3 py-2 bg-white border border-secondary-300 rounded-md" placeholder="Ej: 1" />
           </div>
           <button (click)="generarManual()" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md font-semibold whitespace-nowrap">Generar</button>
+        </div>
+        <div class="mt-3 flex flex-wrap gap-2">
+          <button (click)="generarTodos('interior')" class="px-3 py-1.5 text-xs sm:text-sm bg-secondary-200 hover:bg-secondary-300 text-secondary-800 rounded-md font-semibold">Generar todos (Interior)</button>
+          <button (click)="generarTodos('exterior')" class="px-3 py-1.5 text-xs sm:text-sm bg-secondary-200 hover:bg-secondary-300 text-secondary-800 rounded-md font-semibold">Generar todos (Exterior)</button>
         </div>
       </div>
 
@@ -110,6 +137,54 @@
         </div>
         <a [href]="resultado!.url || resultado!.path" target="_blank" rel="noopener" *ngIf="resultado!.url || resultado!.path" class="block text-center mt-4 text-primary-600 hover:underline text-sm font-semibold">Probar enlace &rarr;</a>
       </div>
+
+      <!-- Listado de QRs generados -->
+      <div *ngIf="generados.length" class="mt-6">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-semibold text-secondary-700">QRs generados</h4>
+          <div class="flex gap-2">
+            <button (click)="exportGenerados()" class="px-2.5 py-1 bg-secondary-100 hover:bg-secondary-200 text-secondary-800 rounded text-xs font-semibold">Exportar JSON</button>
+            <button (click)="clearGenerados()" class="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded text-xs font-semibold">Limpiar</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div *ngFor="let g of generados" class="bg-white rounded-lg border p-3 flex items-center gap-3">
+            <qrcode [qrdata]="g.url || g.path" [width]="96" [errorCorrectionLevel]="'M'"></qrcode>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm text-secondary-700">
+                <span class="font-semibold">Área:</span>
+                <span class="font-mono bg-secondary-100 px-1.5 py-0.5 rounded">{{ g.area }}</span>
+                <span class="ml-2 font-semibold">Mesa:</span>
+                <span class="font-mono bg-secondary-100 px-1.5 py-0.5 rounded">{{ g.mesa }}</span>
+              </div>
+              <div class="mt-1 text-xs text-secondary-600 truncate">{{ g.url || g.path }}</div>
+              <div class="mt-2 flex gap-2">
+                <a [href]="g.url || g.path" target="_blank" rel="noopener" class="text-primary-600 hover:underline text-xs font-semibold">Abrir</a>
+                <button (click)="copyGenerado(g)" class="text-secondary-600 hover:text-secondary-800 text-xs font-semibold">Copiar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Área de impresión (solo print) -->
+  <div class="print-area">
+    <div class="labels-grid">
+      <ng-container *ngFor="let g of generados">
+        <ng-container *ngFor="let _ of copiasArray(copias)">
+          <div class="label-box" [style.width.mm]="labelWidthMm" [style.height.mm]="labelHeightMm">
+            <div class="label-content">
+              <qrcode [qrdata]="g.url || g.path" [width]="getQrPxWidth()" [errorCorrectionLevel]="'M'"></qrcode>
+              <div *ngIf="includeTexto" class="label-text">
+                <div>Área: {{ g.area }}</div>
+                <div>Mesa: {{ g.mesa }}</div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
     </div>
   </div>
 </div>
