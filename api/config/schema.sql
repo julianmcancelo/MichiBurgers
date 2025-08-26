@@ -179,7 +179,12 @@ ALTER TABLE pedidos
 ALTER TABLE pedidos
   ADD COLUMN pago_metodo ENUM('tarjeta','mercado_pago','transferencia','efectivo','qr','mixto') NULL AFTER total,
   ADD COLUMN pago_detalles TEXT NULL AFTER pago_metodo,
-  ADD COLUMN pago_referencia VARCHAR(120) NULL AFTER pago_detalles;
+  ADD COLUMN pago_referencia VARCHAR(120) NULL AFTER pago_detalles,
+  ADD COLUMN pago_estado ENUM('pendiente','aprobado','rechazado') NULL AFTER pago_referencia,
+  ADD COLUMN pago_revision_nota TEXT NULL AFTER pago_estado,
+  ADD COLUMN pago_revisado_por VARCHAR(100) NULL AFTER pago_revision_nota,
+  ADD COLUMN pago_revisado_en TIMESTAMP NULL DEFAULT NULL AFTER pago_revisado_por,
+  ADD INDEX idx_pedidos_pago_metodo_estado (pago_metodo, pago_estado);
 
 -- Actualizamos la vista de mesas ocupadas para incluir el nuevo estado
 CREATE OR REPLACE VIEW v_mesas_ocupadas AS

@@ -5,6 +5,18 @@ require_once __DIR__ . '/../config/cors.php';
 
 header('Content-Type: application/json');
 
+// Soporte CORS preflight y control de métodos
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+  http_response_code(204);
+  exit;
+}
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+  header('Allow: POST, OPTIONS');
+  http_response_code(405);
+  echo json_encode(['error' => 'Método no permitido']);
+  exit;
+}
+
 try {
   $raw = file_get_contents('php://input');
   $body = json_decode($raw, true) ?? [];
@@ -50,8 +62,8 @@ try {
 
   // 2. Crear el pedido principal (dejamos created_at por defecto de la DB)
   $stmt = $pdo->prepare(
-    'INSERT INTO pedidos (area, mesa_id, cliente_nombre, cliente_telefono, estado, tipo, total, pago_metodo, pago_detalles, pago_referencia)
-     VALUES (:area, :mesa_id, :nombre, :tel, \'listo_para_cocina\', \'cliente\', :total, :pago_metodo, :pago_detalles, :pago_ref)'
+    'INSERT INTO pedidos (area, mesa_id, cliente_nombre, cliente_telefono, estado, tipo, total, pago_metodo, pago_detalles, pago_referencia, pago_estado)
+     VALUES (:area, :mesa_id, :nombre, :tel, \'listo_para_cocina\', \'cliente\', :total, :pago_metodo, :pago_detalles, :pago_ref, :pago_estado)'
   );
   try {
     $stmt->execute([
@@ -63,6 +75,7 @@ try {
       ':pago_metodo' => $metodo,
       ':pago_detalles' => $detalles_json,
       ':pago_ref' => $referencia,
+      ':pago_estado' => $metodo === 'transferencia' ? 'pendiente' : null,
     ]);
   } catch (Throwable $e) {
     error_log('confirmar-pago INSERT pedidos failed: ' . $e->getMessage());
@@ -72,6 +85,12 @@ try {
 
   // 3. Insertar los ítems del pedido
   $items = json_decode($pedido_cliente['items'], true);
+  if (!is_array($items) || empty($items)) {
+    $pdo->rollBack();
+    http_response_code(400);
+    echo json_encode(['error' => 'Items inválidos en el pedido del cliente']);
+    exit;
+  }
   $stmt_items_info = $pdo->prepare('SELECT nombre, precio FROM productos WHERE id = :id');
   $stmt_insert_item = $pdo->prepare(
     'INSERT INTO pedido_items (pedido_id, producto_id, nombre, precio_unit, cantidad, subtotal) VALUES (:pid, :prod_id, :nombre, :precio, :cant, :subtotal)'
@@ -85,7 +104,13 @@ try {
       throw $e;
     }
     $producto_info = $stmt_items_info->fetch(PDO::FETCH_ASSOC);
-    $subtotal = $producto_info['precio'] * $cantidad;
+    if (!$producto_info || !isset($producto_info['precio'])) {
+      $pdo->rollBack();
+      http_response_code(400);
+      echo json_encode(['error' => 'Producto no válido al confirmar el pedido', 'producto_id' => (int)$producto_id]);
+      exit;
+    }
+    $subtotal = (float)$producto_info['precio'] * (int)$cantidad;
 
     try {
       $stmt_insert_item->execute([
@@ -107,7 +132,7 @@ try {
   $metodo_pagos = null;
   if ($metodo === 'tarjeta') { $metodo_pagos = 'tarjeta'; }
   elseif ($metodo === 'mercado_pago') { $metodo_pagos = 'qr'; }
-  elseif ($metodo === 'transferencia') { $metodo_pagos = 'efectivo'; } // sin enum específico, usamos efectivo como marcador
+  elseif ($metodo === 'transferencia') { $metodo_pagos = null; } // no registramos en pagos hasta que sea aprobado
 
   if ($metodo_pagos !== null) {
     $stmtPago = $pdo->prepare('INSERT INTO pagos (pedido_id, metodo, monto) VALUES (:pid, :metodo, :monto)');
@@ -123,10 +148,21 @@ try {
     }
   }
 
-  // Actualizar estado del pedido del cliente a 'pagado'
-  $stmt = $pdo->prepare('UPDATE pedidos_clientes SET estado = \'pagado\' WHERE id = :id');
+  // Cerramos el carrito del cliente como pagado siempre (la aprobación de transferencia se maneja en pedidos.pago_estado)
+  // Nota: para evitar violar el índice único (area, mesa_id, estado) cuando ya existe un 'pagado' previo,
+  // marcamos cualquier 'pagado' anterior como 'expirado' antes de actualizar este carrito.
   try {
-    $stmt->execute([':id' => $pedido_cliente_id]);
+    $stmt = $pdo->prepare('UPDATE pedidos_clientes SET estado = "expirado" WHERE area = :area AND mesa_id = :mesa AND estado = "pagado"');
+    $stmt->execute([':area' => $pedido_cliente['area'], ':mesa' => $pedido_cliente['mesa_id']]);
+  } catch (Throwable $e) {
+    error_log('confirmar-pago UPDATE antiguos pagados failed: ' . $e->getMessage());
+    throw $e;
+  }
+
+  $nuevo_estado = 'pagado';
+  $stmt = $pdo->prepare('UPDATE pedidos_clientes SET estado = :estado WHERE id = :id');
+  try {
+    $stmt->execute([':estado' => $nuevo_estado, ':id' => $pedido_cliente_id]);
   } catch (Throwable $e) {
     error_log('confirmar-pago UPDATE pedidos_clientes failed: ' . $e->getMessage());
     throw $e;

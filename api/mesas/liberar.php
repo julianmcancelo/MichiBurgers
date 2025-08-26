@@ -6,6 +6,18 @@ require_once __DIR__ . '/../config/cors.php';
 
 header('Content-Type: application/json');
 
+// Soporte CORS preflight y métodos permitidos
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+  http_response_code(204);
+  exit;
+}
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+  header('Allow: POST, OPTIONS');
+  http_response_code(405);
+  echo json_encode(['error' => 'Método no permitido']);
+  exit;
+}
+
 $raw = file_get_contents('php://input');
 $body = json_decode($raw, true) ?? [];
 $area = (string)($body['area'] ?? '');
@@ -61,15 +73,21 @@ try {
     exit;
   }
 
-  // Si está ocupada y hay pedido, verificar que NO esté abierto
+  // Si está ocupada y hay pedido, verificar que NO esté en estados considerados "abiertos"
   if ($pedidoId > 0) {
     $p = $pdo->prepare('SELECT estado FROM pedidos WHERE id=:id');
     $p->execute([':id' => $pedidoId]);
     $pedido = $p->fetch();
-    if ($pedido && $pedido['estado'] === 'abierto') {
+    // Mismos estados que usa la vista v_mesas_ocupadas
+    $estadosAbiertos = ['abierto','listo_para_cocina','en_preparacion','listo_para_entregar'];
+    if ($pedido && in_array((string)$pedido['estado'], $estadosAbiertos, true)) {
       $pdo->rollBack();
       http_response_code(400);
-      echo json_encode(['error' => 'El pedido aún está abierto. Usar pagar.php para cerrar y liberar.']);
+      echo json_encode([
+        'error' => 'El pedido aún está abierto. Usar pagar.php para cerrar y liberar.',
+        'pedido_id' => $pedidoId,
+        'estado' => (string)$pedido['estado'],
+      ]);
       exit;
     }
   }
@@ -83,5 +101,8 @@ try {
 } catch (Throwable $e) {
   if (isset($pdo) && $pdo->inTransaction()) $pdo->rollBack();
   http_response_code(500);
-  echo json_encode(['error' => 'Error de servidor']);
+  echo json_encode([
+    'error' => 'Error de servidor',
+    'detalle' => $e->getMessage(),
+  ]);
 }

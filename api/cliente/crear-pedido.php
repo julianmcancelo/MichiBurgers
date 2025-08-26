@@ -6,6 +6,18 @@ require_once __DIR__ . '/../config/helpers.php';
 
 header('Content-Type: application/json');
 
+// Soporte CORS preflight y métodos permitidos
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+  http_response_code(204);
+  exit;
+}
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+  header('Allow: POST, OPTIONS');
+  http_response_code(405);
+  echo json_encode(['error' => 'Método no permitido']);
+  exit;
+}
+
 try {
   $raw = file_get_contents('php://input');
   $body = json_decode($raw, true) ?? [];
@@ -25,13 +37,18 @@ try {
 
   $pdo = db();
 
-  // 2. Validar que la mesa no tenga un pedido activo (la vista expone 'pedido_id', no 'id')
-  //    Usamos SELECT 1 ya que solo necesitamos existencia
-  $stmt = $pdo->prepare("SELECT 1 FROM v_mesas_ocupadas WHERE area = :area AND mesa_id = :mesa_id LIMIT 1");
+  // 2. Detectar si la mesa tiene un pedido abierto (bloqueamos y devolvemos 409 con detalles)
+  $stmt = $pdo->prepare("SELECT pedido_id FROM v_mesas_ocupadas WHERE area = :area AND mesa_id = :mesa_id LIMIT 1");
   $stmt->execute([':area' => $area, ':mesa_id' => $mesa_id]);
-  if ($stmt->fetch()) {
+  $ocupada = $stmt->fetchColumn();
+  if ($ocupada) {
     http_response_code(409);
-    echo json_encode(['error' => 'La mesa ya se encuentra ocupada']);
+    echo json_encode([
+      'error' => 'La mesa ya se encuentra ocupada. Pedí ayuda a un mozo para liberarla o cerrá el pedido existente.',
+      'area' => $area,
+      'mesa_id' => $mesa_id,
+      'pedido_id' => (int)$ocupada,
+    ]);
     exit;
   }
 

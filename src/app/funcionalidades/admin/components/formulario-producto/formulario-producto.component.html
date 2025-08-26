@@ -18,7 +18,18 @@
 
       <!-- Formulario -->
       <div class="px-6 py-6">
-        <form [formGroup]="formularioProducto" (ngSubmit)="guardarProducto()" class="space-y-6">
+        <!-- Estados -->
+        <div *ngIf="cargando" class="mb-4">
+          <div class="inline-flex items-center gap-3 px-4 py-2 bg-orange-50 text-orange-700 rounded-lg">
+            <div class="w-4 h-4 border-2 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
+            <span class="text-sm font-medium">Cargando datos...</span>
+          </div>
+        </div>
+        <div *ngIf="error" class="mb-4">
+          <div class="px-4 py-2 bg-red-50 text-red-700 rounded-lg border border-red-200 text-sm">{{ error }}</div>
+        </div>
+
+        <form [formGroup]="formularioProducto" (ngSubmit)="guardarProducto()" class="space-y-6" *ngIf="!cargando">
           <!-- Campo Nombre -->
           <div class="space-y-2">
             <label class="block text-sm font-semibold text-gray-700">Nombre del Producto</label>
@@ -39,6 +50,15 @@
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
               <span>{{ obtenerErrorNombre() }}</span>
             </div>
+          </div>
+
+          <!-- Campo Categoría -->
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-gray-700">Categoría</label>
+            <select formControlName="categoria_id" class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+              <option [ngValue]="null" disabled>Selecciona una categoría</option>
+              <option *ngFor="let c of categorias" [ngValue]="c.id">{{ c.nombre }}</option>
+            </select>
           </div>
 
           <!-- Campo Precio -->
@@ -64,6 +84,28 @@
             </div>
           </div>
 
+          <!-- Campo Descripción -->
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-gray-700">Descripción</label>
+            <textarea formControlName="descripcion" rows="3" placeholder="Opcional" class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"></textarea>
+          </div>
+
+          <!-- Imagen URL y preview -->
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-gray-700">URL de Imagen</label>
+            <input formControlName="imagen_url" (input)="onImagenUrlChange()" placeholder="https://..." class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"/>
+            <div class="mt-2 flex items-center gap-3">
+              <img [src]="previewUrl || '/favicon.ico'" (error)="onPreviewError($event)" class="w-16 h-16 rounded object-cover ring-1 ring-gray-200 bg-gray-100" alt="preview"/>
+              <span class="text-xs text-gray-500">Previsualización</span>
+            </div>
+          </div>
+
+          <!-- Activo -->
+          <div class="flex items-center gap-2">
+            <input id="activoChk" type="checkbox" formControlName="activo" class="h-4 w-4 text-orange-600 border-gray-300 rounded"/>
+            <label for="activoChk" class="text-sm text-gray-700">Activo</label>
+          </div>
+
           <!-- Botones de acción -->
           <div class="flex flex-col sm:flex-row gap-3 pt-4">
             <button
@@ -76,11 +118,12 @@
             </button>
             <button
               type="submit"
-              [disabled]="formularioProducto.invalid"
+              [disabled]="formularioProducto.invalid || guardando"
               class="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none"
             >
-              <svg *ngIf="esEdicion" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z" /></svg>
-              <svg *ngIf="!esEdicion" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+              <svg *ngIf="guardando" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="4" class="opacity-20"></circle><path d="M4 12a8 8 0 018-8" stroke-width="4" class="opacity-80"></path></svg>
+              <svg *ngIf="!guardando && esEdicion" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z" /></svg>
+              <svg *ngIf="!esEdicion && !guardando" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
               <span>{{ esEdicion ? 'Actualizar' : 'Crear' }} Producto</span>
             </button>
           </div>

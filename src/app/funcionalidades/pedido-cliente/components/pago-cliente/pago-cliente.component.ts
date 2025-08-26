@@ -189,6 +189,9 @@ export class PagoClienteComponent implements OnInit, OnDestroy {
       items: itemsMap,
     };
 
+    // Guardar método de pago elegido en el estado para mostrarlo en la confirmación
+    this.pedidoClienteService.setPagoMetodo(this.selectedMetodo || undefined);
+
     this.pedidoApiService.crearPedido(payload).subscribe({
       next: (res) => {
         const pedidoId = (res as any)?.id || (res as any)?.pedido_id;
@@ -222,10 +225,27 @@ export class PagoClienteComponent implements OnInit, OnDestroy {
           }
         });
       },
-      error: (_err) => {
-        this.errorMessage = 'Hubo un error al crear tu pedido. Por favor, intenta de nuevo.';
+      error: (err) => {
+        this.errorMessage = this.formatCrearPedidoError(err);
         this.isLoading = false;
       }
     });
+  }
+
+  private formatCrearPedidoError(err: any): string {
+    // 409: mesa ocupada según backend. Mostrar mensaje claro y datos si existen
+    if (err?.status === 409) {
+      const msg = err?.error?.error || 'La mesa está ocupada en este momento.';
+      const mesa = err?.error?.mesa_id ? ` Mesa: ${err.error.mesa_id}.` : '';
+      const pedido = err?.error?.pedido_id ? ` Pedido ID: ${err.error.pedido_id}.` : '';
+      return `${msg}${mesa}${pedido}`.trim();
+    }
+    if (err?.status === 400) {
+      return err?.error?.error || 'Datos inválidos para crear el pedido.';
+    }
+    if (err?.status === 500) {
+      return 'Error de servidor. Intenta nuevamente en unos segundos.';
+    }
+    return 'Hubo un error al crear tu pedido. Por favor, intenta de nuevo.';
   }
 }

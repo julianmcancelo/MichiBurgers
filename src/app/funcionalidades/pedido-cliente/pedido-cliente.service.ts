@@ -7,6 +7,7 @@ export interface PedidoClienteState {
   cliente?: { nombre: string; telefono: string };
   items: { [productoId: number]: { cantidad: number; nombre: string; precio: number } };
   total: number;
+  pagoMetodo?: 'tarjeta' | 'mercado_pago' | 'transferencia' | 'efectivo' | 'qr' | 'mixto';
 }
 
 const initialState: PedidoClienteState = {
@@ -53,6 +54,11 @@ export class PedidoClienteService {
   setCliente(nombre: string, telefono: string): void {
     const currentState = this.state.getValue();
     this.state.next({ ...currentState, cliente: { nombre, telefono } });
+  }
+
+  setPagoMetodo(metodo: PedidoClienteState['pagoMetodo']): void {
+    const currentState = this.state.getValue();
+    this.state.next({ ...currentState, pagoMetodo: metodo });
   }
 
   agregarItem(producto: { id: number; nombre: string; precio: number }): void {

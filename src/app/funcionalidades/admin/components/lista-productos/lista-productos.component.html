@@ -11,23 +11,42 @@
         <p class="text-orange-100 text-sm">Administra el menú de MichiBurgers</p>
       </div>
       
-      <!-- Acciones principales -->
+      <!-- Barra de acciones enfocada en productos -->
       <div class="px-6 py-4 bg-white border-b border-gray-200">
-        <div class="flex flex-col sm:flex-row gap-3">
-          <button 
-            (click)="nuevoProducto()"
-            class="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
-            <span>Nuevo Producto</span>
-          </button>
-          <a
-            routerLink="/admin/usuarios/registrar"
-            class="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 11a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1v-1z" /></svg>
-            <span>Registrar Usuario</span>
-          </a>
+        <div class="flex flex-col gap-3">
+          <div class="flex flex-col md:flex-row gap-3">
+            <div class="flex-1 flex items-center gap-2">
+              <div class="relative w-full max-w-md">
+                <input type="text"
+                       placeholder="Buscar por nombre..."
+                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                       (input)="search = ($any($event.target).value || '').toString(); applyFilters()" />
+                <div class="pointer-events-none absolute right-2 top-2.5 text-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l3.387 3.387a1 1 0 01-1.414 1.414l-3.387-3.387zM8 14a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd" /></svg>
+                </div>
+              </div>
+              <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      (change)="categoriaId = $any($event.target).value === 'todas' ? 'todas' : +$any($event.target).value; applyFilters()">
+                <option value="todas">Todas las categorías</option>
+                <option *ngFor="let c of categorias" [value]="c.id">{{ c.nombre }}</option>
+              </select>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button (click)="nuevoProducto()"
+                      class="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                <span>Nuevo</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2" *ngIf="anySelected">
+            <span class="text-sm text-gray-600">Seleccionados: {{ selectedIds.size }}</span>
+            <button (click)="bulkActivar()" class="px-3 py-1.5 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700">Activar</button>
+            <button (click)="bulkDesactivar()" class="px-3 py-1.5 text-sm bg-amber-600 text-white rounded-md hover:bg-amber-700">Desactivar</button>
+            <button (click)="bulkEliminar()" class="px-3 py-1.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700">Eliminar</button>
+          </div>
         </div>
       </div>
 
@@ -56,14 +75,23 @@
           <table class="w-full">
             <thead>
               <tr class="border-b border-gray-200">
+                <th class="bg-gray-50 px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-10">
+                  <input type="checkbox"
+                         [checked]="allVisibleSelected"
+                         (change)="toggleAllVisible()"/>
+                </th>
                 <th class="bg-gray-50 px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Foto</th>
                 <th class="bg-gray-50 px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Nombre</th>
                 <th class="bg-gray-50 px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Precio</th>
+                <th class="bg-gray-50 px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Activo</th>
                 <th class="bg-gray-50 px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let producto of productos" class="hover:bg-gray-50 transition-colors duration-150">
+              <tr *ngFor="let producto of filtered" class="hover:bg-gray-50 transition-colors duration-150">
+                <td class="px-4 py-4 border-b border-gray-200">
+                  <input type="checkbox" [checked]="selectedIds.has(producto.id)" (change)="toggleOne(producto.id)"/>
+                </td>
                 <td class="px-4 py-4 border-b border-gray-200">
                   <img
                     [src]="producto.imagen_url || '/favicon.ico'"
@@ -81,6 +109,13 @@
                   </span>
                 </td>
                 <td class="px-4 py-4 border-b border-gray-200">
+                  <button (click)="toggleActivo(producto)"
+                          class="px-2 py-1 rounded-md text-sm"
+                          [ngClass]="producto.activo ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'">
+                    {{ producto.activo ? 'Activo' : 'Inactivo' }}
+                  </button>
+                </td>
+                <td class="px-4 py-4 border-b border-gray-200">
                   <div class="flex items-center gap-2">
                     <button 
                       (click)="editarProducto(producto.id)"
@@ -88,6 +123,13 @@
                       title="Editar producto"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg>
+                    </button>
+                    <button 
+                      (click)="duplicarProducto(producto)"
+                      class="inline-flex items-center justify-center w-8 h-8 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors duration-200"
+                      title="Duplicar producto"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a2 2 0 012-2h6a2 2 0 012 2v1h1a2 2 0 012 2v8a2 2 0 01-2 2H8a2 2 0 01-2-2H5a2 2 0 01-2-2V5a2 2 0 012-2h1V3z" /></svg>
                     </button>
                     <button 
                       (click)="eliminarProducto(producto.id)"
@@ -102,6 +144,7 @@
             </tbody>
           </table>
         </div>
+        <div class="text-sm text-gray-600 mt-2">Mostrando {{ filtered.length }} de {{ productos.length }} productos</div>
       </div>
     </div>
   </div>

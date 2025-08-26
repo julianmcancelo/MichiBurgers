@@ -50,16 +50,22 @@ try {
   if (!empty($pedidoIds)) {
     $ids = array_keys($pedidoIds);
     $in = implode(',', array_fill(0, count($ids), '?'));
-    $st3 = db()->prepare("SELECT id, estado FROM pedidos WHERE id IN ($in)");
+    // Traemos también pago_estado para marcar correctamente 'pagado' tras aprobación de transferencia
+    $st3 = db()->prepare("SELECT id, estado, pago_estado FROM pedidos WHERE id IN ($in)");
     $st3->execute($ids);
     $map = [];
     while ($p = $st3->fetch()) {
-      $map[(int)$p['id']] = (string)$p['estado'];
+      $map[(int)$p['id']] = [
+        'estado' => (string)$p['estado'],
+        'pago_estado' => isset($p['pago_estado']) ? (string)$p['pago_estado'] : null,
+      ];
     }
     foreach ($mesas as &$m) {
       if (!empty($m['pedidoId']) && isset($map[(int)$m['pedidoId']])) {
-        $m['pedidoEstado'] = $map[(int)$m['pedidoId']];
-        $m['pagado'] = ($m['pedidoEstado'] === 'pagado');
+        $info = $map[(int)$m['pedidoId']];
+        $m['pedidoEstado'] = $info['estado'];
+        // Consideramos pagado si el estado del pedido es 'pagado' o si el pago fue aprobado (transferencia)
+        $m['pagado'] = ($info['estado'] === 'pagado') || ($info['pago_estado'] === 'aprobado');
       }
     }
     unset($m);

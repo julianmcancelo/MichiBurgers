@@ -12,9 +12,11 @@ import { ListaProductosComponent } from './components/lista-productos/lista-prod
 import { NuevoProductoDialogComponent } from './components/nuevo-producto-dialog/nuevo-producto-dialog.component';
 import { QrGeneratorComponent } from './components/qr-generator/qr-generator.component';
 import { RegistroUsuarioComponent } from './components/registro-usuario/registro-usuario.component';
+import { RevisarTransferenciasComponent } from './components/revisar-transferencias/revisar-transferencias.component';
+import { DashboardAdminComponent } from './components/dashboard-admin/dashboard-admin.component';
 
 @NgModule({
-  declarations: [ListaProductosComponent, FormularioProductoComponent],
+  declarations: [ListaProductosComponent, FormularioProductoComponent, DashboardAdminComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -22,11 +24,15 @@ import { RegistroUsuarioComponent } from './components/registro-usuario/registro
     MatSnackBarModule,
     MatDialogModule,
     HttpClientModule,
-    RegistroUsuarioComponent,
-    NuevoProductoDialogComponent,
     RouterModule.forChild([
       {
         path: '',
+        component: DashboardAdminComponent,
+        canActivate: [authGuard],
+        data: { roles: ['admin'] },
+      },
+      {
+        path: 'productos',
         component: ListaProductosComponent,
         canActivate: [authGuard],
         data: { roles: ['admin'] },
@@ -52,6 +58,12 @@ import { RegistroUsuarioComponent } from './components/registro-usuario/registro
       {
         path: 'qr',
         component: QrGeneratorComponent,
+        canActivate: [authGuard],
+        data: { roles: ['admin'] },
+      },
+      {
+        path: 'pagos/transferencias',
+        component: RevisarTransferenciasComponent,
         canActivate: [authGuard],
         data: { roles: ['admin'] },
       },
